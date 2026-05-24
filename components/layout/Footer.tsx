@@ -1,0 +1,219 @@
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import { Facebook, Instagram, Youtube, Mail, Phone, MapPin, Clock, ArrowRight, CheckCircle, Lock } from "lucide-react";
+import { useLanguage } from "@/lib/i18n-context";
+import { useContent } from "@/lib/content-context";
+import { SITE_ADDRESS, SITE_EMAIL, SITE_HOURS, SITE_PHONE, SOCIAL_LINKS } from "@/lib/constants";
+
+export default function Footer() {
+  const { t } = useLanguage();
+  const content = useContent();
+  const [email, setEmail] = useState("");
+  const [subscribed, setSubscribed] = useState(false);
+
+  // Use live content from CMS if available, otherwise fall back to constants
+  const phone   = content?.business?.phone   ?? SITE_PHONE;
+  const mail    = content?.business?.email   ?? SITE_EMAIL;
+  const address = content?.business?.address ?? SITE_ADDRESS;
+  const hours   = content?.business?.hours   ?? SITE_HOURS;
+  const social  = content?.business?.social  ?? SOCIAL_LINKS;
+  const name    = content?.business?.name    ?? "Michael Lamidis";
+
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email) {
+      setSubscribed(true);
+      setEmail("");
+    }
+  };
+
+  return (
+    <footer className="bg-navy-950 noise-overlay relative overflow-hidden">
+      {/* Gradient orbs */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full bg-blue-500/8 blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 rounded-full bg-gold-500/6 blur-[120px] pointer-events-none" />
+
+      {/* Top divider */}
+      <div className="divider-gold opacity-20" />
+
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+        {/* Main content */}
+        <div className="pt-16 pb-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8">
+          {/* Brand column */}
+          <div className="lg:col-span-4 flex flex-col gap-6">
+            {/* Logo */}
+            <Link href="/" className="flex items-center gap-2.5 w-fit group">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-gold-500 to-gold-400 flex items-center justify-center">
+                <span className="text-navy-950 font-black text-sm font-display">ML</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-white font-display font-bold text-lg leading-tight">{name}</span>
+                <span className="text-white/35 text-[10px] font-medium tracking-wider uppercase">Open Box Shop</span>
+              </div>
+            </Link>
+
+            <p className="text-white/45 text-sm leading-relaxed max-w-xs">
+              {t.footer.description}
+            </p>
+
+            {/* Contact info */}
+            <div className="flex flex-col gap-3">
+              {[
+                { icon: MapPin, text: address },
+                { icon: Phone, text: phone,  href: `tel:${phone.replace(/\s/g, "")}` },
+                { icon: Mail,  text: mail,   href: `mailto:${mail}` },
+                { icon: Clock, text: hours },
+              ].map(({ icon: Icon, text, href }) => (
+                <div key={text} className="flex items-start gap-2.5">
+                  <Icon className="w-3.5 h-3.5 text-gold-500 mt-0.5 shrink-0" />
+                  {href ? (
+                    <a href={href} className="text-white/45 text-xs hover:text-white/70 transition-colors leading-relaxed">
+                      {text}
+                    </a>
+                  ) : (
+                    <span className="text-white/45 text-xs leading-relaxed">{text}</span>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Social */}
+            <div className="flex items-center gap-2">
+              {[
+                { href: social.facebook,  Icon: Facebook,  label: "Facebook" },
+                { href: social.instagram, Icon: Instagram, label: "Instagram" },
+                { href: social.youtube,   Icon: Youtube,   label: "YouTube" },
+              ].map(({ href, Icon, label }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="w-9 h-9 rounded-lg border border-white/[0.1] flex items-center justify-center text-white/40 hover:text-white hover:border-white/25 hover:bg-white/[0.06] transition-all duration-200"
+                >
+                  <Icon className="w-4 h-4" />
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Links columns */}
+          <div className="lg:col-span-5 grid grid-cols-3 gap-6">
+            {[
+              { title: t.footer.companyTitle,  links: t.footer.companyLinks },
+              { title: t.footer.servicesTitle, links: t.footer.servicesLinks },
+              { title: t.footer.supportTitle,  links: t.footer.supportLinks },
+            ].map(({ title, links }) => (
+              <div key={title} className="flex flex-col gap-4">
+                <span className="text-white text-xs font-bold uppercase tracking-widest">{title}</span>
+                <ul className="flex flex-col gap-2.5">
+                  {links.map(({ label, href }) => (
+                    <li key={href}>
+                      <Link
+                        href={href}
+                        className="text-white/40 text-sm hover:text-white/80 transition-colors duration-200 leading-snug"
+                      >
+                        {label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          {/* Newsletter */}
+          <div className="lg:col-span-3 flex flex-col gap-5">
+            <span className="text-white text-xs font-bold uppercase tracking-widest">
+              {t.footer.newsletterTitle}
+            </span>
+            <p className="text-white/40 text-sm leading-relaxed">
+              Get exclusive deals and early access to our best open box finds.
+            </p>
+            {subscribed ? (
+              <div className="flex items-center gap-2 text-sm text-emerald-400 font-medium">
+                <CheckCircle className="w-4 h-4" />
+                <span>You&apos;re subscribed!</span>
+              </div>
+            ) : (
+              <form onSubmit={handleSubscribe} className="flex flex-col gap-2.5">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder={t.footer.newsletterPlaceholder}
+                  required
+                  className="form-input text-sm"
+                />
+                <button type="submit" className="btn-gold text-sm !px-4 !py-2.5 justify-between">
+                  {t.footer.newsletterCta}
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </form>
+            )}
+
+            {/* Trust seals */}
+            <div className="flex items-center gap-3 pt-2">
+              <div className="glass-card rounded-lg px-3 py-2 flex items-center gap-1.5">
+                <span className="text-gold-400 text-xs">★</span>
+                <span className="text-white/60 text-xs font-medium">4.9/5 Rating</span>
+              </div>
+              <div className="glass-card rounded-lg px-3 py-2 flex items-center gap-1.5">
+                <span className="text-emerald-400 text-xs">✓</span>
+                <span className="text-white/60 text-xs font-medium">Certified</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Payment methods */}
+        <div className="border-t border-white/[0.06] py-5">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-white/25 text-[11px] font-medium uppercase tracking-widest">
+              Secure Payment
+            </p>
+            <div className="flex items-center gap-2 flex-wrap justify-center">
+              {[
+                { label: "VISA",          bg: "#1a1f71", text: "#fff",    italic: true  },
+                { label: "MC",            bg: "#eb001b", text: "#fff",    italic: false },
+                { label: "PayPal",        bg: "#003087", text: "#009cde", italic: false },
+                { label: "Apple Pay",     bg: "#000",    text: "#fff",    italic: false },
+                { label: "Google Pay",    bg: "#fff",    text: "#1a73e8", italic: false },
+                { label: "Bank Transfer", bg: "#0f766e", text: "#fff",    italic: false },
+              ].map(({ label, bg, text, italic }) => (
+                <div
+                  key={label}
+                  className="px-3 py-1.5 rounded-lg text-[11px] font-extrabold tracking-tight select-none"
+                  style={{ background: bg, color: text, fontStyle: italic ? "italic" : "normal" }}
+                >
+                  {label}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom bar */}
+        <div className="border-t border-white/[0.06] py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-white/30 text-xs font-medium text-center sm:text-left">
+            {t.footer.copyright}
+          </p>
+          <div className="flex items-center gap-5">
+            {t.footer.legal.map(({ label, href }) => (
+              <Link
+                key={href}
+                href={href}
+                className="text-white/30 text-xs hover:text-white/60 transition-colors"
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}

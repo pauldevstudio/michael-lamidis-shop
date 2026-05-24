@@ -1,0 +1,51 @@
+# Dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# Next.js
+/.next/
+/out/
+next-env.d.ts
+*.tsbuildinfo
+
+# Production
+/build
+
+# Vercel
+.vercel
+
+# Environment
+.env*.local
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# Editor / OS
+.DS_Store
+*.pem
+.idea/
+.vscode/
+Thumbs.db
+
+# Local data (use MongoDB / KV in production)
+/data/site-content.json
+/public/uploads/*
+!/public/uploads/.gitkeep
+
+# Old / experimental
+/v2-rebuild/.next/
+/v2-rebuild/node_modules/
+/v2-rebuild/.env*

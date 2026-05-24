@@ -1,0 +1,110 @@
+/**
+ * Idempotent seed script:
+ *  - Creates the bootstrap admin user from env
+ *  - Inserts the singleton site content document if missing
+ *  - Adds a handful of demo products
+ *
+ * Run with: `npm run seed`
+ */
+import dotenv from "dotenv";
+dotenv.config({ path: [".env.local", ".env"] });
+
+import bcrypt from "bcryptjs";
+import { connectDB } from "../lib/db";
+import { UserModel } from "../models/User";
+import { ContentModel } from "../models/Content";
+import { ProductModel } from "../models/Product";
+
+async function main() {
+  await connectDB();
+
+  const email = process.env.ADMIN_BOOTSTRAP_EMAIL;
+  const password = process.env.ADMIN_BOOTSTRAP_PASSWORD;
+  if (email && password) {
+    const exists = await UserModel.findOne({ email });
+    if (!exists) {
+      const passwordHash = await bcrypt.hash(password, 10);
+      await UserModel.create({ email, name: "Admin", passwordHash, role: "admin" });
+      console.log(`[seed] Created admin: ${email}`);
+    }
+  }
+
+  const content = await ContentModel.findOne({ key: "site" });
+  if (!content) {
+    await ContentModel.create({
+      key: "site",
+      business: {
+        name: "Michael Lamidis",
+        tagline: "Open Box. Open Savings.",
+        description: "Cyprus's premier open box appliance destination.",
+        phone: "+357 25 123 456",
+        email: "info@michaellamidis.com.cy",
+        address: "123 Makarios Avenue, Limassol, Cyprus 3025",
+        hours: "Mon–Sat: 09:00–20:00",
+      },
+      hero: {
+        badge: "Cyprus's #1 Open Box Destination",
+        headline: "Premium Appliances. Open Box Prices.",
+        subheadline: "Every item certified, warranted & delivered across Cyprus.",
+        ctaPrimary: "Shop now",
+        ctaSecondary: "Browse catalog",
+      },
+      about: {
+        headline: "How Cyprus Buys Smart",
+        body: "Every item passes a 47-point inspection backed by our 12-month warranty.",
+      },
+      stats: [
+        { label: "Happy customers", value: "5,000+" },
+        { label: "Brands", value: "25+" },
+        { label: "Avg. savings", value: "30–70%" },
+        { label: "Coverage", value: "All Cyprus" },
+      ],
+    });
+    console.log("[seed] Created site content");
+  }
+
+  const sample = [
+    {
+      slug: "samsung-rf28-fridge",
+      name: "Samsung RF28 French Door Fridge",
+      brand: "Samsung",
+      category: "Refrigeration",
+      description: "28 cu ft French door refrigerator with twin cooling and water dispenser.",
+      price: 1199,
+      originalPrice: 1899,
+      condition: "open-box" as const,
+      stock: 3,
+      featured: true,
+      active: true,
+      images: [{ url: "https://images.unsplash.com/photo-1571175443880-49e1d25b2bc5?w=800" }],
+      specs: [
+        { label: "Capacity", value: "28 cu ft" },
+        { label: "Energy", value: "A+" },
+      ],
+    },
+    {
+      slug: "bosch-series-6-dishwasher",
+      name: "Bosch Series 6 Dishwasher",
+      brand: "Bosch",
+      category: "Dishwashers",
+      description: "Whisper-quiet 42 dB dishwasher with crystal-dry technology.",
+      price: 549,
+      originalPrice: 899,
+      condition: "open-box" as const,
+      stock: 5,
+      featured: true,
+      active: true,
+      images: [{ url: "https://images.unsplash.com/photo-1635944317676-3576a4e88dad?w=800" }],
+      specs: [{ label: "Noise", value: "42 dB" }],
+    },
+  ];
+
+  for (const p of sample) {
+    await ProductModel.updateOne({ slug: p.slug }, { $setOnInsert: p }, { upsert: true });
+  }
+  console.log(`[seed] Upserted ${sample.length} products`);
+
+  process.exit(0);
+}
+
+main().catch((
