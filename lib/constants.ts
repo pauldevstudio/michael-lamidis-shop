@@ -19,9 +19,7 @@ export const NAV_LINKS = [
 ];
 
 export const SOCIAL_LINKS = {
-  facebook: "https://facebook.com/michaellamidisshop",
-  instagram: "https://instagram.com/michaellamidisshop",
-  youtube: "https://youtube.com/@michaellamidis",
+  facebook: "https://www.facebook.com/michaelsappliances",
 };
 
 export const PRODUCT_CATEGORIES = [

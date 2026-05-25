@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
-import { Facebook, Instagram, Youtube, Mail, Phone, MapPin, Clock, ArrowRight, CheckCircle, Lock } from "lucide-react";
+import { Facebook, Mail, Phone, MapPin, Clock, ArrowRight, CheckCircle, Lock } from "lucide-react";
 import { useLanguage } from "@/lib/i18n-context";
 import { useContent } from "@/lib/content-context";
 import { SITE_ADDRESS, SITE_EMAIL, SITE_HOURS, SITE_PHONE, SOCIAL_LINKS } from "@/lib/constants";
@@ -94,21 +94,21 @@ export default function Footer() {
             {/* Social */}
             <div className="flex items-center gap-2">
               {[
-                { href: social.facebook,  Icon: Facebook,  label: "Facebook" },
-                { href: social.instagram, Icon: Instagram, label: "Instagram" },
-                { href: social.youtube,   Icon: Youtube,   label: "YouTube" },
-              ].map(({ href, Icon, label }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={label}
-                  className="w-9 h-9 rounded-lg border border-white/[0.1] flex items-center justify-center text-white/40 hover:text-white hover:border-white/25 hover:bg-white/[0.06] transition-all duration-200"
-                >
-                  <Icon className="w-4 h-4" />
-                </a>
-              ))}
+                { href: social.facebook, Icon: Facebook, label: "Facebook" },
+              ]
+                .filter((s) => s.href)
+                .map(({ href, Icon, label }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    className="w-9 h-9 rounded-lg border border-white/[0.1] flex items-center justify-center text-white/40 hover:text-white hover:border-white/25 hover:bg-white/[0.06] transition-all duration-200"
+                  >
+                    <Icon className="w-4 h-4" />
+                  </a>
+                ))}
             </div>
           </div>
 
