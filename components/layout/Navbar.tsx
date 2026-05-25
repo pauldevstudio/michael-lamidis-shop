@@ -33,13 +33,14 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const { t } = useLanguage();
+  const { t, lang, pick } = useLanguage();
   const content = useContent();
   const __nav = content?.navigation;
-  const __navItems = (__nav?.items && __nav.items.length > 0)
+  // Greek: always use translations. English: prefer CMS if filled.
+  const __navItems = (lang === "en" && __nav?.items && __nav.items.length > 0)
     ? __nav.items.map((it) => ({ href: it.href, label: it.label, key: it.href as "/" }))
     : navLinks.map((l) => ({ href: l.href, label: t.nav[l.key], key: l.href }));
-  const __ctaLabel = __nav?.getQuoteLabel ?? t.nav.getQuote;
+  const __ctaLabel = pick(__nav?.getQuoteLabel, t.nav.getQuote);
   const __ctaHref  = __nav?.getQuoteHref  ?? "/contact";
   const phone = content?.business?.phone ?? SITE_PHONE;
   const pathname = usePathname();

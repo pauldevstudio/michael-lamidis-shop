@@ -24,13 +24,13 @@ const ICON_COLORS = [
 ];
 
 export default function Features() {
-  const { t } = useLanguage();
+  const { t, lang, pick } = useLanguage();
   const __content = useContent();
   const __fs = __content?.features;
-  const __fsEyebrow  = __fs?.eyebrow  ?? t.features.eyebrow;
-  const __fsTitle    = __fs?.title    ?? t.features.title;
-  const __fsSubtitle = __fs?.subtitle ?? t.features.subtitle;
-  const __fsItems    = (__fs?.items && __fs.items.length > 0) ? __fs.items : t.features.items;
+  const __fsEyebrow  = pick(__fs?.eyebrow,  t.features.eyebrow);
+  const __fsTitle    = pick(__fs?.title,    t.features.title);
+  const __fsSubtitle = pick(__fs?.subtitle, t.features.subtitle);
+  const __fsItems    = (lang === "en" && __fs?.items && __fs.items.length > 0) ? __fs.items : t.features.items;
 
   return (
     <section className="bg-navy-950 noise-overlay section-py relative overflow-hidden">

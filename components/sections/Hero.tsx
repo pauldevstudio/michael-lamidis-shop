@@ -97,24 +97,24 @@ function FloatCard({
 
 /* ═══════════════════════════════════════════════════════ */
 export default function Hero() {
-  const { t } = useLanguage();
-  // CMS-driven hero content (Payload home-hero global), falling back to i18n strings.
+  const { t, pick, lang } = useLanguage();
+  // CMS-driven hero content (Payload home-hero global), but Greek prefers the i18n strings.
   const __content = useContent();
   const __h = __content?.hero;
   const __rawHeadline: string =
-    __h?.headline && __h.headline.length > 0
+    lang === "en" && __h?.headline && __h.headline.length > 0
       ? __h.headline
       : `${t.hero.titleLine1}\n${t.hero.titleLine2}`;
   const __headlineLines: string[] = __rawHeadline.split("\n");
   const __cms = {
-    locationLabel:     __h?.locationLabel     ?? t.hero.locationLabel,
-    badge:             __h?.badge             ?? t.hero.badge,
+    locationLabel:     pick(__h?.locationLabel, t.hero.locationLabel)!,
+    badge:             pick(__h?.badge, t.hero.badge)!,
     titleLine1:        __headlineLines[0]     ?? t.hero.titleLine1,
     titleLine2:        __headlineLines.slice(1).join(" ") || t.hero.titleLine2,
-    subtitle:          __h?.subheadline       ?? t.hero.subtitle,
-    primaryCtaLabel:   __h?.primaryCtaLabel,
+    subtitle:          pick(__h?.subheadline, t.hero.subtitle)!,
+    primaryCtaLabel:   pick(__h?.primaryCtaLabel, t.hero.cta1),
     primaryCtaHref:    __h?.primaryCtaHref   ?? "/products",
-    secondaryCtaLabel: __h?.secondaryCtaLabel,
+    secondaryCtaLabel: pick(__h?.secondaryCtaLabel, t.hero.cta2),
     secondaryCtaHref:  __h?.secondaryCtaHref ?? "/products",
   };
 

@@ -85,14 +85,14 @@ function FAQItem({
 }
 
 export default function FAQ() {
-  const { t } = useLanguage();
+  const { t, lang, pick } = useLanguage();
   const __content = useContent();
   const __f = __content?.faq;
   const __cms = {
-    eyebrow:  __f?.eyebrow  ?? t.faq.eyebrow,
-    title:    __f?.title    ?? t.faq.title,
-    subtitle: __f?.subtitle ?? t.faq.subtitle,
-    items:    (__f?.items && __f.items.length > 0) ? __f.items : t.faq.items,
+    eyebrow:  pick(__f?.eyebrow,  t.faq.eyebrow),
+    title:    pick(__f?.title,    t.faq.title),
+    subtitle: pick(__f?.subtitle, t.faq.subtitle),
+    items:    (lang === "en" && __f?.items && __f.items.length > 0) ? __f.items : t.faq.items,
   };
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 

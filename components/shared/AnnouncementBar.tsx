@@ -14,7 +14,7 @@ interface Props {
 }
 
 export default function AnnouncementBar({ message, ctaLabel, ctaHref = "/products" }: Props) {
-  const { t } = useLanguage();
+  const { t, pick } = useLanguage();
   const [visible, setVisible] = useState(true);
   // framer-motion's <AnimatePresence initial={...}> emits inline styles on
   // mount that differ from the SSR HTML and trip React's hydration check.
@@ -32,13 +32,11 @@ export default function AnnouncementBar({ message, ctaLabel, ctaHref = "/product
 
   const resolvedMessage =
     message
-    ?? __ann?.message
-    ?? t?.announcement?.message
+    ?? pick(__ann?.message, t?.announcement?.message)
     ?? "Summer Sale: Up to 70% off premium open box appliances. Limited stock.";
   const resolvedCta =
     ctaLabel
-    ?? __ann?.ctaLabel
-    ?? t?.announcement?.cta
+    ?? pick(__ann?.ctaLabel, t?.announcement?.cta)
     ?? "Shop Now";
   const resolvedCtaHref = ctaHref ?? __ann?.ctaHref ?? "/products";
 

@@ -11,12 +11,12 @@ const ICONS: Record<string, React.ElementType> = {
 };
 
 export default function TrustBadges() {
-  const { t } = useLanguage();
+  const { t, lang, pick } = useLanguage();
   const __content = useContent();
   const __tb = __content?.trustBadges;
-  const __tbEyebrow = __tb?.eyebrow ?? t.trust.eyebrow;
-  const __tbTitle   = __tb?.title   ?? t.trust.title;
-  const __tbItems   = (__tb?.items && __tb.items.length > 0) ? __tb.items : t.trust.items;
+  const __tbEyebrow = pick(__tb?.eyebrow, t.trust.eyebrow);
+  const __tbTitle   = pick(__tb?.title,   t.trust.title);
+  const __tbItems   = (lang === "en" && __tb?.items && __tb.items.length > 0) ? __tb.items : t.trust.items;
 
   return (
     <section className="bg-white section-py">

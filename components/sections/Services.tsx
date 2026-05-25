@@ -20,14 +20,14 @@ const SERVICE_COLORS = [
 ];
 
 export default function Services() {
-  const { t } = useLanguage();
+  const { t, lang, pick } = useLanguage();
   const __content = useContent();
   const __s = __content?.services;
   const __cms = {
-    eyebrow:  __s?.eyebrow  ?? t.services.eyebrow,
-    title:    __s?.title    ?? t.services.title,
-    subtitle: __s?.subtitle ?? t.services.subtitle,
-    items:    (__s?.items && __s.items.length > 0) ? __s.items : t.services.items,
+    eyebrow:  pick(__s?.eyebrow,  t.services.eyebrow),
+    title:    pick(__s?.title,    t.services.title),
+    subtitle: pick(__s?.subtitle, t.services.subtitle),
+    items:    (lang === "en" && __s?.items && __s.items.length > 0) ? __s.items : t.services.items,
   };
 
   return (

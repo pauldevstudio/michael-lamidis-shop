@@ -36,16 +36,16 @@ function Counter({ target, suffix, duration = 2000 }: { target: number; suffix: 
 }
 
 export default function Statistics() {
-  const { t } = useLanguage();
+  const { t, lang, pick } = useLanguage();
   // CMS overlay: prefer Payload Stats Section if populated.
   const __content = useContent();
   const __ss = __content?.statsSection;
   const __statsItems =
-    (__ss?.items && __ss.items.length > 0)
+    (lang === "en" && __ss?.items && __ss.items.length > 0)
       ? __ss.items.map((it) => ({ value: it.value, suffix: it.suffix, label: it.label }))
       : (t.stats.items as Array<{ value: number; suffix: string; label: string }>);
-  const __statsEyebrow = __ss?.eyebrow ?? t.stats.eyebrow;
-  const __statsTitle   = __ss?.title   ?? t.stats.title;
+  const __statsEyebrow = pick(__ss?.eyebrow, t.stats.eyebrow);
+  const __statsTitle   = pick(__ss?.title,   t.stats.title);
 
   return (
     <section className="section-py relative overflow-hidden" style={{ background: "#030813" }}>

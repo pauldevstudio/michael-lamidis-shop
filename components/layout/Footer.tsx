@@ -8,13 +8,14 @@ import { useContent } from "@/lib/content-context";
 import { SITE_ADDRESS, SITE_EMAIL, SITE_HOURS, SITE_PHONE, SOCIAL_LINKS } from "@/lib/constants";
 
 export default function Footer() {
-  const { t } = useLanguage();
+  const { t, lang, pick } = useLanguage();
   const __content = useContent();
   const __ft = __content?.footer;
-  const __ftDescription  = __ft?.description ?? t.footer.description;
-  const __ftCopyright    = __ft?.copyright ? `© ${new Date().getFullYear()} ${__ft.copyright}` : t.footer.copyright;
-  const __ftCompanyLinks  = (__ft?.companyLinks  && __ft.companyLinks.length  > 0) ? __ft.companyLinks  : t.footer.companyLinks;
-  const __ftServicesLinks = (__ft?.servicesLinks && __ft.servicesLinks.length > 0) ? __ft.servicesLinks : t.footer.servicesLinks;
+  const __ftDescription  = pick(__ft?.description, t.footer.description);
+  const __ftCopyright    = lang === "en" && __ft?.copyright ? `© ${new Date().getFullYear()} ${__ft.copyright}` : t.footer.copyright;
+  // Greek: always use translations. English: prefer CMS if filled.
+  const __ftCompanyLinks  = (lang === "en" && __ft?.companyLinks  && __ft.companyLinks.length  > 0) ? __ft.companyLinks  : t.footer.companyLinks;
+  const __ftServicesLinks = (lang === "en" && __ft?.servicesLinks && __ft.servicesLinks.length > 0) ? __ft.servicesLinks : t.footer.servicesLinks;
   const content = useContent();
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);

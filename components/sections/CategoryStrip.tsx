@@ -69,11 +69,11 @@ const FALLBACK_ITEMS = [
 ];
 
 export default function CategoryStrip() {
-  const { t } = useLanguage();
+  const { t, lang, pick } = useLanguage();
   const __content = useContent();
   const __cs = __content?.categoryStrip;
-  const eyebrow = __cs?.eyebrow ?? t?.categoryStrip?.eyebrow ?? "Shop by Category";
-  const items = (__cs?.items && __cs.items.length > 0)
+  const eyebrow = pick(__cs?.eyebrow, t?.categoryStrip?.eyebrow) ?? "Shop by Category";
+  const items = (lang === "en" && __cs?.items && __cs.items.length > 0)
     ? __cs.items
     : (t?.categoryStrip?.items ?? FALLBACK_ITEMS);
 

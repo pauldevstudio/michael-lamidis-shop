@@ -11,14 +11,14 @@ import { cn } from "@/lib/utils";
 const BENEFIT_ICONS = [Clock, Shield, Tag, Sparkles];
 
 export default function LeadCapture() {
-  const { t } = useLanguage();
+  const { t, lang, pick } = useLanguage();
   const f = t.leadCapture.form;
   const __content = useContent();
   const __lc = __content?.leadCapture;
-  const __lcEyebrow  = __lc?.eyebrow  ?? t.leadCapture.eyebrow;
-  const __lcTitle    = __lc?.title    ?? t.leadCapture.title;
-  const __lcSubtitle = __lc?.subtitle ?? t.leadCapture.subtitle;
-  const __lcBenefits = (__lc?.benefits && __lc.benefits.length > 0) ? __lc.benefits : t.leadCapture.benefits;
+  const __lcEyebrow  = pick(__lc?.eyebrow,  t.leadCapture.eyebrow);
+  const __lcTitle    = pick(__lc?.title,    t.leadCapture.title);
+  const __lcSubtitle = pick(__lc?.subtitle, t.leadCapture.subtitle);
+  const __lcBenefits = (lang === "en" && __lc?.benefits && __lc.benefits.length > 0) ? __lc.benefits : t.leadCapture.benefits;
 
   const [form, setForm] = useState({
     name: "", email: "", phone: "", interest: "", message: "",

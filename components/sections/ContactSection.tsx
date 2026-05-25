@@ -11,18 +11,18 @@ import AnimatedSection from "@/components/shared/AnimatedSection";
 import { SITE_ADDRESS, SITE_EMAIL, SITE_HOURS, SITE_PHONE } from "@/lib/constants";
 
 export default function ContactSection() {
-  const { t } = useLanguage();
+  const { t, pick } = useLanguage();
   const f = t.contact.form;
   const __content = useContent();
   const __cs = __content?.contactSection;
-  const __csEyebrow      = __cs?.eyebrow      ?? t.contact.eyebrow;
-  const __csTitle        = __cs?.title        ?? t.contact.title;
-  const __csSubtitle     = __cs?.subtitle     ?? t.contact.subtitle;
-  const __csAddressLabel = __cs?.addressLabel ?? t.contact.addressLabel;
-  const __csPhoneLabel   = __cs?.phoneLabel   ?? t.contact.phoneLabel;
-  const __csEmailLabel   = __cs?.emailLabel   ?? t.contact.emailLabel;
-  const __csHoursLabel   = __cs?.hoursLabel   ?? t.contact.hoursLabel;
-  const __csMapCta       = __cs?.mapCta       ?? t.contact.mapCta;
+  const __csEyebrow      = pick(__cs?.eyebrow,      t.contact.eyebrow);
+  const __csTitle        = pick(__cs?.title,        t.contact.title);
+  const __csSubtitle     = pick(__cs?.subtitle,     t.contact.subtitle);
+  const __csAddressLabel = pick(__cs?.addressLabel, t.contact.addressLabel);
+  const __csPhoneLabel   = pick(__cs?.phoneLabel,   t.contact.phoneLabel);
+  const __csEmailLabel   = pick(__cs?.emailLabel,   t.contact.emailLabel);
+  const __csHoursLabel   = pick(__cs?.hoursLabel,   t.contact.hoursLabel);
+  const __csMapCta       = pick(__cs?.mapCta,       t.contact.mapCta);
   const __bi = __content?.business;
   const __biAddress = __bi?.address || SITE_ADDRESS;
   const __biPhone   = __bi?.phone   || SITE_PHONE;

@@ -19,12 +19,12 @@ function StarRow({ count }: { count: number }) {
 }
 
 export default function Testimonials() {
-  const { t } = useLanguage();
+  const { t, lang, pick } = useLanguage();
   // CMS overlay: prefer Payload Testimonials Section if populated.
   const __content = useContent();
   const __ts = __content?.testimonialsSection;
   const items =
-    (__ts?.items && __ts.items.length > 0)
+    (lang === "en" && __ts?.items && __ts.items.length > 0)
       ? __ts.items.map((it) => ({
           content: it.content,
           name: it.name,
@@ -33,9 +33,9 @@ export default function Testimonials() {
           rating: it.rating,
         }))
       : t.testimonials.items;
-  const __tsEyebrow  = __ts?.eyebrow  ?? t.testimonials.eyebrow;
-  const __tsTitle    = __ts?.title    ?? t.testimonials.title;
-  const __tsSubtitle = __ts?.subtitle ?? t.testimonials.subtitle;
+  const __tsEyebrow  = pick(__ts?.eyebrow,  t.testimonials.eyebrow);
+  const __tsTitle    = pick(__ts?.title,    t.testimonials.title);
+  const __tsSubtitle = pick(__ts?.subtitle, t.testimonials.subtitle);
   const [active, setActive] = useState(0);
 
   const prev = () => setActive((a) => (a === 0 ? items.length - 1 : a - 1));
