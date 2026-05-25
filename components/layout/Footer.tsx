@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { Facebook, Instagram, Youtube, Mail, Phone, MapPin, Clock, ArrowRight, CheckCircle, Lock } from "lucide-react";
 import { useLanguage } from "@/lib/i18n-context";
@@ -52,9 +53,13 @@ export default function Footer() {
           <div className="lg:col-span-4 flex flex-col gap-6">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2.5 w-fit group">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-gold-500 to-gold-400 flex items-center justify-center">
-                <span className="text-navy-950 font-black text-sm font-display">ML</span>
-              </div>
+              <Image
+                src="/logo.png"
+                alt="Michael Lamidis logo"
+                width={40}
+                height={40}
+                className="w-10 h-10 shrink-0"
+              />
               <div className="flex flex-col">
                 <span className="text-white font-display font-bold text-lg leading-tight">{name}</span>
                 <span className="text-white/35 text-[10px] font-medium tracking-wider uppercase">Open Box Shop</span>

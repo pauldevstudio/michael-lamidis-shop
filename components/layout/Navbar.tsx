@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Phone, Lock } from "lucide-react";
@@ -77,9 +78,20 @@ export default function Navbar() {
           <div className="flex items-center gap-6">
             <Link
               href="/"
-              className="font-display text-xl sm:text-2xl font-bold text-white tracking-tight"
+              className="flex items-center gap-2.5"
+              aria-label="Michael Lamidis — home"
             >
-              Michael <span className="text-gold-500">Lamidis</span>
+              <Image
+                src="/logo.png"
+                alt="Michael Lamidis logo"
+                width={40}
+                height={40}
+                priority
+                className="w-9 h-9 sm:w-10 sm:h-10 shrink-0"
+              />
+              <span className="font-display text-xl sm:text-2xl font-bold text-white tracking-tight hidden sm:inline">
+                Michael <span className="text-gold-500">Lamidis</span>
+              </span>
             </Link>
 
             <div className="hidden lg:flex items-center gap-1 mx-auto">
