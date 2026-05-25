@@ -60,7 +60,6 @@ export default buildConfig({
       admin: {
         useAsTitle: "model",
         defaultColumns: ["image", "model", "brand", "category", "salePrice", "grade"],
-        defaultSort: "displayOrder",
       },
       fields: [
         {
