@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext } from "react";
+import { createContext } from "react";
 import type { SiteContent } from "./site-content";
 
 const ContentContext = createContext<SiteContent | null>(null);
@@ -21,5 +21,7 @@ export function ContentProvider({
 
 /** Returns site content from context, or null if used outside ContentProvider. */
 export function useContent(): SiteContent | null {
-  return useContext(ContentContext);
+  // Temporarily disabled until MongoDB is wired: forcing null unifies EN and GR
+  // on the translations.ts source. Re-enable by returning useContext(ContentContext).
+  return null;
 }
