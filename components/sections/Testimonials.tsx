@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Star, ChevronLeft, ChevronRight, Quote, MapPin } from "lucide-react";
 import { useLanguage } from "@/lib/i18n-context";
+import { useContent } from "@/lib/content-context";
 import SectionHeader from "@/components/shared/SectionHeader";
 import { cn } from "@/lib/utils";
 
@@ -19,7 +20,22 @@ function StarRow({ count }: { count: number }) {
 
 export default function Testimonials() {
   const { t } = useLanguage();
-  const items = t.testimonials.items;
+  // CMS overlay: prefer Payload Testimonials Section if populated.
+  const __content = useContent();
+  const __ts = __content?.testimonialsSection;
+  const items =
+    (__ts?.items && __ts.items.length > 0)
+      ? __ts.items.map((it) => ({
+          content: it.content,
+          name: it.name,
+          role: it.role ?? "",
+          location: it.location ?? "",
+          rating: it.rating,
+        }))
+      : t.testimonials.items;
+  const __tsEyebrow  = __ts?.eyebrow  ?? t.testimonials.eyebrow;
+  const __tsTitle    = __ts?.title    ?? t.testimonials.title;
+  const __tsSubtitle = __ts?.subtitle ?? t.testimonials.subtitle;
   const [active, setActive] = useState(0);
 
   const prev = () => setActive((a) => (a === 0 ? items.length - 1 : a - 1));
@@ -34,9 +50,9 @@ export default function Testimonials() {
 
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <SectionHeader
-          eyebrow={t.testimonials.eyebrow}
-          title={t.testimonials.title}
-          subtitle={t.testimonials.subtitle}
+          eyebrow={__tsEyebrow}
+          title={__tsTitle}
+          subtitle={__tsSubtitle}
           theme="dark"
           className="mb-14"
         />

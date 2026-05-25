@@ -11,8 +11,15 @@ import {
   Wind,
   Monitor,
   Coffee,
+  Snowflake,
+  Bed,
+  Sofa,
+  Wrench,
+  Utensils,
+  Bike,
 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n-context";
+import { useContent } from "@/lib/content-context";
 
 const ICONS: Record<string, React.ElementType> = {
   all: LayoutGrid,
@@ -21,8 +28,14 @@ const ICONS: Record<string, React.ElementType> = {
   ovens: Flame,
   dishwashers: Droplets,
   "air-conditioners": Wind,
+  freezers: Snowflake,
   tvs: Monitor,
   "small-appliances": Coffee,
+  mattresses: Bed,
+  furniture: Sofa,
+  tools: Wrench,
+  kitchenware: Utensils,
+  bicycles: Bike,
 };
 
 const COLORS: Record<string, { from: string; to: string }> = {
@@ -32,9 +45,17 @@ const COLORS: Record<string, { from: string; to: string }> = {
   ovens: { from: "#C2410C", to: "#F97316" },
   dishwashers: { from: "#1D4ED8", to: "#60A5FA" },
   "air-conditioners": { from: "#0369A1", to: "#38BDF8" },
+  freezers: { from: "#0E7490", to: "#22D3EE" },
   tvs: { from: "#B45309", to: "#F59E0B" },
   "small-appliances": { from: "#9D174D", to: "#F472B6" },
+  mattresses: { from: "#475569", to: "#94A3B8" },
+  furniture: { from: "#854D0E", to: "#A16207" },
+  tools: { from: "#991B1B", to: "#DC2626" },
+  kitchenware: { from: "#65A30D", to: "#84CC16" },
+  bicycles: { from: "#1E40AF", to: "#3B82F6" },
 };
+
+const DEFAULT_COLOR = { from: "#475569", to: "#94A3B8" };
 
 const FALLBACK_ITEMS = [
   { id: "all", label: "All Products" },
@@ -49,8 +70,12 @@ const FALLBACK_ITEMS = [
 
 export default function CategoryStrip() {
   const { t } = useLanguage();
-  const eyebrow = t?.categoryStrip?.eyebrow ?? "Shop by Category";
-  const items = t?.categoryStrip?.items ?? FALLBACK_ITEMS;
+  const __content = useContent();
+  const __cs = __content?.categoryStrip;
+  const eyebrow = __cs?.eyebrow ?? t?.categoryStrip?.eyebrow ?? "Shop by Category";
+  const items = (__cs?.items && __cs.items.length > 0)
+    ? __cs.items
+    : (t?.categoryStrip?.items ?? FALLBACK_ITEMS);
 
   return (
     <section className="bg-white border-b border-navy-100/60 py-8 overflow-hidden">
@@ -61,8 +86,8 @@ export default function CategoryStrip() {
 
         <div className="flex items-start gap-5 sm:gap-8 overflow-x-auto pb-2 scrollbar-none justify-start sm:justify-center snap-x snap-mandatory sm:snap-none px-1">
           {items.map(({ id, label }, i) => {
-            const Icon = ICONS[id];
-            const color = COLORS[id];
+            const Icon = ICONS[id] ?? LayoutGrid;
+            const color = COLORS[id] ?? DEFAULT_COLOR;
             return (
               <motion.div
                 key={id}

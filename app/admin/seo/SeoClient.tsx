@@ -102,7 +102,7 @@ export default function SeoClient() {
               <p className="text-blue-600 text-xs mt-0.5">Title: 30–60 chars · Description: 120–160 chars.</p>
             </div>
           </div>
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+          <div className="bg-slate-900 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -121,29 +121,29 @@ export default function SeoClient() {
                     const tOk = tLen >= 30 && tLen <= 60;
                     const dOk = dLen >= 120 && dLen <= 160;
                     return (
-                      <tr key={route} className="hover:bg-slate-50 transition-colors">
+                      <tr key={route} className="hover:bg-slate-800 transition-colors">
                         <td className="px-5 py-4">
                           <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
+                            <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center">
                               <Globe className="w-3.5 h-3.5 text-slate-400" />
                             </div>
                             <div>
-                              <p className="text-slate-800 font-semibold">{PAGE_LABELS[route]}</p>
+                              <p className="text-slate-100 font-semibold">{PAGE_LABELS[route]}</p>
                               <p className="text-slate-400 text-xs font-mono">{route}</p>
                             </div>
                           </div>
                         </td>
                         <td className="px-4 py-4 max-w-[200px]">
-                          <p className="text-slate-700 text-xs truncate">{seo?.title || <span className="text-slate-300">—</span>}</p>
+                          <p className="text-slate-200 text-xs truncate">{seo?.title || <span className="text-slate-300">—</span>}</p>
                           <p className={`text-[10px] mt-0.5 ${tOk ? "text-emerald-500" : "text-amber-500"}`}>{tLen}/{60} chars</p>
                         </td>
                         <td className="px-4 py-4 hidden lg:table-cell max-w-[240px]">
-                          <p className="text-slate-700 text-xs truncate">{seo?.description || <span className="text-slate-300">—</span>}</p>
+                          <p className="text-slate-200 text-xs truncate">{seo?.description || <span className="text-slate-300">—</span>}</p>
                           <p className={`text-[10px] mt-0.5 ${dOk ? "text-emerald-500" : "text-amber-500"}`}>{dLen}/{160} chars</p>
                         </td>
                         <td className="px-4 py-4">
                           <button onClick={() => openEdit(route)}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 text-slate-500 text-xs font-medium hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50 transition-all">
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-700 text-slate-500 text-xs font-medium hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50 transition-all">
                             <Pencil className="w-3 h-3" /> Edit
                           </button>
                         </td>
@@ -158,44 +158,44 @@ export default function SeoClient() {
       </main>
       {editRoute && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg">
+          <div className="bg-slate-900 rounded-3xl shadow-2xl w-full max-w-lg">
             <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
               <div>
-                <h2 className="text-slate-800 font-display font-bold text-lg">Edit SEO — {PAGE_LABELS[editRoute]}</h2>
+                <h2 className="text-slate-100 font-display font-bold text-lg">Edit SEO — {PAGE_LABELS[editRoute]}</h2>
                 <p className="text-slate-400 text-xs font-mono">{editRoute}</p>
               </div>
-              <button onClick={() => setEditRoute(null)} className="w-8 h-8 rounded-xl border border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-600"><X className="w-4 h-4" /></button>
+              <button onClick={() => setEditRoute(null)} className="w-8 h-8 rounded-xl border border-slate-700 flex items-center justify-center text-slate-400 hover:text-slate-400"><X className="w-4 h-4" /></button>
             </div>
             <div className="p-6 space-y-5">
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-slate-600 text-xs font-semibold uppercase tracking-wider">Meta Title</label>
+                  <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Meta Title</label>
                   <span className={`text-xs font-medium ${titleOk ? "text-emerald-500" : "text-amber-500"}`}>{titleLen}/60</span>
                 </div>
                 <input value={editData.title} onChange={(e) => setEditData({ ...editData, title: e.target.value })} maxLength={70}
                   placeholder="Page Title | Michael Lamidis"
-                  className="border border-slate-200 rounded-xl px-4 py-3 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
-                <div className="w-full bg-slate-100 rounded-full h-1.5">
+                  className="border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
+                <div className="w-full bg-slate-800 rounded-full h-1.5">
                   <div className={`h-1.5 rounded-full transition-all ${titleOk ? "bg-emerald-400" : titleLen > 60 ? "bg-red-400" : "bg-amber-400"}`}
                     style={{ width: `${Math.min(100, (titleLen / 60) * 100)}%` }} />
                 </div>
               </div>
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-slate-600 text-xs font-semibold uppercase tracking-wider">Meta Description</label>
+                  <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Meta Description</label>
                   <span className={`text-xs font-medium ${descOk ? "text-emerald-500" : "text-amber-500"}`}>{descLen}/160</span>
                 </div>
                 <textarea value={editData.description} onChange={(e) => setEditData({ ...editData, description: e.target.value })} maxLength={200} rows={4}
                   placeholder="A compelling description (120–160 characters)…"
-                  className="border border-slate-200 rounded-xl px-4 py-3 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 resize-none" />
-                <div className="w-full bg-slate-100 rounded-full h-1.5">
+                  className="border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 resize-none" />
+                <div className="w-full bg-slate-800 rounded-full h-1.5">
                   <div className={`h-1.5 rounded-full transition-all ${descOk ? "bg-emerald-400" : descLen > 160 ? "bg-red-400" : "bg-amber-400"}`}
                     style={{ width: `${Math.min(100, (descLen / 160) * 100)}%` }} />
                 </div>
               </div>
             </div>
             <div className="flex items-center justify-end gap-3 px-6 py-5 border-t border-slate-100">
-              <button onClick={() => setEditRoute(null)} className="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50">Cancel</button>
+              <button onClick={() => setEditRoute(null)} className="px-5 py-2.5 rounded-xl border border-slate-700 text-slate-400 text-sm font-medium hover:bg-slate-800">Cancel</button>
               <button onClick={saveEdit} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-bold"
                 style={{ background: "linear-gradient(135deg, #3A5F8A, #5B82A8)" }}>
                 <CheckCircle className="w-4 h-4" /> Apply

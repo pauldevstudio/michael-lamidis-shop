@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/lib/i18n-context";
+import { useContent } from "@/lib/content-context";
 import SectionHeader from "@/components/shared/SectionHeader";
 import AnimatedSection from "@/components/shared/AnimatedSection";
 import { SITE_ADDRESS, SITE_EMAIL, SITE_HOURS, SITE_PHONE } from "@/lib/constants";
@@ -12,6 +13,21 @@ import { SITE_ADDRESS, SITE_EMAIL, SITE_HOURS, SITE_PHONE } from "@/lib/constant
 export default function ContactSection() {
   const { t } = useLanguage();
   const f = t.contact.form;
+  const __content = useContent();
+  const __cs = __content?.contactSection;
+  const __csEyebrow      = __cs?.eyebrow      ?? t.contact.eyebrow;
+  const __csTitle        = __cs?.title        ?? t.contact.title;
+  const __csSubtitle     = __cs?.subtitle     ?? t.contact.subtitle;
+  const __csAddressLabel = __cs?.addressLabel ?? t.contact.addressLabel;
+  const __csPhoneLabel   = __cs?.phoneLabel   ?? t.contact.phoneLabel;
+  const __csEmailLabel   = __cs?.emailLabel   ?? t.contact.emailLabel;
+  const __csHoursLabel   = __cs?.hoursLabel   ?? t.contact.hoursLabel;
+  const __csMapCta       = __cs?.mapCta       ?? t.contact.mapCta;
+  const __bi = __content?.business;
+  const __biAddress = __bi?.address || SITE_ADDRESS;
+  const __biPhone   = __bi?.phone   || SITE_PHONE;
+  const __biEmail   = __bi?.email   || SITE_EMAIL;
+  const __biHours   = __bi?.hours   || SITE_HOURS;
 
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
   const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
@@ -26,19 +42,19 @@ export default function ContactSection() {
   };
 
   const contactItems = [
-    { icon: MapPin, label: t.contact.addressLabel, value: SITE_ADDRESS, href: null },
-    { icon: Phone, label: t.contact.phoneLabel, value: SITE_PHONE, href: `tel:${SITE_PHONE.replace(/\s/g, "")}` },
-    { icon: Mail, label: t.contact.emailLabel, value: SITE_EMAIL, href: `mailto:${SITE_EMAIL}` },
-    { icon: Clock, label: t.contact.hoursLabel, value: SITE_HOURS, href: null },
+    { icon: MapPin, label: __csAddressLabel, value: __biAddress, href: null },
+    { icon: Phone, label: __csPhoneLabel, value: __biPhone, href: `tel:${__biPhone.replace(/\s/g, "")}` },
+    { icon: Mail, label: __csEmailLabel, value: __biEmail, href: `mailto:${__biEmail}` },
+    { icon: Clock, label: __csHoursLabel, value: __biHours, href: null },
   ];
 
   return (
     <section className="bg-white section-py" id="contact">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <SectionHeader
-          eyebrow={t.contact.eyebrow}
-          title={t.contact.title}
-          subtitle={t.contact.subtitle}
+          eyebrow={__csEyebrow}
+          title={__csTitle}
+          subtitle={__csSubtitle}
           theme="light"
           className="mb-14"
         />
@@ -58,12 +74,12 @@ export default function ContactSection() {
                   </div>
                   <p className="text-navy-400 text-sm font-medium">Limassol Showroom</p>
                   <a
-                    href={`https://maps.google.com/?q=${encodeURIComponent(SITE_ADDRESS)}`}
+                    href={`https://maps.google.com/?q=${encodeURIComponent(__biAddress)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn-ghost-dark text-xs !px-4 !py-2"
                   >
-                    {t.contact.mapCta} <ArrowRight className="w-3 h-3" />
+                    {__csMapCta} <ArrowRight className="w-3 h-3" />
                   </a>
                 </div>
               </div>

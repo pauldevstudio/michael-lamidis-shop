@@ -86,9 +86,9 @@ export default function ThemeClient() {
       />
       <main className="flex-1 overflow-auto p-6">
         <div className="max-w-2xl mx-auto space-y-6">
-          <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+          <section className="bg-slate-900 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
             <div className="px-6 py-4 border-b border-slate-100">
-              <h2 className="text-slate-800 font-bold text-base">Theme Presets</h2>
+              <h2 className="text-slate-100 font-bold text-base">Theme Presets</h2>
               <p className="text-slate-500 text-sm">One-click apply a color scheme</p>
             </div>
             <div className="p-6 grid grid-cols-3 sm:grid-cols-6 gap-3">
@@ -98,23 +98,23 @@ export default function ThemeClient() {
                   <button key={name} onClick={() => applyPreset(primary, accent)} title={name}
                     className={`flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all ${isActive ? "border-slate-800 shadow-md scale-105" : "border-slate-100 hover:border-slate-300"}`}>
                     <div className="w-10 h-10 rounded-xl shadow-sm" style={{ background: `linear-gradient(135deg, ${primary}, ${accent})` }} />
-                    <span className="text-slate-600 text-[10px] font-medium text-center leading-tight">{name}</span>
+                    <span className="text-slate-400 text-[10px] font-medium text-center leading-tight">{name}</span>
                   </button>
                 );
               })}
             </div>
           </section>
-          <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+          <section className="bg-slate-900 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
             <div className="px-6 py-4 border-b border-slate-100">
-              <h2 className="text-slate-800 font-bold text-base">Brand Colors</h2>
+              <h2 className="text-slate-100 font-bold text-base">Brand Colors</h2>
             </div>
             <div className="p-6 grid grid-cols-2 gap-6">
               {([{ key: "primaryColor" as const, label: "Primary Color" }, { key: "accentColor" as const, label: "Accent Color" }]).map(({ key, label }) => (
                 <div key={key} className="flex flex-col gap-2">
-                  <label className="text-slate-600 text-xs font-semibold uppercase tracking-wider">{label}</label>
+                  <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">{label}</label>
                   <div className="flex items-center gap-3">
-                    <input type="color" value={t[key]} onChange={(e) => setTheme(key, e.target.value)} className="w-12 h-12 rounded-xl border border-slate-200 cursor-pointer" />
-                    <input value={t[key]} onChange={(e) => setTheme(key, e.target.value)} className="flex-1 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-800 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-gold-500/30" />
+                    <input type="color" value={t[key]} onChange={(e) => setTheme(key, e.target.value)} className="w-12 h-12 rounded-xl border border-slate-700 cursor-pointer" />
+                    <input value={t[key]} onChange={(e) => setTheme(key, e.target.value)} className="flex-1 border border-slate-700 rounded-xl px-3 py-2.5 text-slate-100 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-gold-500/30" />
                   </div>
                 </div>
               ))}
@@ -127,15 +127,15 @@ export default function ThemeClient() {
               </div>
             </div>
           </section>
-          <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+          <section className="bg-slate-900 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
             <div className="px-6 py-4 border-b border-slate-100">
-              <h2 className="text-slate-800 font-bold text-base">Typography</h2>
+              <h2 className="text-slate-100 font-bold text-base">Typography</h2>
             </div>
             <div className="p-6 grid grid-cols-2 gap-5">
               {([{ key: "fontHeading" as const, label: "Heading Font" }, { key: "fontBody" as const, label: "Body Font" }]).map(({ key, label }) => (
                 <div key={key} className="flex flex-col gap-1.5">
-                  <label className="text-slate-600 text-xs font-semibold uppercase tracking-wider">{label}</label>
-                  <select value={t[key]} onChange={(e) => setTheme(key, e.target.value)} className="border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 bg-white">
+                  <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">{label}</label>
+                  <select value={t[key]} onChange={(e) => setTheme(key, e.target.value)} className="border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 bg-slate-900">
                     {FONT_OPTIONS.map((f) => <option key={f}>{f}</option>)}
                   </select>
                   <p className="text-slate-400 text-xs" style={{ fontFamily: t[key] }}>The quick brown fox — {t[key]}</p>
@@ -143,8 +143,8 @@ export default function ThemeClient() {
               ))}
             </div>
           </section>
-          <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-100"><h2 className="text-slate-800 font-bold text-base">Site Preview</h2></div>
+          <section className="bg-slate-900 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-100"><h2 className="text-slate-100 font-bold text-base">Site Preview</h2></div>
             <div className="p-6">
               <div className="rounded-2xl overflow-hidden shadow-lg" style={{ background: "#030813" }}>
                 <div className="flex items-center justify-between px-5 py-3 border-b border-white/10">

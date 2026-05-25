@@ -29,10 +29,28 @@ export const PRODUCT_CATEGORIES = [
   { id: "washing-machines",icon: "Loader",     colorFrom: "#7C3AED", colorTo: "#A78BFA" },
   { id: "ovens",           icon: "Flame",      colorFrom: "#C2410C", colorTo: "#F97316" },
   { id: "dishwashers",     icon: "Droplets",   colorFrom: "#1D4ED8", colorTo: "#60A5FA" },
+  { id: "freezers",        icon: "Snowflake",  colorFrom: "#0E7490", colorTo: "#22D3EE" },
   { id: "air-conditioners",icon: "Wind",       colorFrom: "#0369A1", colorTo: "#38BDF8" },
-  { id: "tvs",             icon: "Monitor",    colorFrom: "#B45309", colorTo: "#F59E0B" },
-  { id: "small-appliances",icon: "Coffee",     colorFrom: "#9D174D", colorTo: "#F472B6" },
 ];
+
+// Color lookup keyed by slug, with a default for any CMS slug not in the map.
+export const CATEGORY_COLOR_MAP: Record<string, { colorFrom: string; colorTo: string }> = {
+  all:                { colorFrom: "#1E48B8", colorTo: "#3D62CC" },
+  refrigerators:      { colorFrom: "#0F766E", colorTo: "#14B8A6" },
+  "washing-machines": { colorFrom: "#7C3AED", colorTo: "#A78BFA" },
+  ovens:              { colorFrom: "#C2410C", colorTo: "#F97316" },
+  dishwashers:        { colorFrom: "#1D4ED8", colorTo: "#60A5FA" },
+  freezers:           { colorFrom: "#0E7490", colorTo: "#22D3EE" },
+  "air-conditioners": { colorFrom: "#0369A1", colorTo: "#38BDF8" },
+  tvs:                { colorFrom: "#B45309", colorTo: "#F59E0B" },
+  "small-appliances": { colorFrom: "#9D174D", colorTo: "#F472B6" },
+  mattresses:         { colorFrom: "#475569", colorTo: "#94A3B8" },
+  furniture:          { colorFrom: "#854D0E", colorTo: "#A16207" },
+  tools:              { colorFrom: "#991B1B", colorTo: "#DC2626" },
+  kitchenware:        { colorFrom: "#65A30D", colorTo: "#84CC16" },
+  bicycles:           { colorFrom: "#1E40AF", colorTo: "#3B82F6" },
+};
+export const DEFAULT_CATEGORY_COLOR = { colorFrom: "#475569", colorTo: "#94A3B8" };
 
 // ─── Verified Pexels image URLs ────────────────────────────────────
 // All images verified from pexels.com (free commercial license)

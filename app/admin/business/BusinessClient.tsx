@@ -141,15 +141,15 @@ export default function BusinessClient() {
 
       <main className="flex-1 overflow-auto p-6">
         <div className="max-w-2xl mx-auto space-y-6">
-          <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+          <section className="bg-slate-900 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
             <div className="px-6 py-4 border-b border-slate-100">
-              <h2 className="text-slate-800 font-bold text-base">Business Details</h2>
+              <h2 className="text-slate-100 font-bold text-base">Business Details</h2>
               <p className="text-slate-500 text-sm">Core information shown across the website</p>
             </div>
             <div className="p-6 space-y-5">
               {FIELDS.map(({ key, label, placeholder, icon: Icon, type, multiline }) => (
                 <div key={key} className="flex flex-col gap-1.5">
-                  <label className="text-slate-600 text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5">
+                  <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5">
                     <Icon className="w-3.5 h-3.5" />
                     {label}
                   </label>
@@ -159,7 +159,7 @@ export default function BusinessClient() {
                       onChange={(e) => update(key, e.target.value)}
                       placeholder={placeholder}
                       rows={3}
-                      className="w-full border border-slate-200 rounded-xl px-4 py-3 text-slate-800 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 transition resize-none"
+                      className="w-full border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 transition resize-none"
                     />
                   ) : (
                     <input
@@ -167,7 +167,7 @@ export default function BusinessClient() {
                       value={(b[key] as string) ?? ""}
                       onChange={(e) => update(key, e.target.value)}
                       placeholder={placeholder}
-                      className="w-full border border-slate-200 rounded-xl px-4 py-3 text-slate-800 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 transition"
+                      className="w-full border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 transition"
                     />
                   )}
                 </div>
@@ -175,15 +175,15 @@ export default function BusinessClient() {
             </div>
           </section>
 
-          <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+          <section className="bg-slate-900 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
             <div className="px-6 py-4 border-b border-slate-100">
-              <h2 className="text-slate-800 font-bold text-base">Social Media</h2>
+              <h2 className="text-slate-100 font-bold text-base">Social Media</h2>
               <p className="text-slate-500 text-sm">Links to your social profiles</p>
             </div>
             <div className="p-6 space-y-5">
               {SOCIAL_FIELDS.map(({ key, label, icon: Icon, placeholder }) => (
                 <div key={key} className="flex flex-col gap-1.5">
-                  <label className="text-slate-600 text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5">
+                  <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5">
                     <Icon className="w-3.5 h-3.5" />
                     {label}
                   </label>
@@ -192,7 +192,7 @@ export default function BusinessClient() {
                     value={b.social[key] ?? ""}
                     onChange={(e) => updateSocial(key, e.target.value)}
                     placeholder={placeholder}
-                    className="w-full border border-slate-200 rounded-xl px-4 py-3 text-slate-800 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 transition"
+                    className="w-full border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 transition"
                   />
                 </div>
               ))}

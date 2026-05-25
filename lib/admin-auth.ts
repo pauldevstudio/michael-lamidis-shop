@@ -7,13 +7,13 @@ import crypto from "crypto";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-// Must match SESSION_SECRET in app/api/admin/login/route.ts
-const SESSION_SECRET = "ml-admin-secret-2026-xK9pQ3";
+// SESSION_SECRET must come from ADMIN_SECRET env var - no source-code fallback.
 const SESSION_MAX_AGE_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 /** Creates a new signed session token — call this on successful login. */
 export function createSessionToken(): string {
-  const secret = process.env.ADMIN_SECRET ?? SESSION_SECRET;
+  const secret = process.env.ADMIN_SECRET;
+  if (!secret) return "";  // no env → cannot create token
   const ts = Date.now().toString();
   const sig = crypto
     .createHmac("sha256", secret)
@@ -27,7 +27,8 @@ export function isValidSessionToken(token: string | undefined): boolean {
   if (!token) return false;
 
   try {
-    const secret = process.env.ADMIN_SECRET ?? SESSION_SECRET;
+    const secret = process.env.ADMIN_SECRET;
+    if (!secret) return false;  // no env → no valid tokens
     const dot = token.indexOf(".");
     if (dot === -1) return false;
 
@@ -60,6 +61,6 @@ export async function requireAdmin(): Promise<void> {
   const cookieStore = await cookies();
   const session = cookieStore.get("admin_session");
   if (!isValidSessionToken(session?.value)) {
-    // redirect("/admin/login"); // temporarily disabled
+    redirect("/admin/login");
   }
 }

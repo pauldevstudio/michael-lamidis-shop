@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { KITCHEN_IMAGE } from "@/lib/constants";
 import { useLanguage } from "@/lib/i18n-context";
+import { useContent } from "@/lib/content-context";
 import SectionHeader from "@/components/shared/SectionHeader";
 import { StaggerChildren, StaggerItem } from "@/components/shared/AnimatedSection";
 import AnimatedSection from "@/components/shared/AnimatedSection";
@@ -14,6 +15,19 @@ const VALUE_ICONS = [CheckCircle, Star, Heart, Leaf];
 
 export default function AboutContent() {
   const { t } = useLanguage();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _t = t;
+  const __content = useContent();
+  const __about = __content?.about;
+  const __headline    = __about?.headline    ?? "Redefining How Cyprus Buys Appliances";
+  const __subheadline = __about?.subheadline ?? "For over 12 years, Michael Lamidis has been making premium appliances accessible to every Cypriot household.";
+  const __story = (__about?.story && __about.story.length > 0)
+    ? __about.story
+    : [
+        "Michael Lamidis was founded in 2012 with a simple mission: to make premium appliances affordable for every Cypriot family. What started as a small operation has grown into Cyprus's most trusted open box appliance destination.",
+        "We believe that everyone deserves access to quality appliances without breaking the bank. By specializing in certified open box products, we bridge the gap between luxury and affordability.",
+        "Today, we serve thousands of satisfied customers across Cyprus - from individual homeowners to hotels and businesses. Our certified technicians ensure every product meets our exacting standards.",
+      ];
 
   return (
     <>
@@ -43,9 +57,7 @@ export default function AboutContent() {
             className="font-display font-black text-white leading-[1.05] tracking-tighter max-w-4xl"
             style={{ fontFamily: "var(--font-jakarta)", fontSize: "clamp(2.2rem, 5vw, 4rem)" }}
           >
-            Redefining How{" "}
-            <span className="text-gradient-gold">Cyprus Buys</span>{" "}
-            Appliances
+            {__headline}
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -53,7 +65,7 @@ export default function AboutContent() {
             transition={{ duration: 0.7, delay: 0.18, ease: [0.16, 1, 0.3, 1] }}
             className="text-white/50 text-lg leading-relaxed max-w-2xl mt-5"
           >
-            For over 12 years, Michael Lamidis has been making premium appliances accessible to every Cypriot household.
+            {__subheadline}
           </motion.p>
         </div>
       </section>
@@ -103,11 +115,7 @@ export default function AboutContent() {
                     A Family Business Built on Trust
                   </h2>
                 </div>
-                {[
-                  "Michael Lamidis was founded in 2012 with a simple mission: to make premium appliances affordable for every Cypriot family. What started as a small operation has grown into Cyprus's most trusted open box appliance destination.",
-                  "We believe that everyone deserves access to quality appliances without breaking the bank. By specializing in certified open box products, we bridge the gap between luxury and affordability.",
-                  "Today, we serve thousands of satisfied customers across Cyprus — from individual homeowners to hotels and businesses. Our certified technicians ensure every product meets our exacting standards.",
-                ].map((paragraph, i) => (
+                {__story.map((paragraph, i) => (
                   <p key={i} className="text-navy-900/55 text-base leading-relaxed">{paragraph}</p>
                 ))}
                 <Link href="/contact" className="btn-primary text-sm w-fit mt-2">

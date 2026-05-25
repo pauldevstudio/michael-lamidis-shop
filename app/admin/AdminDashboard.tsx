@@ -130,7 +130,7 @@ export default function AdminDashboard({ content }: Props) {
           {stats.map(({ label, value, sub, icon: Icon, color, bg }) => (
             <div
               key={label}
-              className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-shadow"
+              className="bg-slate-900 rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-shadow"
             >
               <div className="flex items-start justify-between mb-3">
                 <div
@@ -141,7 +141,7 @@ export default function AdminDashboard({ content }: Props) {
                 </div>
                 <Activity className="w-4 h-4 text-slate-300" />
               </div>
-              <p className="text-2xl font-display font-black text-slate-900">{value}</p>
+              <p className="text-2xl font-display font-black text-slate-100">{value}</p>
               <p className="text-slate-500 text-xs font-medium mt-0.5">
                 {label} <span className="text-slate-400">{sub}</span>
               </p>
@@ -152,7 +152,7 @@ export default function AdminDashboard({ content }: Props) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Quick Actions */}
           <div className="lg:col-span-2">
-            <h2 className="text-slate-700 text-xs font-bold uppercase tracking-widest mb-3">
+            <h2 className="text-slate-200 text-xs font-bold uppercase tracking-widest mb-3">
               Quick Actions
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -160,7 +160,7 @@ export default function AdminDashboard({ content }: Props) {
                 <Link
                   key={href}
                   href={href}
-                  className="group bg-white rounded-2xl p-4 border border-slate-100 hover:border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-4"
+                  className="group bg-slate-900 rounded-2xl p-4 border border-slate-100 hover:border-slate-700 shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-4"
                 >
                   <div
                     className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 duration-200"
@@ -169,7 +169,7 @@ export default function AdminDashboard({ content }: Props) {
                     <Icon className="w-5 h-5" style={{ color }} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-slate-800 font-semibold text-sm truncate">{label}</p>
+                    <p className="text-slate-100 font-semibold text-sm truncate">{label}</p>
                     <p className="text-slate-400 text-xs truncate">{desc}</p>
                   </div>
                   <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-slate-500 group-hover:translate-x-1 transition-all duration-200 shrink-0" />
@@ -181,7 +181,7 @@ export default function AdminDashboard({ content }: Props) {
           {/* Recent Products */}
           <div>
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-slate-700 text-xs font-bold uppercase tracking-widest">
+              <h2 className="text-slate-200 text-xs font-bold uppercase tracking-widest">
                 Recent Products
               </h2>
               <Link
@@ -191,9 +191,9 @@ export default function AdminDashboard({ content }: Props) {
                 View all
               </Link>
             </div>
-            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden divide-y divide-slate-50">
+            <div className="bg-slate-900 rounded-2xl border border-slate-100 shadow-sm overflow-hidden divide-y divide-slate-50">
               {recentProducts.map((p) => (
-                <div key={p.id} className="flex items-center gap-3 p-3.5 hover:bg-slate-50 transition-colors">
+                <div key={p.id} className="flex items-center gap-3 p-3.5 hover:bg-slate-800 transition-colors">
                   <div
                     className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 text-white text-xs font-bold"
                     style={{
@@ -203,7 +203,7 @@ export default function AdminDashboard({ content }: Props) {
                     {p.brand[0]}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-slate-800 text-sm font-semibold truncate">
+                    <p className="text-slate-100 text-sm font-semibold truncate">
                       {p.brand} {p.model}
                     </p>
                     <p className="text-slate-400 text-xs">€{p.salePrice} · Grade {p.grade}</p>

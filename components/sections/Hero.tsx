@@ -7,6 +7,7 @@ import {
   ChevronDown, ShieldCheck, Award, Truck, ArrowRight, MapPin,
 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n-context";
+import { useContent } from "@/lib/content-context";
 import {
   HERO_IMAGE,
   HERO_FRIDGE_IMAGE,
@@ -97,6 +98,25 @@ function FloatCard({
 /* ═══════════════════════════════════════════════════════ */
 export default function Hero() {
   const { t } = useLanguage();
+  // CMS-driven hero content (Payload home-hero global), falling back to i18n strings.
+  const __content = useContent();
+  const __h = __content?.hero;
+  const __rawHeadline: string =
+    __h?.headline && __h.headline.length > 0
+      ? __h.headline
+      : `${t.hero.titleLine1}\n${t.hero.titleLine2}`;
+  const __headlineLines: string[] = __rawHeadline.split("\n");
+  const __cms = {
+    locationLabel:     __h?.locationLabel     ?? t.hero.locationLabel,
+    badge:             __h?.badge             ?? t.hero.badge,
+    titleLine1:        __headlineLines[0]     ?? t.hero.titleLine1,
+    titleLine2:        __headlineLines.slice(1).join(" ") || t.hero.titleLine2,
+    subtitle:          __h?.subheadline       ?? t.hero.subtitle,
+    primaryCtaLabel:   __h?.primaryCtaLabel,
+    primaryCtaHref:    __h?.primaryCtaHref   ?? "/products",
+    secondaryCtaLabel: __h?.secondaryCtaLabel,
+    secondaryCtaHref:  __h?.secondaryCtaHref ?? "/products",
+  };
 
   return (
     <section
@@ -164,9 +184,9 @@ export default function Hero() {
               >
                 <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gold-500/35 bg-gold-500/12 text-gold-400 text-[11px] font-bold tracking-[0.18em] uppercase">
                   <MapPin className="w-3 h-3" />
-                  {t.hero.locationLabel}
+                  {__cms.locationLabel}
                   <span className="w-1 h-1 rounded-full bg-gold-400/60" />
-                  {t.hero.badge}
+                  {__cms.badge}
                 </span>
               </motion.div>
 
@@ -181,9 +201,9 @@ export default function Hero() {
                   fontSize: "clamp(2rem, 5vw, 4.5rem)",
                 }}
               >
-                {t.hero.titleLine1}
+                {__cms.titleLine1}
                 <br />
-                <span className="text-gradient-gold">{t.hero.titleLine2}</span>
+                <span className="text-gradient-gold">{__cms.titleLine2}</span>
               </motion.h1>
 
               {/* Subheadline */}
@@ -193,7 +213,7 @@ export default function Hero() {
                 transition={{ duration: 0.78, delay: 0.68, ease: [0.16, 1, 0.3, 1] }}
                 className="text-white/60 text-base sm:text-[1.1rem] leading-relaxed mt-5 max-w-lg font-medium"
               >
-                {t.hero.subtitle}
+                {__cms.subtitle}
               </motion.p>
 
               {/* CTAs */}
@@ -203,19 +223,12 @@ export default function Hero() {
                 transition={{ duration: 0.75, delay: 0.84, ease: [0.16, 1, 0.3, 1] }}
                 className="flex flex-wrap items-center gap-3 mt-8"
               >
-                <Link href="/products" className="btn-gold text-sm sm:text-base !px-7 !py-3.5 w-full sm:w-auto justify-center">
-                  {t.hero.cta1}
+                <Link href={__cms.primaryCtaHref} className="btn-gold text-sm sm:text-base !px-7 !py-3.5 w-full sm:w-auto justify-center">
+                  {__cms.primaryCtaLabel ?? t.hero.cta1}
                   <ArrowRight className="w-4 h-4" />
                 </Link>
-                <Link href="/products" className="btn-ghost-white text-sm sm:text-base !px-7 !py-3.5 w-full sm:w-auto justify-center">
-                  {t.hero.cta2}
-                </Link>
-                <Link
-                  href="/contact"
-                  className="text-white/55 hover:text-white text-sm font-medium transition-colors flex items-center gap-1.5 mt-0.5 w-full sm:w-auto justify-center sm:justify-start"
-                >
-                  <MapPin className="w-3.5 h-3.5 text-gold-400" />
-                  {t.hero.cta3}
+                <Link href={__cms.secondaryCtaHref} className="btn-ghost-white text-sm sm:text-base !px-7 !py-3.5 w-full sm:w-auto justify-center">
+                  {__cms.secondaryCtaLabel ?? t.hero.cta2}
                 </Link>
               </motion.div>
 

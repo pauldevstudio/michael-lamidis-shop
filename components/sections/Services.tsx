@@ -3,6 +3,7 @@
 import { Search, Wrench, Settings, Package, ArrowRight, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/lib/i18n-context";
+import { useContent } from "@/lib/content-context";
 import { StaggerChildren, StaggerItem } from "@/components/shared/AnimatedSection";
 import SectionHeader from "@/components/shared/SectionHeader";
 import { cn } from "@/lib/utils";
@@ -20,20 +21,28 @@ const SERVICE_COLORS = [
 
 export default function Services() {
   const { t } = useLanguage();
+  const __content = useContent();
+  const __s = __content?.services;
+  const __cms = {
+    eyebrow:  __s?.eyebrow  ?? t.services.eyebrow,
+    title:    __s?.title    ?? t.services.title,
+    subtitle: __s?.subtitle ?? t.services.subtitle,
+    items:    (__s?.items && __s.items.length > 0) ? __s.items : t.services.items,
+  };
 
   return (
     <section className="bg-off-white section-py" style={{ background: "#F8FAFF" }}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <SectionHeader
-          eyebrow={t.services.eyebrow}
-          title={t.services.title}
-          subtitle={t.services.subtitle}
+          eyebrow={__cms.eyebrow}
+          title={__cms.title}
+          subtitle={__cms.subtitle}
           theme="light"
           className="mb-14"
         />
 
         <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {t.services.items.map(({ icon, title, description, price, badge }, i) => {
+          {__cms.items.map(({ icon, title, description, price, badge }, i) => {
             const Icon = ICONS[icon];
             const color = SERVICE_COLORS[i % SERVICE_COLORS.length];
             return (

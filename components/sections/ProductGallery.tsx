@@ -9,8 +9,9 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useLanguage } from "@/lib/i18n-context";
+import { useContent } from "@/lib/content-context";
 import SectionHeader from "@/components/shared/SectionHeader";
-import { FEATURED_PRODUCTS, PRODUCT_CATEGORIES } from "@/lib/constants";
+import { FEATURED_PRODUCTS, PRODUCT_CATEGORIES, CATEGORY_COLOR_MAP, DEFAULT_CATEGORY_COLOR } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 const ICONS: Record<string, React.ElementType> = {
@@ -121,17 +122,27 @@ function ProductCard({
 
 export default function ProductGallery() {
   const { t } = useLanguage();
+  const __content = useContent();
+  const __products = (__content?.products && __content.products.length > 0) ? __content.products : FEATURED_PRODUCTS;
   const [activeCategory, setActiveCategory] = useState("all");
 
   const filtered =
     activeCategory === "all"
-      ? FEATURED_PRODUCTS
-      : FEATURED_PRODUCTS.filter((p) => p.category === activeCategory);
+      ? __products
+      : __products.filter((p) => p.category === activeCategory);
 
-  const categories = PRODUCT_CATEGORIES.map((c) => ({
-    ...c,
-    label: (t.gallery.categories as Record<string, string>)[c.id] ?? c.id,
-  }));
+  // Prefer CMS categoryStrip items so admin edits drive both the icon strip and these filters.
+  const __cmsItems = __content?.categoryStrip?.items;
+  const categories = (__cmsItems && __cmsItems.length > 0)
+    ? __cmsItems.map((c) => ({
+        id: c.id,
+        label: c.label,
+        ...(CATEGORY_COLOR_MAP[c.id] ?? DEFAULT_CATEGORY_COLOR),
+      }))
+    : PRODUCT_CATEGORIES.map((c) => ({
+        ...c,
+        label: (t.gallery.categories as Record<string, string>)[c.id] ?? c.id,
+      }));
 
   return (
     <section className="bg-white section-py">

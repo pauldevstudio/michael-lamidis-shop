@@ -3,6 +3,7 @@
 import { useRef, useEffect, useState } from "react";
 import { useInView } from "framer-motion";
 import { useLanguage } from "@/lib/i18n-context";
+import { useContent } from "@/lib/content-context";
 import SectionHeader from "@/components/shared/SectionHeader";
 
 function Counter({ target, suffix, duration = 2000 }: { target: number; suffix: string; duration?: number }) {
@@ -36,6 +37,15 @@ function Counter({ target, suffix, duration = 2000 }: { target: number; suffix: 
 
 export default function Statistics() {
   const { t } = useLanguage();
+  // CMS overlay: prefer Payload Stats Section if populated.
+  const __content = useContent();
+  const __ss = __content?.statsSection;
+  const __statsItems =
+    (__ss?.items && __ss.items.length > 0)
+      ? __ss.items.map((it) => ({ value: it.value, suffix: it.suffix, label: it.label }))
+      : (t.stats.items as Array<{ value: number; suffix: string; label: string }>);
+  const __statsEyebrow = __ss?.eyebrow ?? t.stats.eyebrow;
+  const __statsTitle   = __ss?.title   ?? t.stats.title;
 
   return (
     <section className="section-py relative overflow-hidden" style={{ background: "#030813" }}>
@@ -50,14 +60,14 @@ export default function Statistics() {
 
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <SectionHeader
-          eyebrow={t.stats.eyebrow}
-          title={t.stats.title}
+          eyebrow={__statsEyebrow}
+          title={__statsTitle}
           theme="dark"
           className="mb-16"
         />
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
-          {t.stats.items.map(({ value, suffix, label }, i) => (
+          {__statsItems.map(({ value, suffix, label }, i) => (
             <div
               key={label}
               className="group relative flex flex-col items-center gap-3 p-5 sm:p-7 lg:p-8 rounded-2xl glass-card hover:border-white/20 transition-all duration-400 cursor-default text-center"

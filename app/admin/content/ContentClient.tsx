@@ -88,39 +88,39 @@ export default function ContentClient() {
       />
       <main className="flex-1 overflow-auto p-6">
         <div className="max-w-2xl mx-auto space-y-6">
-          <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-100 shadow-sm w-fit">
+          <div className="flex items-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-100 shadow-sm w-fit">
             {TABS.map(({ key, label }) => (
               <button key={key} onClick={() => setTab(key)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${tab === key ? "bg-navy-950 text-white shadow-sm" : "text-slate-500 hover:text-slate-700"}`}>
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${tab === key ? "bg-navy-950 text-white shadow-sm" : "text-slate-500 hover:text-slate-200"}`}>
                 {label}
               </button>
             ))}
           </div>
 
           {tab === "hero" && (
-            <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            <section className="bg-slate-900 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
               <div className="px-6 py-4 border-b border-slate-100">
-                <h2 className="text-slate-800 font-bold text-base">Hero Section</h2>
+                <h2 className="text-slate-100 font-bold text-base">Hero Section</h2>
                 <p className="text-slate-500 text-sm">The first thing visitors see on your homepage</p>
               </div>
               <div className="p-6 space-y-5">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-slate-600 text-xs font-semibold uppercase tracking-wider">Badge Text</label>
+                  <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Badge Text</label>
                   <input value={content.hero.badge} onChange={(e) => setHero("badge", e.target.value)}
                     placeholder="Cyprus's #1 Open Box Destination"
-                    className="border border-slate-200 rounded-xl px-4 py-3 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
+                    className="border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-slate-600 text-xs font-semibold uppercase tracking-wider">Headline</label>
+                  <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Headline</label>
                   <textarea value={content.hero.headline} onChange={(e) => setHero("headline", e.target.value)} rows={3}
                     placeholder="Premium Appliances.\nOpen Box Prices."
-                    className="border border-slate-200 rounded-xl px-4 py-3 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 resize-none font-display" />
+                    className="border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 resize-none font-display" />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-slate-600 text-xs font-semibold uppercase tracking-wider">Subheadline</label>
+                  <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Subheadline</label>
                   <textarea value={content.hero.subheadline} onChange={(e) => setHero("subheadline", e.target.value)} rows={2}
                     placeholder="Every item certified, warranted & delivered across Cyprus."
-                    className="border border-slate-200 rounded-xl px-4 py-3 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 resize-none" />
+                    className="border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 resize-none" />
                 </div>
                 <div className="rounded-xl bg-navy-950 p-5 text-center">
                   <span className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border border-white/15 text-white/60 mb-4">★ {content.hero.badge}</span>
@@ -132,24 +132,24 @@ export default function ContentClient() {
           )}
 
           {tab === "about" && (
-            <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            <section className="bg-slate-900 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
               <div className="px-6 py-4 border-b border-slate-100">
-                <h2 className="text-slate-800 font-bold text-base">About Section</h2>
+                <h2 className="text-slate-100 font-bold text-base">About Section</h2>
               </div>
               <div className="p-6 space-y-5">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-slate-600 text-xs font-semibold uppercase tracking-wider">Headline</label>
+                  <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Headline</label>
                   <input value={content.about.headline} onChange={(e) => setAbout("headline", e.target.value)}
-                    className="border border-slate-200 rounded-xl px-4 py-3 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
+                    className="border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-slate-600 text-xs font-semibold uppercase tracking-wider">Subheadline</label>
+                  <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Subheadline</label>
                   <input value={content.about.subheadline} onChange={(e) => setAbout("subheadline", e.target.value)}
-                    className="border border-slate-200 rounded-xl px-4 py-3 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
+                    className="border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
                 </div>
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center justify-between">
-                    <label className="text-slate-600 text-xs font-semibold uppercase tracking-wider">Story Paragraphs</label>
+                    <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Story Paragraphs</label>
                     <button onClick={addStoryParagraph} className="text-xs text-blue-600 font-medium hover:text-blue-700 flex items-center gap-1">
                       <Plus className="w-3 h-3" /> Add Paragraph
                     </button>
@@ -157,7 +157,7 @@ export default function ContentClient() {
                   {content.about.story.map((para, i) => (
                     <div key={i} className="relative">
                       <textarea value={para} onChange={(e) => setStoryParagraph(i, e.target.value)} rows={3} placeholder={`Paragraph ${i + 1}…`}
-                        className="w-full border border-slate-200 rounded-xl px-4 py-3 pr-10 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 resize-none" />
+                        className="w-full border border-slate-700 rounded-xl px-4 py-3 pr-10 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 resize-none" />
                       <button onClick={() => removeStoryParagraph(i)} className="absolute top-2.5 right-2.5 p-1 text-slate-300 hover:text-red-400 transition-colors">
                         <X className="w-3.5 h-3.5" />
                       </button>
@@ -169,18 +169,18 @@ export default function ContentClient() {
           )}
 
           {tab === "stats" && (
-            <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            <section className="bg-slate-900 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
               <div className="px-6 py-4 border-b border-slate-100">
-                <h2 className="text-slate-800 font-bold text-base">Statistics</h2>
+                <h2 className="text-slate-100 font-bold text-base">Statistics</h2>
               </div>
               <div className="p-6 grid grid-cols-2 gap-5">
                 {(["customers", "brands", "savings", "cities"] as const).map((key) => {
                   const labels: Record<string, string> = { customers: "Customers Served", brands: "Brands", savings: "Savings Range", cities: "Coverage" };
                   return (
                     <div key={key} className="flex flex-col gap-1.5">
-                      <label className="text-slate-600 text-xs font-semibold uppercase tracking-wider">{labels[key]}</label>
+                      <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">{labels[key]}</label>
                       <input value={content.stats[key]} onChange={(e) => setStats(key, e.target.value)}
-                        className="border border-slate-200 rounded-xl px-4 py-3 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
+                        className="border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
                     </div>
                   );
                 })}

@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Tag } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/lib/i18n-context";
+import { useContent } from "@/lib/content-context";
 
 interface Props {
   message?: string;
@@ -15,10 +16,29 @@ interface Props {
 export default function AnnouncementBar({ message, ctaLabel, ctaHref = "/products" }: Props) {
   const { t } = useLanguage();
   const [visible, setVisible] = useState(true);
+  // framer-motion's <AnimatePresence initial={...}> emits inline styles on
+  // mount that differ from the SSR HTML and trip React's hydration check.
+  // Defer mounting until the client.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
+
+  // CMS overlay: prefer Payload Announcement Bar if populated.
+  const __content = useContent();
+  const __ann = __content?.announcement;
+  if (__ann && __ann.enabled === false) return null;
 
   const resolvedMessage =
-    message ?? t?.announcement?.message ?? "🔥 Summer Sale — Up to 70% off premium open box appliances. Limited stock!";
-  const resolvedCta = ctaLabel ?? t?.announcement?.cta ?? "Shop Now";
+    message
+    ?? __ann?.message
+    ?? t?.announcement?.message
+    ?? "Summer Sale: Up to 70% off premium open box appliances. Limited stock.";
+  const resolvedCta =
+    ctaLabel
+    ?? __ann?.ctaLabel
+    ?? t?.announcement?.cta
+    ?? "Shop Now";
+  const resolvedCtaHref = ctaHref ?? __ann?.ctaHref ?? "/products";
 
   return (
     <AnimatePresence>
@@ -38,10 +58,10 @@ export default function AnnouncementBar({ message, ctaLabel, ctaHref = "/product
             </p>
             {resolvedCta && (
               <Link
-                href={ctaHref}
+                href={resolvedCtaHref}
                 className="shrink-0 ml-1 px-3 py-1 rounded-full bg-white/20 hover:bg-white/30 text-white text-[11px] sm:text-xs font-bold transition-colors border border-white/30 whitespace-nowrap"
               >
-                {resolvedCta} →
+                {resolvedCta} &rarr;
               </Link>
             )}
             <button

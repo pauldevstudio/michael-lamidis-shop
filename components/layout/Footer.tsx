@@ -9,6 +9,12 @@ import { SITE_ADDRESS, SITE_EMAIL, SITE_HOURS, SITE_PHONE, SOCIAL_LINKS } from "
 
 export default function Footer() {
   const { t } = useLanguage();
+  const __content = useContent();
+  const __ft = __content?.footer;
+  const __ftDescription  = __ft?.description ?? t.footer.description;
+  const __ftCopyright    = __ft?.copyright ? `© ${new Date().getFullYear()} ${__ft.copyright}` : t.footer.copyright;
+  const __ftCompanyLinks  = (__ft?.companyLinks  && __ft.companyLinks.length  > 0) ? __ft.companyLinks  : t.footer.companyLinks;
+  const __ftServicesLinks = (__ft?.servicesLinks && __ft.servicesLinks.length > 0) ? __ft.servicesLinks : t.footer.servicesLinks;
   const content = useContent();
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
@@ -55,7 +61,7 @@ export default function Footer() {
             </Link>
 
             <p className="text-white/45 text-sm leading-relaxed max-w-xs">
-              {t.footer.description}
+              {__ftDescription}
             </p>
 
             {/* Contact info */}
@@ -103,8 +109,8 @@ export default function Footer() {
           {/* Links columns */}
           <div className="lg:col-span-5 grid grid-cols-3 gap-6">
             {[
-              { title: t.footer.companyTitle,  links: t.footer.companyLinks },
-              { title: t.footer.servicesTitle, links: t.footer.servicesLinks },
+              { title: t.footer.companyTitle,  links: __ftCompanyLinks },
+              { title: t.footer.servicesTitle, links: __ftServicesLinks },
               { title: t.footer.supportTitle,  links: t.footer.supportLinks },
             ].map(({ title, links }) => (
               <div key={title} className="flex flex-col gap-4">
@@ -199,7 +205,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="border-t border-white/[0.06] py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-white/30 text-xs font-medium text-center sm:text-left">
-            {t.footer.copyright}
+            {__ftCopyright}
           </p>
           <div className="flex items-center gap-5">
             {t.footer.legal.map(({ label, href }) => (

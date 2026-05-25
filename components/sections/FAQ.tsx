@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Minus, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/lib/i18n-context";
+import { useContent } from "@/lib/content-context";
 import SectionHeader from "@/components/shared/SectionHeader";
 import { cn } from "@/lib/utils";
 
@@ -85,6 +86,14 @@ function FAQItem({
 
 export default function FAQ() {
   const { t } = useLanguage();
+  const __content = useContent();
+  const __f = __content?.faq;
+  const __cms = {
+    eyebrow:  __f?.eyebrow  ?? t.faq.eyebrow,
+    title:    __f?.title    ?? t.faq.title,
+    subtitle: __f?.subtitle ?? t.faq.subtitle,
+    items:    (__f?.items && __f.items.length > 0) ? __f.items : t.faq.items,
+  };
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   const toggle = (i: number) => setOpenIndex(openIndex === i ? null : i);
@@ -96,9 +105,9 @@ export default function FAQ() {
           {/* Left — header + CTA */}
           <div className="flex flex-col gap-8 lg:sticky lg:top-28">
             <SectionHeader
-              eyebrow={t.faq.eyebrow}
-              title={t.faq.title}
-              subtitle={t.faq.subtitle}
+              eyebrow={__cms.eyebrow}
+              title={__cms.title}
+              subtitle={__cms.subtitle}
               theme="light"
               align="left"
             />
@@ -123,7 +132,7 @@ export default function FAQ() {
 
           {/* Right — accordion */}
           <div className="flex flex-col gap-3">
-            {t.faq.items.map(({ question, answer }, i) => (
+            {__cms.items.map(({ question, answer }, i) => (
               <FAQItem
                 key={i}
                 question={question}

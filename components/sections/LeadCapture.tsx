@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle, Clock, Shield, Tag, Sparkles, ArrowRight, Send } from "lucide-react";
 import { useLanguage } from "@/lib/i18n-context";
+import { useContent } from "@/lib/content-context";
 import AnimatedSection from "@/components/shared/AnimatedSection";
 import { cn } from "@/lib/utils";
 
@@ -12,6 +13,12 @@ const BENEFIT_ICONS = [Clock, Shield, Tag, Sparkles];
 export default function LeadCapture() {
   const { t } = useLanguage();
   const f = t.leadCapture.form;
+  const __content = useContent();
+  const __lc = __content?.leadCapture;
+  const __lcEyebrow  = __lc?.eyebrow  ?? t.leadCapture.eyebrow;
+  const __lcTitle    = __lc?.title    ?? t.leadCapture.title;
+  const __lcSubtitle = __lc?.subtitle ?? t.leadCapture.subtitle;
+  const __lcBenefits = (__lc?.benefits && __lc.benefits.length > 0) ? __lc.benefits : t.leadCapture.benefits;
 
   const [form, setForm] = useState({
     name: "", email: "", phone: "", interest: "", message: "",
@@ -47,7 +54,7 @@ export default function LeadCapture() {
             <AnimatedSection>
               <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gold-500/30 bg-gold-500/10 text-gold-400 text-xs font-bold tracking-widest uppercase">
                 <span className="w-1.5 h-1.5 rounded-full bg-gold-400 animate-pulse" />
-                {t.leadCapture.eyebrow}
+                {__lcEyebrow}
               </span>
             </AnimatedSection>
 
@@ -56,18 +63,18 @@ export default function LeadCapture() {
                 className="font-display font-black text-white leading-[1.05] tracking-tight"
                 style={{ fontFamily: "var(--font-jakarta)", fontSize: "clamp(2rem, 4vw, 3rem)" }}
               >
-                {t.leadCapture.title}
+                {__lcTitle}
               </h2>
             </AnimatedSection>
 
             <AnimatedSection delay={0.12}>
               <p className="text-white/50 text-base leading-relaxed max-w-md">
-                {t.leadCapture.subtitle}
+                {__lcSubtitle}
               </p>
             </AnimatedSection>
 
             <div className="flex flex-col gap-3">
-              {t.leadCapture.benefits.map((benefit, i) => {
+              {__lcBenefits.map((benefit, i) => {
                 const Icon = BENEFIT_ICONS[i];
                 return (
                   <AnimatedSection key={benefit} delay={0.16 + i * 0.07}>

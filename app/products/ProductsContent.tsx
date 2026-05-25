@@ -11,6 +11,7 @@ import {
 import AnimatedSection from "@/components/shared/AnimatedSection";
 import { FEATURED_PRODUCTS, PRODUCT_CATEGORIES } from "@/lib/constants";
 import { useCart } from "@/lib/cart-context";
+import { useContent } from "@/lib/content-context";
 import { cn } from "@/lib/utils";
 
 /* ── Category order for filters ───────────────────────── */
@@ -213,11 +214,15 @@ export default function ProductsContent() {
   const [sortBy, setSortBy] = useState<SortKey>("savings");
   const [sortOpen, setSortOpen] = useState(false);
 
+  // Prefer admin-edited products from the CMS; fall back to constants seed.
+  const __content = useContent();
+  const __products = __content?.products?.length ? __content.products : FEATURED_PRODUCTS;
+
   const filtered = useMemo(() => {
     const list =
       activeCategory === "all"
-        ? [...FEATURED_PRODUCTS]
-        : FEATURED_PRODUCTS.filter((p) => p.category === activeCategory);
+        ? [...__products]
+        : __products.filter((p) => p.category === activeCategory);
 
     switch (sortBy) {
       case "price-asc":  return list.sort((a, b) => a.salePrice - b.salePrice);

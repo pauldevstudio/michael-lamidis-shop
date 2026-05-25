@@ -1,0 +1,72 @@
+/* Payload admin contrast + layout repairs */
+
+.payload-default-theme,
+.template-default,
+.payload__app {
+  background-color: #18181b;
+  color: #f4f4f5;
+}
+.template-default input,
+.template-default textarea,
+.template-default select {
+  color: #f4f4f5;
+}
+.template-minimal {
+  background-color: #18181b;
+  color: #f4f4f5;
+}
+.template-minimal input,
+.template-minimal textarea {
+  color: #f4f4f5;
+}
+.template-minimal a { color: #93c5fd; }
+
+.payload__drawer,
+[class*="drawer__"],
+.payload__modal,
+[class*="modal__"] {
+  color: #f4f4f5;
+}
+
+/* ─── Repair array-field row controls ─────────────────────────────
+   Tailwind's preflight resets <button> padding/background which
+   makes Payload's "Toggle" / "Show" / "Duplicate" / "Delete" buttons
+   on each array row collapse on top of each other. Restore the
+   minimal padding + flex layout Payload expects. */
+[class*="array-actions"],
+[class*="array-row"],
+[class*="collapsible__header"],
+[class*="collapsible__actions"],
+[class*="row-actions"],
+[class*="popup-button-list"] {
+  display: flex !important;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+[class*="array-actions"] button,
+[class*="array-row"] button,
+[class*="collapsible__header"] button,
+[class*="collapsible__actions"] button,
+[class*="row-actions"] button,
+[class*="popup-button-list"] button {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px !important;
+  background: transparent;
+  border: 0;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+/* The collapsible block header that has "Toggle block" + "Show all"
+   needs explicit positioning. */
+[class*="collapsible__header"] {
+  position: relative !important;
+  width: 100%;
+}
+[class*="collapsible__toggle"] {
+  position: static !important;
+}

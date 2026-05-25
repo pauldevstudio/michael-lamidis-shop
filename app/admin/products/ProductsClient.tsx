@@ -311,7 +311,7 @@ export default function ProductsClient() {
         }
       />
 
-      <main className="flex-1 overflow-auto p-6 bg-slate-50">
+      <main className="flex-1 overflow-auto p-6 bg-slate-800">
         {/* Category filter tabs — click to filter, double-click (or pencil) to rename */}
         <div className="flex gap-2 mb-5 overflow-x-auto pb-2 -mx-1 px-1">
           {DEFAULT_CATEGORIES.map((c) => {
@@ -321,7 +321,7 @@ export default function ProductsClient() {
             return (
               <div key={c.id} className="relative group shrink-0">
                 {isEditing ? (
-                  <div className="inline-flex items-center gap-1 px-3 py-2 rounded-full bg-white border-2 border-purple-400 shadow-sm">
+                  <div className="inline-flex items-center gap-1 px-3 py-2 rounded-full bg-slate-900 border-2 border-purple-400 shadow-sm">
                     <input
                       ref={labelInputRef}
                       value={labelDraft}
@@ -349,14 +349,14 @@ export default function ProductsClient() {
                     className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all border ${
                       active
                         ? "bg-purple-600 text-white border-purple-600 shadow-md shadow-purple-500/30"
-                        : "bg-white text-purple-700 border-purple-200 hover:border-purple-400 hover:bg-purple-50"
+                        : "bg-slate-900 text-purple-700 border-purple-200 hover:border-purple-400 hover:bg-purple-50"
                     }`}
                     title="Click to filter · double-click to rename"
                   >
                     {getCategoryLabel(c.id)}
                     <span
                       className={`px-1.5 py-0.5 rounded text-[10px] font-black tracking-wide ${
-                        active ? "bg-white/20 text-white" : "bg-purple-100 text-purple-700"
+                        active ? "bg-slate-900/20 text-white" : "bg-purple-100 text-purple-700"
                       }`}
                     >
                       {count}
@@ -367,7 +367,7 @@ export default function ProductsClient() {
                   <button
                     onClick={(e) => { e.stopPropagation(); setEditingCategory(c.id); setLabelDraft(getCategoryLabel(c.id)); }}
                     aria-label={`Rename ${c.label}`}
-                    className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-white border border-slate-200 shadow-sm flex items-center justify-center text-slate-400 hover:text-purple-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-slate-900 border border-slate-700 shadow-sm flex items-center justify-center text-slate-400 hover:text-purple-600 opacity-0 group-hover:opacity-100 transition-opacity"
                   >
                     <Pencil className="w-3 h-3" />
                   </button>
@@ -383,7 +383,7 @@ export default function ProductsClient() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search products…"
-            className="w-full border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 bg-white"
+            className="w-full border border-slate-700 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 bg-slate-900"
           />
         </div>
 
@@ -392,7 +392,7 @@ export default function ProductsClient() {
             <RefreshCw className="w-5 h-5 animate-spin text-slate-400" />
           </div>
         ) : filtered.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-slate-100 py-16 text-center">
+          <div className="bg-slate-900 rounded-2xl border border-slate-100 py-16 text-center">
             <Package className="w-8 h-8 mx-auto mb-2 opacity-40 text-slate-400" />
             <p className="text-sm text-slate-400">No products found</p>
           </div>
@@ -404,7 +404,7 @@ export default function ProductsClient() {
               return (
                 <div
                   key={p.id}
-                  className="group bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:border-slate-300 transition-all overflow-hidden flex flex-col"
+                  className="group bg-slate-900 rounded-2xl border border-slate-700 shadow-sm hover:shadow-lg hover:border-slate-300 transition-all overflow-hidden flex flex-col"
                 >
                   {/* Image area */}
                   <div className="relative aspect-square bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden">
@@ -440,7 +440,7 @@ export default function ProductsClient() {
                     <button
                       onClick={() => toggleFeatured(p.id)}
                       aria-label={isFeatured ? "Unfeature product" : "Feature product"}
-                      className="absolute top-3 right-3 w-8 h-8 rounded-lg bg-white/90 backdrop-blur shadow-sm flex items-center justify-center hover:bg-white transition-colors z-10"
+                      className="absolute top-3 right-3 w-8 h-8 rounded-lg bg-slate-900/90 backdrop-blur shadow-sm flex items-center justify-center hover:bg-slate-900 transition-colors z-10"
                     >
                       <Star
                         className={`w-4 h-4 transition-colors ${isFeatured ? "text-amber-400 fill-amber-400" : "text-slate-300"}`}
@@ -462,7 +462,7 @@ export default function ProductsClient() {
                           e.currentTarget.value = "";
                         }}
                       />
-                      <span className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-white text-slate-800 text-xs font-bold shadow-lg">
+                      <span className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-900 text-slate-100 text-xs font-bold shadow-lg">
                         {uploadingId === p.id ? (
                           <>
                             <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -481,7 +481,7 @@ export default function ProductsClient() {
                   {/* Info */}
                   <div className="p-4 flex flex-col gap-3 flex-1">
                     <div className="min-h-[44px]">
-                      <p className="text-slate-800 font-bold text-sm leading-snug line-clamp-2">
+                      <p className="text-slate-100 font-bold text-sm leading-snug line-clamp-2">
                         {p.brand} {p.model}
                       </p>
                     </div>
@@ -491,7 +491,7 @@ export default function ProductsClient() {
                       <div className="flex flex-col">
                         {isEditingThis ? (
                           <div className="flex items-center gap-1">
-                            <span className="text-slate-600 font-bold">€</span>
+                            <span className="text-slate-400 font-bold">€</span>
                             <input
                               ref={priceInputRef}
                               type="number"
@@ -502,7 +502,7 @@ export default function ProductsClient() {
                                 if (e.key === "Enter") commitPrice(p);
                                 else if (e.key === "Escape") setEditingPrice(null);
                               }}
-                              className="w-20 border border-blue-300 bg-blue-50 rounded-md px-2 py-0.5 text-slate-900 font-bold text-base focus:outline-none focus:ring-2 focus:ring-blue-400"
+                              className="w-20 border border-blue-300 bg-blue-50 rounded-md px-2 py-0.5 text-slate-100 font-bold text-base focus:outline-none focus:ring-2 focus:ring-blue-400"
                             />
                             <button
                               onMouseDown={(e) => e.preventDefault()}
@@ -519,7 +519,7 @@ export default function ProductsClient() {
                             className="text-left group/price"
                             title="Click to edit price"
                           >
-                            <p className="text-slate-900 font-black text-lg leading-none group-hover/price:text-blue-600 transition-colors">
+                            <p className="text-slate-100 font-black text-lg leading-none group-hover/price:text-blue-600 transition-colors">
                               €{p.salePrice}
                             </p>
                           </button>
@@ -545,14 +545,14 @@ export default function ProductsClient() {
                       <Link
                         href={`/products/${p.id}`}
                         target="_blank"
-                        className="flex-1 inline-flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg border border-slate-200 text-slate-600 text-xs font-bold hover:bg-slate-50 hover:text-slate-800 hover:border-slate-300 transition-colors"
+                        className="flex-1 inline-flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg border border-slate-700 text-slate-400 text-xs font-bold hover:bg-slate-800 hover:text-slate-100 hover:border-slate-300 transition-colors"
                       >
                         <Eye className="w-3.5 h-3.5" />
                         View
                       </Link>
                       <button
                         onClick={() => openEdit(p)}
-                        className="flex-1 inline-flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg border border-slate-200 text-slate-600 text-xs font-bold hover:bg-slate-50 hover:text-slate-800 hover:border-slate-300 transition-colors"
+                        className="flex-1 inline-flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg border border-slate-700 text-slate-400 text-xs font-bold hover:bg-slate-800 hover:text-slate-100 hover:border-slate-300 transition-colors"
                       >
                         <Pencil className="w-3.5 h-3.5" />
                         Edit
@@ -560,7 +560,7 @@ export default function ProductsClient() {
                       <button
                         onClick={() => setDeleteId(p.id)}
                         aria-label="Delete product"
-                        className="inline-flex items-center justify-center w-9 rounded-lg border border-slate-200 text-slate-400 hover:text-red-600 hover:bg-red-50 hover:border-red-200 transition-colors"
+                        className="inline-flex items-center justify-center w-9 rounded-lg border border-slate-700 text-slate-400 hover:text-red-600 hover:bg-red-50 hover:border-red-200 transition-colors"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -575,14 +575,14 @@ export default function ProductsClient() {
 
       {deleteId && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full">
+          <div className="bg-slate-900 rounded-2xl shadow-2xl p-6 max-w-sm w-full">
             <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
               <Trash2 className="w-5 h-5 text-red-500" />
             </div>
-            <h3 className="text-slate-800 font-bold text-lg text-center mb-1">Delete Product?</h3>
+            <h3 className="text-slate-100 font-bold text-lg text-center mb-1">Delete Product?</h3>
             <p className="text-slate-500 text-sm text-center mb-6">This action cannot be undone.</p>
             <div className="flex gap-3">
-              <button onClick={() => setDeleteId(null)} className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50">Cancel</button>
+              <button onClick={() => setDeleteId(null)} className="flex-1 py-2.5 rounded-xl border border-slate-700 text-slate-400 text-sm font-medium hover:bg-slate-800">Cancel</button>
               <button onClick={() => deleteProduct(deleteId)} className="flex-1 py-2.5 rounded-xl bg-red-500 text-white text-sm font-bold hover:bg-red-600">Delete</button>
             </div>
           </div>
@@ -591,36 +591,36 @@ export default function ProductsClient() {
 
       {showModal && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-auto">
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl my-8">
+          <div className="bg-slate-900 rounded-3xl shadow-2xl w-full max-w-2xl my-8">
             <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
-              <h2 className="text-slate-800 font-display font-bold text-lg">
+              <h2 className="text-slate-100 font-display font-bold text-lg">
                 {editProduct ? "Edit Product" : "Add New Product"}
               </h2>
-              <button onClick={closeModal} className="w-8 h-8 rounded-xl border border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50"><X className="w-4 h-4" /></button>
+              <button onClick={closeModal} className="w-8 h-8 rounded-xl border border-slate-700 flex items-center justify-center text-slate-400 hover:text-slate-400 hover:bg-slate-800"><X className="w-4 h-4" /></button>
             </div>
             <div className="p-6 overflow-y-auto max-h-[70vh] space-y-5">
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-slate-600 text-xs font-semibold uppercase tracking-wider">Brand</label>
+                  <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Brand</label>
                   <input value={formData.brand} onChange={(e) => updateForm("brand", e.target.value)} placeholder="Samsung"
-                    className="border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
+                    className="border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-slate-600 text-xs font-semibold uppercase tracking-wider">Model</label>
+                  <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Model</label>
                   <input value={formData.model} onChange={(e) => updateForm("model", e.target.value)} placeholder="RS68A8820WW"
-                    className="border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
+                    className="border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-slate-600 text-xs font-semibold uppercase tracking-wider">Category</label>
-                  <select value={formData.category} onChange={(e) => updateForm("category", e.target.value)} className="border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 bg-white">
+                  <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Category</label>
+                  <select value={formData.category} onChange={(e) => updateForm("category", e.target.value)} className="border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 bg-slate-900">
                     {CATEGORY_OPTIONS.map((c) => <option key={c} value={c}>{c.replace("-", " ")}</option>)}
                   </select>
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-slate-600 text-xs font-semibold uppercase tracking-wider">Grade</label>
-                  <select value={formData.grade} onChange={(e) => updateForm("grade", e.target.value)} className="border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 bg-white">
+                  <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Grade</label>
+                  <select value={formData.grade} onChange={(e) => updateForm("grade", e.target.value)} className="border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 bg-slate-900">
                     {GRADE_OPTIONS.map((g) => <option key={g}>{g}</option>)}
                   </select>
                 </div>
@@ -628,19 +628,19 @@ export default function ProductsClient() {
               <div className="grid grid-cols-3 gap-4">
                 {[["originalPrice","Original Price (€)"],["salePrice","Sale Price (€)"],["savings","Savings %"]].map(([key, label]) => (
                   <div key={key} className="flex flex-col gap-1.5">
-                    <label className="text-slate-600 text-xs font-semibold uppercase tracking-wider">{label}</label>
+                    <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">{label}</label>
                     <input type="number" value={(formData as Record<string,unknown>)[key] as number || ""} onChange={(e) => updateForm(key as keyof Omit<Product,"id">, Number(e.target.value))}
-                      className="border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
+                      className="border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
                   </div>
                 ))}
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-slate-600 text-xs font-semibold uppercase tracking-wider">Warranty (months)</label>
+                <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Warranty (months)</label>
                 <input type="number" value={formData.warranty || ""} onChange={(e) => updateForm("warranty", Number(e.target.value))} placeholder="12"
-                  className="w-32 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
+                  className="w-32 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
               </div>
               <div className="flex flex-col gap-2">
-                <label className="text-slate-600 text-xs font-semibold uppercase tracking-wider">Product Image</label>
+                <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Product Image</label>
 
                 {/* Drag-drop / click-to-upload zone */}
                 <div
@@ -654,7 +654,7 @@ export default function ProductsClient() {
                   }}
                   onClick={() => modalFileInputRef.current?.click()}
                   className={`relative border-2 border-dashed rounded-2xl p-4 cursor-pointer transition-colors ${
-                    dragOver ? "border-blue-400 bg-blue-50" : "border-slate-200 hover:border-slate-300 bg-slate-50"
+                    dragOver ? "border-blue-400 bg-blue-50" : "border-slate-700 hover:border-slate-300 bg-slate-800"
                   }`}
                 >
                   <input
@@ -670,12 +670,12 @@ export default function ProductsClient() {
                   />
                   {formData.imageUrl ? (
                     <div className="flex items-center gap-4">
-                      <div className="relative w-24 h-24 rounded-xl overflow-hidden bg-white border border-slate-200 shrink-0">
+                      <div className="relative w-24 h-24 rounded-xl overflow-hidden bg-slate-900 border border-slate-700 shrink-0">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={formData.imageUrl} alt="Preview" className="absolute inset-0 w-full h-full object-contain p-2" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-slate-700 text-sm font-semibold truncate">
+                        <p className="text-slate-200 text-sm font-semibold truncate">
                           {formData.imageUrl.startsWith("/uploads/")
                             ? formData.imageUrl.replace("/uploads/", "")
                             : formData.imageUrl}
@@ -700,14 +700,14 @@ export default function ProductsClient() {
                       {uploadingId === "modal" ? (
                         <>
                           <Loader2 className="w-6 h-6 text-blue-500 animate-spin" />
-                          <p className="text-slate-600 text-sm font-medium">Uploading…</p>
+                          <p className="text-slate-400 text-sm font-medium">Uploading…</p>
                         </>
                       ) : (
                         <>
-                          <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center">
+                          <div className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center">
                             <Upload className="w-4 h-4 text-slate-500" />
                           </div>
-                          <p className="text-slate-700 text-sm font-semibold">Drop an image or click to browse</p>
+                          <p className="text-slate-200 text-sm font-semibold">Drop an image or click to browse</p>
                           <p className="text-slate-400 text-xs">PNG, JPG, WebP, GIF up to 5 MB</p>
                         </>
                       )}
@@ -722,43 +722,43 @@ export default function ProductsClient() {
                     value={formData.imageUrl}
                     onChange={(e) => updateForm("imageUrl", e.target.value)}
                     placeholder="https://…"
-                    className="flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-slate-800 text-xs focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400"
+                    className="flex-1 border border-slate-700 rounded-lg px-3 py-1.5 text-slate-100 text-xs focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400"
                   />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 {[["colorFrom","Color From"],["colorTo","Color To"]].map(([key, label]) => (
                   <div key={key} className="flex flex-col gap-1.5">
-                    <label className="text-slate-600 text-xs font-semibold uppercase tracking-wider">{label}</label>
+                    <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">{label}</label>
                     <div className="flex items-center gap-2">
-                      <input type="color" value={(formData as unknown as Record<string,string>)[key]} onChange={(e) => updateForm(key as keyof Omit<Product,"id">, e.target.value)} className="w-9 h-9 rounded-lg border border-slate-200 cursor-pointer" />
+                      <input type="color" value={(formData as unknown as Record<string,string>)[key]} onChange={(e) => updateForm(key as keyof Omit<Product,"id">, e.target.value)} className="w-9 h-9 rounded-lg border border-slate-700 cursor-pointer" />
                       <input value={(formData as unknown as Record<string,string>)[key]} onChange={(e) => updateForm(key as keyof Omit<Product,"id">, e.target.value)}
-                        className="flex-1 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 text-sm font-mono focus:outline-none" />
+                        className="flex-1 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 text-sm font-mono focus:outline-none" />
                     </div>
                   </div>
                 ))}
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-slate-600 text-xs font-semibold uppercase tracking-wider">Description</label>
+                <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Description</label>
                 <textarea value={formData.description} onChange={(e) => updateForm("description", e.target.value)} rows={3} placeholder="Product description…"
-                  className="border border-slate-200 rounded-xl px-4 py-3 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 resize-none" />
+                  className="border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 resize-none" />
               </div>
               <div className="flex flex-col gap-3">
                 <div className="flex items-center justify-between">
-                  <label className="text-slate-600 text-xs font-semibold uppercase tracking-wider">Specifications</label>
+                  <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Specifications</label>
                   <button onClick={addSpec} className="text-xs text-blue-600 font-medium hover:text-blue-700 flex items-center gap-1"><Plus className="w-3 h-3" /> Add Row</button>
                 </div>
                 {formData.specs.map((spec, i) => (
                   <div key={i} className="flex items-center gap-2">
-                    <input value={spec.label} onChange={(e) => updateSpec(i, "label", e.target.value)} placeholder="Label" className="flex-1 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 text-sm focus:outline-none focus:ring-1 focus:ring-gold-400" />
-                    <input value={spec.value} onChange={(e) => updateSpec(i, "value", e.target.value)} placeholder="Value" className="flex-1 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 text-sm focus:outline-none focus:ring-1 focus:ring-gold-400" />
+                    <input value={spec.label} onChange={(e) => updateSpec(i, "label", e.target.value)} placeholder="Label" className="flex-1 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-1 focus:ring-gold-400" />
+                    <input value={spec.value} onChange={(e) => updateSpec(i, "value", e.target.value)} placeholder="Value" className="flex-1 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-1 focus:ring-gold-400" />
                     <button onClick={() => removeSpec(i)} className="p-1.5 text-slate-300 hover:text-red-400 transition-colors"><X className="w-4 h-4" /></button>
                   </div>
                 ))}
               </div>
             </div>
             <div className="flex items-center justify-end gap-3 px-6 py-5 border-t border-slate-100">
-              <button onClick={closeModal} className="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50">Cancel</button>
+              <button onClick={closeModal} className="px-5 py-2.5 rounded-xl border border-slate-700 text-slate-400 text-sm font-medium hover:bg-slate-800">Cancel</button>
               <button onClick={saveProduct} disabled={saving || !formData.brand || !formData.model}
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-bold transition-all disabled:opacity-60"
                 style={{ background: "linear-gradient(135deg, #3A5F8A, #5B82A8)" }}>

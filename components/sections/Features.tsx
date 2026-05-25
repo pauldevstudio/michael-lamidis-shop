@@ -1,16 +1,17 @@
 "use client";
 
 import {
-  Tag, CheckCircle2, Zap, Recycle, Star, HeartHandshake,
+  Tag, CheckCircle2, Zap, Recycle, Star, HeartHandshake, Shield, Truck,
 } from "lucide-react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useLanguage } from "@/lib/i18n-context";
+import { useContent } from "@/lib/content-context";
 import { StaggerChildren, StaggerItem } from "@/components/shared/AnimatedSection";
 import SectionHeader from "@/components/shared/SectionHeader";
 
 const ICONS: Record<string, React.ElementType> = {
-  Tag, CheckCircle2, Zap, Recycle, Star, HeartHandshake,
+  Tag, CheckCircle2, Zap, Recycle, Star, HeartHandshake, Shield, Truck,
 };
 
 const ICON_COLORS = [
@@ -24,10 +25,15 @@ const ICON_COLORS = [
 
 export default function Features() {
   const { t } = useLanguage();
+  const __content = useContent();
+  const __fs = __content?.features;
+  const __fsEyebrow  = __fs?.eyebrow  ?? t.features.eyebrow;
+  const __fsTitle    = __fs?.title    ?? t.features.title;
+  const __fsSubtitle = __fs?.subtitle ?? t.features.subtitle;
+  const __fsItems    = (__fs?.items && __fs.items.length > 0) ? __fs.items : t.features.items;
 
   return (
     <section className="bg-navy-950 noise-overlay section-py relative overflow-hidden">
-      {/* Background elements */}
       <div className="absolute inset-0 dot-grid-bg opacity-100" />
       <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full pointer-events-none"
         style={{ background: "radial-gradient(circle, rgba(30,72,184,0.2) 0%, transparent 70%)" }}
@@ -39,9 +45,9 @@ export default function Features() {
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-14">
           <SectionHeader
-            eyebrow={t.features.eyebrow}
-            title={t.features.title}
-            subtitle={t.features.subtitle}
+            eyebrow={__fsEyebrow}
+            title={__fsTitle}
+            subtitle={__fsSubtitle}
             theme="dark"
             align="left"
             className="lg:max-w-2xl"
@@ -53,7 +59,7 @@ export default function Features() {
         </div>
 
         <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {t.features.items.map(({ icon, title, description }, i) => {
+          {__fsItems.map(({ icon, title, description }, i) => {
             const Icon = ICONS[icon];
             const color = ICON_COLORS[i % ICON_COLORS.length];
             return (

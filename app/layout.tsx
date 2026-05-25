@@ -1,11 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { headers } from "next/headers";
 import "./globals.css";
 import { LanguageProvider } from "@/lib/i18n-context";
 import { CartProvider } from "@/lib/cart-context";
 import { ContentProvider } from "@/lib/content-context";
 import { getSiteContent } from "@/lib/site-content";
-import { SITE_NAME, SITE_DESCRIPTION, SITE_URL, SITE_PHONE, SITE_EMAIL, SITE_ADDRESS } from "@/lib/constants";
+import { SITE_NAME, SITE_DESCRIPTION, SITE_URL, SITE_PHONE, SITE_EMAIL } from "@/lib/constants";
 
 const inter = Inter({
   subsets: ["latin", "greek"],
@@ -25,6 +26,8 @@ export const viewport: Viewport = {
   themeColor: "#030813",
 };
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
@@ -32,36 +35,16 @@ export const metadata: Metadata = {
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
-  keywords: [
-    "open box appliances Cyprus",
-    "certified used appliances",
-    "Samsung LG Bosch open box",
-    "appliance deals Limassol",
-    "home appliances Cyprus",
-    "used appliances Limassol",
-    "μεταχειρισμένες συσκευές Κύπρος",
-    "open box ψυγεία πλυντήρια",
-    "Michael Lamidis",
-    "ηλεκτρικές συσκευές Λεμεσός",
-  ],
   authors: [{ name: "Michael Lamidis" }],
   creator: "Michael Lamidis",
   openGraph: {
     type: "website",
     locale: "en_US",
-    alternateLocale: "el_GR",
     url: SITE_URL,
     siteName: SITE_NAME,
     title: `${SITE_NAME} | Premium Open Box Appliances`,
     description: SITE_DESCRIPTION,
-    images: [
-      {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: `${SITE_NAME} — Open Box Appliances Cyprus`,
-      },
-    ],
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: SITE_NAME }],
   },
   twitter: {
     card: "summary_large_image",
@@ -74,13 +57,8 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large" },
   },
-  icons: {
-    icon: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
-  },
 };
 
-// JSON-LD structured data — LocalBusiness + WebSite
 const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
@@ -97,39 +75,8 @@ const jsonLd = {
         "streetAddress": "123 Makarios Avenue",
         "addressLocality": "Limassol",
         "addressCountry": "CY",
-        "postalCode": "3025",
       },
-      "geo": {
-        "@type": "GeoCoordinates",
-        "latitude": 34.6823,
-        "longitude": 33.0464,
-      },
-      "openingHoursSpecification": [
-        {
-          "@type": "OpeningHoursSpecification",
-          "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
-          "opens": "09:00",
-          "closes": "20:00",
-        },
-      ],
-      "priceRange": "€€",
-      "currenciesAccepted": "EUR",
-      "paymentAccepted": "Cash, Credit Card, Bank Transfer",
-      "areaServed": {
-        "@type": "Country",
-        "name": "Cyprus",
-      },
-      "sameAs": [
-        "https://facebook.com/michaellamidisshop",
-        "https://instagram.com/michaellamidisshop",
-        "https://youtube.com/@michaellamidis",
-      ],
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "4.9",
-        "reviewCount": "347",
-        "bestRating": "5",
-      },
+      "areaServed": { "@type": "Country", "name": "Cyprus" },
     },
     {
       "@type": "WebSite",
@@ -137,15 +84,6 @@ const jsonLd = {
       "url": SITE_URL,
       "name": SITE_NAME,
       "description": SITE_DESCRIPTION,
-      "publisher": { "@id": `${SITE_URL}/#business` },
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": {
-          "@type": "EntryPoint",
-          "urlTemplate": `${SITE_URL}/products?q={search_term_string}`,
-        },
-        "query-input": "required name=search_term_string",
-      },
     },
   ],
 };
@@ -155,11 +93,26 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Read content server-side so every page has access via ContentContext
-  const content = await getSiteContent();
+  // Detect if we're on the Payload admin or API routes.
+  // middleware.ts forwards x-pathname. If we're in /cms/* or /api/payload/*,
+  // render a bare-bones shell so Payload's own layout owns the page entirely.
+  const h = await headers();
+  const pathname = h.get("x-pathname") ?? "";
+  const isPayload =
+    pathname.startsWith("/cms") || pathname.startsWith("/api/payload");
 
+  if (isPayload) {
+    return (
+      <html lang="en">
+        <body>{children}</body>
+      </html>
+    );
+  }
+
+  // Public site: load CMS content + wrap in providers, fonts, JSON-LD.
+  const content = await getSiteContent();
   return (
-    <html lang="en" className={`${inter.variable} ${plusJakarta.variable}`}>
+    <html lang="en" data-scroll-behavior="smooth" className={`${inter.variable} ${plusJakarta.variable}`}>
       <head>
         <script
           type="application/ld+json"
@@ -169,9 +122,7 @@ export default async function RootLayout({
       <body className="font-sans antialiased">
         <LanguageProvider>
           <ContentProvider content={content}>
-            <CartProvider>
-              {children}
-            </CartProvider>
+            <CartProvider>{children}</CartProvider>
           </ContentProvider>
         </LanguageProvider>
       </body>

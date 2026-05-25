@@ -64,7 +64,7 @@ export default function Sidebar() {
       {/* Logo */}
       <div className={cn("flex items-center gap-3 p-5 pb-4 border-b border-white/[0.06]", collapsed && "justify-center px-3")}>
         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-gold-500 to-gold-400 flex items-center justify-center shrink-0 shadow-lg shadow-gold-500/20">
-          <span className="text-navy-950 font-black text-xs font-display">ML</span>
+          <span className="text-slate-100 font-black text-xs font-display">ML</span>
         </div>
         {!collapsed && (
           <div className="overflow-hidden">
@@ -87,7 +87,7 @@ export default function Sidebar() {
                   "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 group relative",
                   active
                     ? "bg-gold-500/15 text-white"
-                    : "text-white/45 hover:text-white/80 hover:bg-white/[0.05]",
+                    : "text-white/45 hover:text-white/80 hover:bg-slate-900/[0.05]",
                   collapsed && "justify-center px-2"
                 )}
                 title={collapsed ? label : undefined}
@@ -112,7 +112,7 @@ export default function Sidebar() {
             target="_blank"
             rel="noopener noreferrer"
             className={cn(
-              "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white/45 hover:text-white/80 hover:bg-white/[0.05] transition-all duration-200 group",
+              "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white/45 hover:text-white/80 hover:bg-slate-900/[0.05] transition-all duration-200 group",
               collapsed && "justify-center px-2"
             )}
             title={collapsed ? "View Site" : undefined}
@@ -139,7 +139,7 @@ export default function Sidebar() {
         </button>
 
         {!collapsed && (
-          <div className="mt-3 px-3 py-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+          <div className="mt-3 px-3 py-3 rounded-xl bg-slate-900/[0.03] border border-white/[0.06]">
             <p className="text-white/50 text-xs font-medium">Signed in as</p>
             <p className="text-white/80 text-xs font-bold mt-0.5">Administrator</p>
           </div>

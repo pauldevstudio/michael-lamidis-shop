@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -10,7 +11,14 @@ import { useContent } from "@/lib/content-context";
 import LanguageSwitcher from "@/components/shared/LanguageSwitcher";
 import { cn } from "@/lib/utils";
 import { SITE_PHONE } from "@/lib/constants";
-import AnnouncementBar from "@/components/shared/AnnouncementBar";
+
+// framer-motion's AnimatePresence with initial={...} emits inline styles on
+// mount that diverge from SSR HTML and trigger React hydration mismatches.
+// Loading the bar client-only sidesteps SSR entirely.
+const AnnouncementBar = dynamic(
+  () => import("@/components/shared/AnnouncementBar"),
+  { ssr: false }
+);
 
 const navLinks = [
   { href: "/", key: "home" as const },
@@ -27,6 +35,12 @@ export default function Navbar() {
 
   const { t } = useLanguage();
   const content = useContent();
+  const __nav = content?.navigation;
+  const __navItems = (__nav?.items && __nav.items.length > 0)
+    ? __nav.items.map((it) => ({ href: it.href, label: it.label, key: it.href as "/" }))
+    : navLinks.map((l) => ({ href: l.href, label: t.nav[l.key], key: l.href }));
+  const __ctaLabel = __nav?.getQuoteLabel ?? t.nav.getQuote;
+  const __ctaHref  = __nav?.getQuoteHref  ?? "/contact";
   const phone = content?.business?.phone ?? SITE_PHONE;
   const pathname = usePathname();
 
@@ -69,7 +83,7 @@ export default function Navbar() {
             </Link>
 
             <div className="hidden lg:flex items-center gap-1 mx-auto">
-              {navLinks.map((link) => {
+              {__navItems.map((link) => {
                 const active =
                   link.href === "/"
                     ? pathname === "/"
@@ -80,12 +94,10 @@ export default function Navbar() {
                     href={link.href}
                     className={cn(
                       "px-3 py-2 text-sm font-medium tracking-wide transition-colors rounded-md",
-                      active
-                        ? "text-gold-400"
-                        : "text-white/80 hover:text-white"
+                      active ? "text-gold-400" : "text-white/80 hover:text-white"
                     )}
                   >
-                    {t.nav[link.key]}
+                    {link.label}
                   </Link>
                 );
               })}
@@ -113,10 +125,10 @@ export default function Navbar() {
               </a>
 
               <Link
-                href="/contact"
+                href={__ctaHref}
                 className="hidden sm:inline-flex items-center px-4 py-2 bg-gold-500 hover:bg-gold-400 text-navy-950 rounded-lg text-sm font-semibold transition-colors"
               >
-                {t.nav.getQuote}
+                {__ctaLabel}
               </Link>
 
               <button
@@ -126,11 +138,7 @@ export default function Navbar() {
                 aria-label={mobileOpen ? "Close menu" : "Open menu"}
                 aria-expanded={mobileOpen}
               >
-                {mobileOpen ? (
-                  <X className="w-6 h-6" />
-                ) : (
-                  <Menu className="w-6 h-6" />
-                )}
+                {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
             </div>
           </div>
@@ -147,7 +155,7 @@ export default function Navbar() {
             className="fixed inset-0 z-40 lg:hidden bg-navy-950/98 backdrop-blur-xl pt-24 px-6 overflow-y-auto"
           >
             <div className="flex flex-col gap-1">
-              {navLinks.map((link) => {
+              {__navItems.map((link) => {
                 const active =
                   link.href === "/"
                     ? pathname === "/"
@@ -158,12 +166,10 @@ export default function Navbar() {
                     href={link.href}
                     className={cn(
                       "px-4 py-3 text-lg font-medium rounded-lg transition-colors",
-                      active
-                        ? "text-gold-400 bg-white/5"
-                        : "text-white/90 hover:bg-white/5"
+                      active ? "text-gold-400 bg-white/5" : "text-white/90 hover:bg-white/5"
                     )}
                   >
-                    {t.nav[link.key]}
+                    {link.label}
                   </Link>
                 );
               })}
@@ -183,7 +189,7 @@ export default function Navbar() {
                 href="/contact"
                 className="mt-6 inline-flex items-center justify-center px-5 py-3 bg-gold-500 hover:bg-gold-400 text-navy-950 rounded-lg font-semibold transition-colors"
               >
-                {t.nav.getQuote}
+                {__ctaLabel}
               </Link>
 
               <Link
