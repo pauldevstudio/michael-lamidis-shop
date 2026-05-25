@@ -10,7 +10,7 @@ import {
   Package, Zap,
 } from "lucide-react";
 import type { Product } from "@/lib/constants";
-import { FEATURED_PRODUCTS } from "@/lib/constants";
+import { FEATURED_PRODUCTS, SITE_PHONE } from "@/lib/constants";
 import { useCart } from "@/lib/cart-context";
 import AnimatedSection, { StaggerChildren, StaggerItem } from "@/components/shared/AnimatedSection";
 import { cn } from "@/lib/utils";
@@ -679,9 +679,9 @@ export default function ProductDetail({ product }: { product: Product }) {
                 <Mail className="w-4 h-4" />
                 Send an Enquiry
               </Link>
-              <a href="tel:+35725123456" className="btn-ghost-white text-sm">
+              <a href={`tel:${SITE_PHONE.replace(/\s+/g, "")}`} className="btn-ghost-white text-sm">
                 <Phone className="w-4 h-4" />
-                +357 25 123 456
+                {SITE_PHONE}
               </a>
             </div>
           </AnimatedSection>

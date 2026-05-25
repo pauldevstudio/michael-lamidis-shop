@@ -6,7 +6,8 @@ import { LanguageProvider } from "@/lib/i18n-context";
 import { CartProvider } from "@/lib/cart-context";
 import { ContentProvider } from "@/lib/content-context";
 import { getSiteContent } from "@/lib/site-content";
-import { SITE_NAME, SITE_DESCRIPTION, SITE_URL, SITE_PHONE, SITE_EMAIL } from "@/lib/constants";
+import { SITE_NAME, SITE_DESCRIPTION, SITE_URL, SITE_PHONE, SITE_EMAIL, SITE_WHATSAPP } from "@/lib/constants";
+import WhatsAppButton from "@/components/shared/WhatsAppButton";
 
 const inter = Inter({
   subsets: ["latin", "greek"],
@@ -72,7 +73,7 @@ const jsonLd = {
       "email": SITE_EMAIL,
       "address": {
         "@type": "PostalAddress",
-        "streetAddress": "123 Makarios Avenue",
+        "streetAddress": "Al Hassa Village",
         "addressLocality": "Limassol",
         "addressCountry": "CY",
       },
@@ -125,6 +126,7 @@ export default async function RootLayout({
             <CartProvider>{children}</CartProvider>
           </ContentProvider>
         </LanguageProvider>
+        <WhatsAppButton phone={SITE_WHATSAPP} />
       </body>
     </html>
   );

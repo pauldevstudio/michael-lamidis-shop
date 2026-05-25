@@ -3,9 +3,10 @@ export const SITE_TAGLINE = "Open Box. Open Savings.";
 export const SITE_DESCRIPTION =
   "Cyprus's premier destination for certified open box appliances. Premium brands at 30–70% off retail. Tested, warranted, delivered.";
 export const SITE_URL = "https://michaellamidis.com.cy";
-export const SITE_EMAIL = "info@michaellamidis.com.cy";
-export const SITE_PHONE = "+357 25 123 456";
-export const SITE_ADDRESS = "123 Makarios Avenue, Limassol, Cyprus 3025";
+export const SITE_EMAIL = "lamidismichaelshop@gmail.com";
+export const SITE_PHONE = "+357 97 755914";
+export const SITE_WHATSAPP = "+357 99 911871";
+export const SITE_ADDRESS = "Al Hassa Village, Limassol, Cyprus";
 export const SITE_HOURS = "Mon–Sat: 09:00–20:00";
 
 export const NAV_LINKS = [
