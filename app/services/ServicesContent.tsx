@@ -37,7 +37,7 @@ export default function ServicesContent() {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gold-500/30 bg-gold-500/10 text-gold-400 text-xs font-bold tracking-widest uppercase mb-6"
           >
             <span className="w-1.5 h-1.5 rounded-full bg-gold-400" />
-            Our Services
+            {t.pages.services.badge}
           </motion.span>
           <motion.h1
             initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
@@ -45,15 +45,15 @@ export default function ServicesContent() {
             className="font-display font-black text-white leading-tight tracking-tighter max-w-3xl"
             style={{ fontFamily: "var(--font-jakarta)", fontSize: "clamp(2.2rem, 5vw, 3.75rem)" }}
           >
-            Everything You Need,{" "}
-            <span className="text-gradient-gold">All in One Place</span>
+            {t.pages.services.titleLine1}{" "}
+            <span className="text-gradient-gold">{t.pages.services.titleLine2}</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.18, ease: [0.16, 1, 0.3, 1] }}
             className="text-white/50 text-lg leading-relaxed max-w-xl mt-4"
           >
-            From sourcing to installation, we provide a complete premium appliance experience.
+            {t.pages.services.subtitle}
           </motion.p>
         </div>
       </section>
@@ -90,7 +90,7 @@ export default function ServicesContent() {
                     </div>
                     <p className="text-navy-900/55 text-base leading-relaxed">{description}</p>
                     <ul className="flex flex-col gap-2">
-                      {["Quick turnaround", "Certified professionals", "Satisfaction guaranteed"].map((feature) => (
+                      {t.pages.services.features.map((feature) => (
                         <li key={feature} className="flex items-center gap-2 text-sm text-navy-900/55">
                           <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />
                           {feature}
@@ -98,7 +98,7 @@ export default function ServicesContent() {
                       ))}
                     </ul>
                     <Link href="/contact" className="btn-ghost-dark text-sm w-fit mt-auto">
-                      Book This Service <ArrowRight className="w-4 h-4" />
+                      {t.pages.services.bookCta} <ArrowRight className="w-4 h-4" />
                     </Link>
                   </div>
                 </StaggerItem>

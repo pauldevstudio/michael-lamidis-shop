@@ -72,7 +72,7 @@ export default function ContactSection() {
                   <div className="w-12 h-12 rounded-full bg-navy-950 flex items-center justify-center">
                     <MapPin className="w-6 h-6 text-gold-400" />
                   </div>
-                  <p className="text-navy-400 text-sm font-medium">Limassol Showroom</p>
+                  <p className="text-navy-400 text-sm font-medium">{t.pages.contact.showroomLabel}</p>
                   <a
                     href={`https://maps.google.com/?q=${encodeURIComponent(__biAddress)}`}
                     target="_blank"
@@ -132,7 +132,7 @@ export default function ContactSection() {
                       onClick={() => { setStatus("idle"); setForm({ name: "", email: "", subject: "", message: "" }); }}
                       className="btn-ghost-dark text-sm"
                     >
-                      Send Another
+                      {t.pages.contact.sendAnother}
                     </button>
                   </motion.div>
                 ) : (
@@ -163,7 +163,7 @@ export default function ContactSection() {
                       disabled={status === "sending"}
                       className="btn-primary w-full justify-center text-sm mt-1"
                     >
-                      {status === "sending" ? "Sending..." : f.submit}
+                      {status === "sending" ? t.pages.contact.sending : f.submit}
                       <Send className="w-4 h-4" />
                     </button>
                   </motion.form>

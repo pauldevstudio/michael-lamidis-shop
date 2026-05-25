@@ -2,13 +2,15 @@
 
 import { motion } from "framer-motion";
 import { useContent } from "@/lib/content-context";
+import { useLanguage } from "@/lib/i18n-context";
 
 export default function ContactHero() {
+  const { t, pick } = useLanguage();
   const __content = useContent();
   const __c = __content?.contact;
-  const __badge       = __c?.badge       ?? "Contact";
-  const __headline    = __c?.headline    ?? "We're Here to Help You Save";
-  const __subheadline = __c?.subheadline ?? "Visit our Limassol showroom or contact us online. Our specialists respond within 2 hours.";
+  const __badge       = pick(__c?.badge,       t.pages.contact.defaultBadge)       ?? t.pages.contact.defaultBadge;
+  const __headline    = pick(__c?.headline,    t.pages.contact.defaultHeadline)    ?? t.pages.contact.defaultHeadline;
+  const __subheadline = pick(__c?.subheadline, t.pages.contact.defaultSubheadline) ?? t.pages.contact.defaultSubheadline;
 
   return (
     <section className="relative min-h-[45vh] flex items-end bg-navy-950 noise-overlay overflow-hidden pt-28 pb-16">

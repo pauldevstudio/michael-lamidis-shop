@@ -49,3 +49,7 @@ Thumbs.db
 /v2-rebuild/.next/
 /v2-rebuild/node_modules/
 /v2-rebuild/.env*
+
+# Translation script backups
+*.bak
+*.tmp

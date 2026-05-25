@@ -25,7 +25,6 @@ const navLinks = [
   { href: "/products", key: "products" as const },
   { href: "/about", key: "about" as const },
   { href: "/testimonials", key: "testimonials" as const },
-  { href: "/blog", key: "blog" as const },
   { href: "/contact", key: "contact" as const },
 ];
 

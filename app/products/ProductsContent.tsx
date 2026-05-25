@@ -12,25 +12,20 @@ import AnimatedSection from "@/components/shared/AnimatedSection";
 import { FEATURED_PRODUCTS, PRODUCT_CATEGORIES } from "@/lib/constants";
 import { useCart } from "@/lib/cart-context";
 import { useContent } from "@/lib/content-context";
+import { useLanguage } from "@/lib/i18n-context";
 import { cn } from "@/lib/utils";
 
-/* ── Category order for filters ───────────────────────── */
-const FILTERS = [
-  { id: "all",              label: "All Products" },
-  { id: "refrigerators",   label: "Refrigerators" },
-  { id: "washing-machines",label: "Washing Machines" },
-  { id: "ovens",           label: "Ovens" },
-  { id: "dishwashers",     label: "Dishwashers" },
-  { id: "air-conditioners",label: "Air Conditioners" },
-  { id: "tvs",             label: "Smart TVs" },
-  { id: "small-appliances",label: "Small Appliances" },
-];
-
-const SORT_OPTIONS = [
-  { value: "savings",    label: "Best Deals" },
-  { value: "price-asc", label: "Price: Low → High" },
-  { value: "price-desc",label: "Price: High → Low" },
-];
+/* ── Filter ids (labels come from translations) ───────── */
+const FILTER_IDS = [
+  "all",
+  "refrigerators",
+  "washing-machines",
+  "ovens",
+  "dishwashers",
+  "air-conditioners",
+  "tvs",
+  "small-appliances",
+] as const;
 
 type SortKey = "savings" | "price-asc" | "price-desc";
 
@@ -38,6 +33,7 @@ type SortKey = "savings" | "price-asc" | "price-desc";
 function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
   const cat = PRODUCT_CATEGORIES.find((c) => c.id === product.category);
   const { addToCart } = useCart();
+  const { t } = useLanguage();
   const [added, setAdded] = useState(false);
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -86,7 +82,7 @@ function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
 
         {/* Grade badge */}
         <div className="absolute top-3 right-3 badge-blue text-[10px] font-bold">
-          Grade {product.grade}
+          {t.pages.products.gradeLabel} {product.grade}
         </div>
 
         {/* Quick add-to-cart circle button (appears on hover) */}
@@ -163,11 +159,11 @@ function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
         <div className="flex items-center gap-3 text-[11px] font-medium text-navy-400">
           <div className="flex items-center gap-1">
             <Shield className="w-3 h-3 text-emerald-500" />
-            <span>{product.warranty}mo Warranty</span>
+            <span>{product.warranty}{t.pages.products.warrantyMo}</span>
           </div>
           <div className="flex items-center gap-1">
             <Zap className="w-3 h-3 text-gold-400" />
-            <span>In Stock</span>
+            <span>{t.pages.products.inStock}</span>
           </div>
         </div>
 
@@ -177,7 +173,7 @@ function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
             href={`/products/${product.id}`}
             className="btn-gold text-xs !px-4 !py-2.5 flex-1 justify-center"
           >
-            View Details
+            {t.pages.products.viewDetails}
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
           <button
@@ -210,6 +206,7 @@ function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
 
 /* ══════════════════════════════════════════════════════ */
 export default function ProductsContent() {
+  const { t } = useLanguage();
   const [activeCategory, setActiveCategory] = useState("all");
   const [sortBy, setSortBy] = useState<SortKey>("savings");
   const [sortOpen, setSortOpen] = useState(false);
@@ -217,6 +214,17 @@ export default function ProductsContent() {
   // Prefer admin-edited products from the CMS; fall back to constants seed.
   const __content = useContent();
   const __products = __content?.products?.length ? __content.products : FEATURED_PRODUCTS;
+
+  const FILTERS = FILTER_IDS.map((id) => ({
+    id,
+    label: t.pages.products.filters[id as keyof typeof t.pages.products.filters],
+  }));
+
+  const SORT_OPTIONS: { value: SortKey; label: string }[] = [
+    { value: "savings",    label: t.pages.products.sortBestDeals },
+    { value: "price-asc",  label: t.pages.products.sortPriceAsc },
+    { value: "price-desc", label: t.pages.products.sortPriceDesc },
+  ];
 
   const filtered = useMemo(() => {
     const list =
@@ -229,9 +237,9 @@ export default function ProductsContent() {
       case "price-desc": return list.sort((a, b) => b.salePrice - a.salePrice);
       default:           return list.sort((a, b) => b.savings - a.savings);
     }
-  }, [activeCategory, sortBy]);
+  }, [activeCategory, sortBy, __products]);
 
-  const activeSortLabel = SORT_OPTIONS.find((o) => o.value === sortBy)?.label ?? "Best Deals";
+  const activeSortLabel = SORT_OPTIONS.find((o) => o.value === sortBy)?.label ?? t.pages.products.sortBestDeals;
 
   return (
     <>
@@ -260,7 +268,7 @@ export default function ProductsContent() {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gold-500/35 bg-gold-500/12 text-gold-300 text-xs font-bold tracking-[0.18em] uppercase mb-6"
           >
             <Package className="w-3 h-3" />
-            Certified Inventory
+            {t.pages.products.badge}
           </motion.span>
 
           <motion.h1
@@ -270,8 +278,8 @@ export default function ProductsContent() {
             className="font-display font-black text-white leading-[1.05] tracking-tighter max-w-3xl"
             style={{ fontFamily: "var(--font-jakarta)", fontSize: "clamp(2.2rem, 5vw, 3.75rem)" }}
           >
-            Our Products —{" "}
-            <span className="text-gradient-gold">All In One Place</span>
+            {t.pages.products.titleLine1}{" "}
+            <span className="text-gradient-gold">{t.pages.products.titleLine2}</span>
           </motion.h1>
 
           <motion.p
@@ -280,8 +288,7 @@ export default function ProductsContent() {
             transition={{ delay: 0.18 }}
             className="text-white/50 text-lg mt-4 max-w-lg leading-relaxed"
           >
-            Every appliance certified, graded, and backed by a 12-month warranty.
-            Up to 70% off retail — ready to ship.
+            {t.pages.products.subtitle}
           </motion.p>
 
           {/* Mini stats */}
@@ -292,9 +299,9 @@ export default function ProductsContent() {
             className="flex flex-wrap items-center gap-x-8 gap-y-3 mt-8"
           >
             {[
-              { value: "500+", label: "Products in stock" },
-              { value: "50+",  label: "Premium brands" },
-              { value: "70%",  label: "Max savings" },
+              { value: "500+", label: t.pages.products.statProductsInStock },
+              { value: "50+",  label: t.pages.products.statPremiumBrands },
+              { value: "70%",  label: t.pages.products.statMaxSavings },
             ].map(({ value, label }) => (
               <div key={label} className="flex flex-col">
                 <span
@@ -393,12 +400,12 @@ export default function ProductsContent() {
           {/* Count */}
           <div className="flex items-center justify-between mb-8">
             <p className="text-navy-400 text-sm font-medium">
-              Showing{" "}
+              {t.pages.products.showing}{" "}
               <span className="text-navy-950 font-semibold">{filtered.length}</span>{" "}
-              {filtered.length === 1 ? "product" : "products"}
+              {filtered.length === 1 ? t.pages.products.productSingular : t.pages.products.productPlural}
               {activeCategory !== "all" && (
                 <>
-                  {" "}in{" "}
+                  {" "}{t.pages.products.inCategory}{" "}
                   <span className="text-gold-500 font-semibold capitalize">
                     {FILTERS.find((f) => f.id === activeCategory)?.label}
                   </span>
@@ -407,7 +414,7 @@ export default function ProductsContent() {
             </p>
             <div className="flex items-center gap-1.5 text-xs text-navy-300 font-medium">
               <LayoutGrid className="w-3.5 h-3.5" />
-              Grid view
+              {t.pages.products.gridView}
             </div>
           </div>
 
@@ -424,12 +431,12 @@ export default function ProductsContent() {
           {filtered.length === 0 && (
             <div className="text-center py-24 text-navy-300">
               <Package className="w-12 h-12 mx-auto mb-4 opacity-30" />
-              <p className="text-navy-400 font-medium">No products in this category right now.</p>
+              <p className="text-navy-400 font-medium">{t.pages.products.emptyMessage}</p>
               <button
                 onClick={() => setActiveCategory("all")}
                 className="btn-gold text-sm mt-6"
               >
-                View All Products
+                {t.pages.products.viewAll}
               </button>
             </div>
           )}
@@ -449,19 +456,18 @@ export default function ProductsContent() {
               className="text-white font-display font-black text-3xl sm:text-4xl mb-4"
               style={{ fontFamily: "var(--font-jakarta)" }}
             >
-              Can&apos;t Find What You&apos;re Looking For?
+              {t.pages.products.ctaTitle}
             </h2>
             <p className="text-white/50 text-base mb-8 max-w-lg mx-auto leading-relaxed">
-              Our inventory updates weekly. Contact us with your requirements and
-              we&apos;ll source the perfect appliance for you.
+              {t.pages.products.ctaSubtitle}
             </p>
             <div className="flex items-center justify-center gap-4 flex-wrap">
               <Link href="/contact" className="btn-gold text-sm">
-                Send an Enquiry
+                {t.pages.products.ctaEnquiry}
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link href="/about" className="btn-ghost-white text-sm">
-                About Our Store
+                {t.pages.products.ctaAbout}
               </Link>
             </div>
           </AnimatedSection>

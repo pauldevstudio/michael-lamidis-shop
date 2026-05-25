@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "payload": "payload",
-    "payload:generate": "payload generate:types && payload generate:importmap"
+    "payload:generate": "payload generate:types && payload generate:importmap",
+    "translate": "node scripts/translate-to-greek.mjs"
   },
   "dependencies": {
     "@payloadcms/db-mongodb": "^3.84.1",

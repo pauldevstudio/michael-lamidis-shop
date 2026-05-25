@@ -36,7 +36,7 @@ export default function TestimonialsContent() {
             transition={{ duration: 0.6 }}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gold-500/30 bg-gold-500/10 text-gold-400 text-xs font-bold tracking-widest uppercase mb-6"
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-gold-400" /> Real Stories
+            <span className="w-1.5 h-1.5 rounded-full bg-gold-400" /> {t.pages.testimonials.badge}
           </motion.span>
           <motion.h1
             initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
@@ -44,15 +44,15 @@ export default function TestimonialsContent() {
             className="font-display font-black text-white leading-tight tracking-tighter max-w-3xl"
             style={{ fontFamily: "var(--font-jakarta)", fontSize: "clamp(2.2rem, 5vw, 3.75rem)" }}
           >
-            Thousands of Families{" "}
-            <span className="text-gradient-gold">Trust Lamidis</span>
+            {t.pages.testimonials.titleLine1}{" "}
+            <span className="text-gradient-gold">{t.pages.testimonials.titleLine2}</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.18 }}
             className="text-white/50 text-lg leading-relaxed max-w-xl mt-4"
           >
-            Real reviews from real customers who saved big without compromising quality.
+            {t.pages.testimonials.subtitle}
           </motion.p>
         </div>
       </section>
@@ -101,9 +101,9 @@ export default function TestimonialsContent() {
 
           {/* CTA */}
           <div className="mt-14 text-center flex flex-col items-center gap-4">
-            <p className="text-navy-900/50 text-sm">Join thousands of satisfied customers across Cyprus.</p>
+            <p className="text-navy-900/50 text-sm">{t.pages.testimonials.ctaText}</p>
             <Link href="/contact" className="btn-primary text-sm">
-              Get Your Free Quote <ArrowRight className="w-4 h-4" />
+              {t.pages.testimonials.ctaBtn} <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>
