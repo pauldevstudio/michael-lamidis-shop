@@ -21,11 +21,13 @@ export default function AnnouncementBar({ message, ctaLabel, ctaHref = "/product
   // Defer mounting until the client.
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
-  if (!mounted) return null;
 
   // CMS overlay: prefer Payload Announcement Bar if populated.
+  // (Hooks must run unconditionally — placed before any early return.)
   const __content = useContent();
   const __ann = __content?.announcement;
+
+  if (!mounted) return null;
   if (__ann && __ann.enabled === false) return null;
 
   const resolvedMessage =
