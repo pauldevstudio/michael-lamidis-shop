@@ -1,6 +1,5 @@
 import fs from "fs";
 import path from "path";
-import { unstable_cache } from "next/cache";
 import {
   SITE_NAME, SITE_TAGLINE, SITE_DESCRIPTION,
   SITE_PHONE, SITE_EMAIL, SITE_ADDRESS, SITE_HOURS,
@@ -791,15 +790,14 @@ async function _getSiteContent(): Promise<SiteContent> {
 }
 
 /**
- * Public, cached wrapper. Subsequent calls within 30s return the cached
- * result instead of running the 17 Payload queries again. Admin save
- * handlers should call revalidateTag(SITE_CONTENT_TAG) to invalidate.
+ * Public wrapper. Was previously unstable_cache'd with revalidateTag-based
+ * invalidation, but revalidateTag wasn't actually busting the entry in this
+ * setup — admin saves looked successful but reads kept returning stale data.
+ * Uncached for now; correctness over the ~500ms saved per call. Pages that
+ * need the result still get their own ISR cache via revalidate at page level,
+ * and admin save handlers flush those via revalidatePath.
  */
-export const getSiteContent = unstable_cache(
-  _getSiteContent,
-  ["site-content-v1"],
-  { revalidate: 30, tags: [SITE_CONTENT_TAG] }
-);
+export const getSiteContent = _getSiteContent;
 
 export { SITE_CONTENT_TAG };
 
