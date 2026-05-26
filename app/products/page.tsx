@@ -5,8 +5,11 @@ import ScrollProgress from "@/components/shared/ScrollProgress";
 import ProductsContent from "./ProductsContent";
 import { getSiteContent } from "@/lib/site-content";
 
-// Always read fresh products from MongoDB so admin edits show on the live site.
-export const dynamic = "force-dynamic";
+// Cache the rendered page for 30s. The admin's PUT /api/admin/products handler
+// calls revalidatePath("/", "layout") after each save, so edits still appear
+// immediately — but cart-icon / Shop Now navigations no longer wait for a
+// MongoDB roundtrip on every hit.
+export const revalidate = 30;
 
 export const metadata: Metadata = {
   title: "Products — Michael Lamidis | Certified Open Box Appliances",

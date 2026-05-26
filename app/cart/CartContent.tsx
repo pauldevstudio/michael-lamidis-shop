@@ -2,26 +2,16 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, ArrowLeft } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
 import { formatPrice } from "@/lib/utils";
 
 export default function CartContent() {
   const { items, updateQuantity, removeFromCart, totalItems, totalPrice } = useCart();
-  const [mounted, setMounted] = useState(false);
 
-  // Avoid SSR/hydration mismatch — cart is localStorage-backed.
-  useEffect(() => setMounted(true), []);
-
-  if (!mounted) {
-    return (
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
-        <div className="h-72 rounded-2xl bg-navy-50 animate-pulse" />
-      </div>
-    );
-  }
-
+  // The cart is localStorage-backed; on first paint items is [] until the
+  // CartProvider's effect rehydrates. We just render the empty state — items
+  // will appear within a frame, which is faster than showing a pulse skeleton.
   if (items.length === 0) {
     return (
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl text-center py-12">
