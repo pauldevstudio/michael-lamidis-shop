@@ -402,12 +402,12 @@ export default function ProductDetail({ product }: { product: Product }) {
 
               {/* Inquiry buttons */}
               <div className="flex flex-col sm:flex-row gap-3">
-                <Link href="/contact" className="btn-gold text-sm flex-1 justify-center !bg-transparent !text-gold-500 !border-gold-300 hover:!bg-gold-50 border rounded-xl flex items-center gap-2 px-5 py-2.5 font-bold transition-all">
+                <Link href="/contact" className="btn-gold text-sm flex-1 justify-center">
                   <Mail className="w-4 h-4" />
                   Send an Enquiry
                 </Link>
                 <a
-                  href="tel:+30210123456"
+                  href={`tel:${SITE_PHONE.replace(/\s+/g, "")}`}
                   className="btn-ghost-dark text-sm flex-1 justify-center"
                 >
                   <Phone className="w-4 h-4" />
