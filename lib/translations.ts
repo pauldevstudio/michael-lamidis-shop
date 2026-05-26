@@ -3,7 +3,7 @@ export type Language = "en" | "gr";
 const en = {
   nav: {
     home: "Home",
-    products: "Shop",
+    products: "Products",
     about: "About",
     services: "Services",
     testimonials: "Testimonials",
