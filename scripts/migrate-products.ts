@@ -11,7 +11,7 @@ import path from "node:path";
 async function main() {
   // Dynamic import keeps the (async) payload.config out of the static
   // module graph so npx payload run's CJS bridge doesn't choke on it.
-  const configModule = await import("../payload.config.js");
+  const configModule = await import("../payload.config.ts");
   const config = configModule.default;
 
   const dataPath = path.join(process.cwd(), "data", "site-content.json");

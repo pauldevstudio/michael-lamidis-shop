@@ -53,3 +53,5 @@ Thumbs.db
 # Translation script backups
 *.bak
 *.tmp
+
+.vercel

@@ -4,10 +4,11 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  Plus, Pencil, Trash2, Search, X, Save, RefreshCw, CheckCircle, AlertCircle, Package,
-  Eye, Star, Check, Upload, ImagePlus, Loader2,
+  Plus, Pencil, Trash2, Search, X, RefreshCw, CheckCircle, AlertCircle, Package,
+  Eye, Star, Check, ImagePlus, Loader2,
 } from "lucide-react";
 import AdminHeader from "@/components/admin/AdminHeader";
+import EditProductModal from "./EditProductModal";
 import type { Product } from "@/lib/constants";
 
 type Toast = { type: "success" | "error"; msg: string } | null;
@@ -29,29 +30,19 @@ const DEFAULT_CATEGORIES: CategoryDef[] = [
   { id: "small-appliances", label: "Small Appliances" },
 ];
 const CATEGORY_LABELS_KEY = "ml-admin-category-labels";
-const EMPTY_PRODUCT: Omit<Product, "id"> = {
-  brand: "", model: "", category: "refrigerators", originalPrice: 0, salePrice: 0, savings: 0,
-  grade: "A", warranty: 12, icon: "Package", colorFrom: "#3A5F8A", colorTo: "#5B82A8",
-  imageUrl: "", description: "", specs: [{ label: "", value: "" }],
-};
-
 export default function ProductsClient() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<Toast>(null);
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [editProduct, setEditProduct] = useState<Product | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [formData, setFormData] = useState<Omit<Product, "id">>(EMPTY_PRODUCT);
   const [featured, setFeatured] = useState<Set<string>>(new Set());
   const [editingPrice, setEditingPrice] = useState<string | null>(null);
   const [priceDraft, setPriceDraft] = useState<string>("");
   const priceInputRef = useRef<HTMLInputElement>(null);
-  const [uploadingId, setUploadingId] = useState<string | "modal" | null>(null);
-  const [dragOver, setDragOver] = useState(false);
-  const modalFileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadingId, setUploadingId] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [categoryLabels, setCategoryLabels] = useState<Record<string, string>>({});
   const [editingCategory, setEditingCategory] = useState<string | null>(null);
@@ -106,49 +97,9 @@ export default function ProductsClient() {
     }
   }, [editingPrice]);
 
-  const openCreate = () => { setEditProduct(null); setFormData(EMPTY_PRODUCT); setShowModal(true); };
-  const openEdit = (p: Product) => { setEditProduct(p); setFormData({ ...p }); setShowModal(true); };
+  const openCreate = () => { setEditProduct(null); setShowModal(true); };
+  const openEdit = (p: Product) => { setEditProduct(p); setShowModal(true); };
   const closeModal = () => { setShowModal(false); setEditProduct(null); };
-
-  const updateForm = (key: keyof Omit<Product, "id">, value: string | number) => {
-    setFormData((prev) => {
-      const next = { ...prev, [key]: value };
-      if ((key === "originalPrice" || key === "salePrice") && next.originalPrice > 0) {
-        next.savings = Math.round(((next.originalPrice - next.salePrice) / next.originalPrice) * 100);
-      }
-      return next;
-    });
-  };
-
-  const updateSpec = (idx: number, field: "label" | "value", val: string) => {
-    const specs = [...formData.specs];
-    specs[idx] = { ...specs[idx], [field]: val };
-    setFormData((p) => ({ ...p, specs }));
-  };
-  const addSpec = () => setFormData((p) => ({ ...p, specs: [...p.specs, { label: "", value: "" }] }));
-  const removeSpec = (idx: number) =>
-    setFormData((p) => ({ ...p, specs: p.specs.filter((_, i) => i !== idx) }));
-
-  const saveProduct = async () => {
-    setSaving(true);
-    try {
-      const url = "/api/admin/products";
-      const method = editProduct ? "PUT" : "POST";
-      const body = editProduct ? { ...formData, id: editProduct.id } : formData;
-      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-      if (res.ok) {
-        await fetchProducts();
-        showToast("success", editProduct ? "Product updated!" : "Product created!");
-        closeModal();
-      } else {
-        showToast("error", "Failed to save product");
-      }
-    } catch {
-      showToast("error", "Network error");
-    } finally {
-      setSaving(false);
-    }
-  };
 
   const deleteProduct = async (id: string) => {
     try {
@@ -236,17 +187,6 @@ export default function ProductsClient() {
       });
       if (res.ok) showToast("success", "Image updated");
       else { await fetchProducts(); showToast("error", "Failed to save image"); }
-    } finally {
-      setUploadingId(null);
-    }
-  };
-
-  /** Upload from inside the create/edit modal — sets formData.imageUrl. */
-  const handleModalUpload = async (file: File) => {
-    setUploadingId("modal");
-    try {
-      const url = await uploadFile(file);
-      if (url) updateForm("imageUrl", url);
     } finally {
       setUploadingId(null);
     }
@@ -590,185 +530,18 @@ export default function ProductsClient() {
       )}
 
       {showModal && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-auto">
-          <div className="bg-slate-900 rounded-3xl shadow-2xl w-full max-w-2xl my-8">
-            <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
-              <h2 className="text-slate-100 font-display font-bold text-lg">
-                {editProduct ? "Edit Product" : "Add New Product"}
-              </h2>
-              <button onClick={closeModal} className="w-8 h-8 rounded-xl border border-slate-700 flex items-center justify-center text-slate-400 hover:text-slate-400 hover:bg-slate-800"><X className="w-4 h-4" /></button>
-            </div>
-            <div className="p-6 overflow-y-auto max-h-[70vh] space-y-5">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Brand</label>
-                  <input value={formData.brand} onChange={(e) => updateForm("brand", e.target.value)} placeholder="Samsung"
-                    className="border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Model</label>
-                  <input value={formData.model} onChange={(e) => updateForm("model", e.target.value)} placeholder="RS68A8820WW"
-                    className="border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Category</label>
-                  <select value={formData.category} onChange={(e) => updateForm("category", e.target.value)} className="border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 bg-slate-900">
-                    {CATEGORY_OPTIONS.map((c) => <option key={c} value={c}>{c.replace("-", " ")}</option>)}
-                  </select>
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Grade</label>
-                  <select value={formData.grade} onChange={(e) => updateForm("grade", e.target.value)} className="border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 bg-slate-900">
-                    {GRADE_OPTIONS.map((g) => <option key={g}>{g}</option>)}
-                  </select>
-                </div>
-              </div>
-              <div className="grid grid-cols-3 gap-4">
-                {[["originalPrice","Original Price (€)"],["salePrice","Sale Price (€)"],["savings","Savings %"]].map(([key, label]) => (
-                  <div key={key} className="flex flex-col gap-1.5">
-                    <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">{label}</label>
-                    <input type="number" value={(formData as Record<string,unknown>)[key] as number || ""} onChange={(e) => updateForm(key as keyof Omit<Product,"id">, Number(e.target.value))}
-                      className="border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
-                  </div>
-                ))}
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Warranty (months)</label>
-                <input type="number" value={formData.warranty || ""} onChange={(e) => updateForm("warranty", Number(e.target.value))} placeholder="12"
-                  className="w-32 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
-              </div>
-              <div className="flex flex-col gap-2">
-                <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Product Image</label>
-
-                {/* Drag-drop / click-to-upload zone */}
-                <div
-                  onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-                  onDragLeave={() => setDragOver(false)}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    setDragOver(false);
-                    const file = e.dataTransfer.files?.[0];
-                    if (file) handleModalUpload(file);
-                  }}
-                  onClick={() => modalFileInputRef.current?.click()}
-                  className={`relative border-2 border-dashed rounded-2xl p-4 cursor-pointer transition-colors ${
-                    dragOver ? "border-blue-400 bg-blue-50" : "border-slate-700 hover:border-slate-300 bg-slate-800"
-                  }`}
-                >
-                  <input
-                    ref={modalFileInputRef}
-                    type="file"
-                    accept="image/*"
-                    className="sr-only"
-                    onChange={(e) => {
-                      const f = e.target.files?.[0];
-                      if (f) handleModalUpload(f);
-                      e.currentTarget.value = "";
-                    }}
-                  />
-                  {formData.imageUrl ? (
-                    <div className="flex items-center gap-4">
-                      <div className="relative w-24 h-24 rounded-xl overflow-hidden bg-slate-900 border border-slate-700 shrink-0">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={formData.imageUrl} alt="Preview" className="absolute inset-0 w-full h-full object-contain p-2" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-slate-200 text-sm font-semibold truncate">
-                          {formData.imageUrl.startsWith("/uploads/")
-                            ? formData.imageUrl.replace("/uploads/", "")
-                            : formData.imageUrl}
-                        </p>
-                        <p className="text-slate-400 text-xs mt-1">Click to replace · or drop a new image</p>
-                      </div>
-                      {uploadingId === "modal" ? (
-                        <Loader2 className="w-4 h-4 animate-spin text-slate-400" />
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={(e) => { e.stopPropagation(); updateForm("imageUrl", ""); }}
-                          className="p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50"
-                          aria-label="Remove image"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center gap-2 py-6 text-center">
-                      {uploadingId === "modal" ? (
-                        <>
-                          <Loader2 className="w-6 h-6 text-blue-500 animate-spin" />
-                          <p className="text-slate-400 text-sm font-medium">Uploading…</p>
-                        </>
-                      ) : (
-                        <>
-                          <div className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center">
-                            <Upload className="w-4 h-4 text-slate-500" />
-                          </div>
-                          <p className="text-slate-200 text-sm font-semibold">Drop an image or click to browse</p>
-                          <p className="text-slate-400 text-xs">PNG, JPG, WebP, GIF up to 5 MB</p>
-                        </>
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                {/* URL fallback */}
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="text-slate-400 text-[11px] font-medium uppercase tracking-wider">or paste URL</span>
-                  <input
-                    value={formData.imageUrl}
-                    onChange={(e) => updateForm("imageUrl", e.target.value)}
-                    placeholder="https://…"
-                    className="flex-1 border border-slate-700 rounded-lg px-3 py-1.5 text-slate-100 text-xs focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400"
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                {[["colorFrom","Color From"],["colorTo","Color To"]].map(([key, label]) => (
-                  <div key={key} className="flex flex-col gap-1.5">
-                    <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">{label}</label>
-                    <div className="flex items-center gap-2">
-                      <input type="color" value={(formData as unknown as Record<string,string>)[key]} onChange={(e) => updateForm(key as keyof Omit<Product,"id">, e.target.value)} className="w-9 h-9 rounded-lg border border-slate-700 cursor-pointer" />
-                      <input value={(formData as unknown as Record<string,string>)[key]} onChange={(e) => updateForm(key as keyof Omit<Product,"id">, e.target.value)}
-                        className="flex-1 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 text-sm font-mono focus:outline-none" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Description</label>
-                <textarea value={formData.description} onChange={(e) => updateForm("description", e.target.value)} rows={3} placeholder="Product description…"
-                  className="border border-slate-700 bg-slate-800 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 resize-none" />
-              </div>
-              <div className="flex flex-col gap-3">
-                <div className="flex items-center justify-between">
-                  <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Specifications</label>
-                  <button onClick={addSpec} className="text-xs text-blue-600 font-medium hover:text-blue-700 flex items-center gap-1"><Plus className="w-3 h-3" /> Add Row</button>
-                </div>
-                {formData.specs.map((spec, i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <input value={spec.label} onChange={(e) => updateSpec(i, "label", e.target.value)} placeholder="Label" className="flex-1 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-1 focus:ring-gold-400" />
-                    <input value={spec.value} onChange={(e) => updateSpec(i, "value", e.target.value)} placeholder="Value" className="flex-1 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-1 focus:ring-gold-400" />
-                    <button onClick={() => removeSpec(i)} className="p-1.5 text-slate-300 hover:text-red-400 transition-colors"><X className="w-4 h-4" /></button>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="flex items-center justify-end gap-3 px-6 py-5 border-t border-slate-100">
-              <button onClick={closeModal} className="px-5 py-2.5 rounded-xl border border-slate-700 text-slate-400 text-sm font-medium hover:bg-slate-800">Cancel</button>
-              <button onClick={saveProduct} disabled={saving || !formData.brand || !formData.model}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-bold transition-all disabled:opacity-60"
-                style={{ background: "linear-gradient(135deg, #3A5F8A, #5B82A8)" }}>
-                {saving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                {saving ? "Saving…" : editProduct ? "Update Product" : "Create Product"}
-              </button>
-            </div>
-          </div>
-        </div>
+        <EditProductModal
+          initialProduct={editProduct}
+          onClose={closeModal}
+          onSaved={(action) => {
+            fetchProducts();
+            showToast("success", action === "updated" ? "Product updated!" : "Product created!");
+          }}
+          onError={(msg) => showToast("error", msg)}
+          uploadFile={uploadFile}
+        />
       )}
+
     </>
   );
 }
