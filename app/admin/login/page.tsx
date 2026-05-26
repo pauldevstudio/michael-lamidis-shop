@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useState, useEffect } from "react";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Lock, User, Eye, EyeOff, ShieldCheck, Loader2 } from "lucide-react";
 
@@ -67,9 +68,14 @@ function LoginForm() {
       `}</style>
       <div className="bg-navy-900/80 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl">
         <div className="flex flex-col items-center mb-8">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-gold-500 to-gold-400 flex items-center justify-center mb-4 shadow-lg shadow-gold-500/20">
-            <span className="text-navy-950 font-black text-xl font-display">ML</span>
-          </div>
+          <Image
+            src="/logo.png"
+            alt="Michael Lamidis logo"
+            width={64}
+            height={64}
+            priority
+            className="w-16 h-16 mb-4"
+          />
           <h1 className="text-white font-display font-bold text-2xl">Admin Panel</h1>
           <p className="text-white/40 text-sm mt-1">Michael Lamidis CMS</p>
         </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import {
@@ -63,9 +64,14 @@ export default function Sidebar() {
 
       {/* Logo */}
       <div className={cn("flex items-center gap-3 p-5 pb-4 border-b border-white/[0.06]", collapsed && "justify-center px-3")}>
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-gold-500 to-gold-400 flex items-center justify-center shrink-0 shadow-lg shadow-gold-500/20">
-          <span className="text-slate-100 font-black text-xs font-display">ML</span>
-        </div>
+        <Image
+          src="/logo.png"
+          alt="Michael Lamidis logo"
+          width={36}
+          height={36}
+          priority
+          className="w-9 h-9 shrink-0"
+        />
         {!collapsed && (
           <div className="overflow-hidden">
             <p className="text-white font-display font-bold text-sm leading-tight whitespace-nowrap">Michael Lamidis</p>
