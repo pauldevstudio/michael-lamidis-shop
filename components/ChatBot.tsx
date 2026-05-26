@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageCircle, X, Send, ChevronDown } from "lucide-react";
+import { MessageCircle, X, Send, ChevronDown, Sparkles } from "lucide-react";
 
 interface Message {
   id: string;
@@ -231,36 +231,54 @@ export default function ChatBot() {
 
   return (
     <div className="fixed bottom-5 right-5 z-[9999]">
-      {/* ── Floating button ── */}
+      {/* ── Floating button + tooltip ── */}
       <AnimatePresence>
         {!isOpen && (
-          <motion.button
+          <motion.div
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
-            whileHover={{ scale: 1.08 }}
-            whileTap={{ scale: 0.93 }}
-            onClick={() => setIsOpen(true)}
-            aria-label="Open chat"
-            className="relative w-14 h-14 rounded-full shadow-2xl flex items-center justify-center"
-            style={{ background: "linear-gradient(135deg, #1A3C5E 0%, #2563EB 100%)" }}
+            className="flex flex-col items-end gap-2"
           >
-            <MessageCircle className="w-7 h-7 text-white" />
-            {hasUnread && (
-              <motion.span
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-[10px] font-bold shadow"
-              >
-                1
-              </motion.span>
-            )}
-            {/* Pulse ring */}
-            <span
-              className="absolute inset-0 rounded-full animate-ping opacity-20"
-              style={{ background: "#2563EB" }}
-            />
-          </motion.button>
+            {/* Hover tooltip */}
+            <motion.div
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.5 }}
+              className="rounded-2xl bg-white shadow-[0_8px_32px_rgba(0,0,0,0.18)] border border-gray-100 px-3.5 py-2.5 max-w-[230px]"
+            >
+              <p className="text-[12px] font-bold text-gray-900 leading-snug flex items-center gap-1">
+                <Sparkles className="w-3 h-3 text-blue-500" />
+                Advanced AI + Business Automation
+              </p>
+              <p className="text-[10px] text-gray-500 mt-0.5">Ask anything · 24/7 instant replies</p>
+            </motion.div>
+
+            <motion.button
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.93 }}
+              onClick={() => setIsOpen(true)}
+              aria-label="Open AI chat"
+              className="relative w-14 h-14 rounded-full shadow-2xl flex items-center justify-center"
+              style={{ background: "linear-gradient(135deg, #1A3C5E 0%, #2563EB 100%)" }}
+            >
+              <Sparkles className="w-7 h-7 text-white" />
+              {hasUnread && (
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-[10px] font-bold shadow"
+                >
+                  1
+                </motion.span>
+              )}
+              {/* Pulse ring */}
+              <span
+                className="absolute inset-0 rounded-full animate-ping opacity-20"
+                style={{ background: "#2563EB" }}
+              />
+            </motion.button>
+          </motion.div>
         )}
       </AnimatePresence>
 
@@ -289,10 +307,16 @@ export default function ChatBot() {
                 ML
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-white font-bold text-sm leading-tight">Michael Lamidis AI</p>
+                <div className="flex items-center gap-1.5">
+                  <p className="text-white font-bold text-sm leading-tight">Michael Lamidis AI</p>
+                  <span className="inline-flex items-center gap-0.5 px-1.5 py-[1px] rounded-full bg-white/15 text-[9px] font-bold uppercase tracking-wider text-white">
+                    <Sparkles className="w-2.5 h-2.5" /> AI
+                  </span>
+                </div>
+                <p className="text-white/75 text-[10px] mt-0.5 leading-tight">Advanced AI + Business Automation</p>
                 <div className="flex items-center gap-1.5 mt-0.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />
-                  <p className="text-white/75 text-[11px]">Online · Typically replies instantly</p>
+                  <p className="text-white/60 text-[10px]">Online · Replies instantly</p>
                 </div>
               </div>
               <button

@@ -4,7 +4,7 @@ import "./globals.css";
 import { LanguageProvider } from "@/lib/i18n-context";
 import { CartProvider } from "@/lib/cart-context";
 import { SITE_NAME, SITE_DESCRIPTION, SITE_URL, SITE_PHONE, SITE_EMAIL } from "@/lib/constants";
-import WhatsAppOnPublic from "@/components/shared/WhatsAppOnPublic";
+import AIChatOnPublic from "@/components/shared/AIChatOnPublic";
 
 const inter = Inter({
   subsets: ["latin", "greek"],
@@ -91,10 +91,8 @@ export default function RootLayout({
 }) {
   // Layout is intentionally synchronous so Vercel can cache the HTML shell.
   // The previous version awaited headers() and getSiteContent() on every
-  // request, forcing dynamic rendering and 18 MongoDB queries per page. The
-  // ContentProvider gets a static fallback because useContent() is currently
-  // disabled (returns null); admin/cms route detection moved into the
-  // WhatsAppOnPublic client wrapper.
+  // request, forcing dynamic rendering and 18 MongoDB queries per page.
+  // Admin/cms route detection moved into the AIChatOnPublic client wrapper.
   return (
     <html lang="en" data-scroll-behavior="smooth" className={`${inter.variable} ${plusJakarta.variable}`}>
       <head>
@@ -107,7 +105,7 @@ export default function RootLayout({
         <LanguageProvider>
           <CartProvider>{children}</CartProvider>
         </LanguageProvider>
-        <WhatsAppOnPublic />
+        <AIChatOnPublic />
       </body>
     </html>
   );
