@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { unstable_cache } from "next/cache";
 import {
   SITE_NAME, SITE_TAGLINE, SITE_DESCRIPTION,
   SITE_PHONE, SITE_EMAIL, SITE_ADDRESS, SITE_HOURS,
@@ -303,7 +304,15 @@ function readFromFile(): SiteContent {
 
 // ─── Public API ───────────────────────────────────────────────────
 
-export async function getSiteContent(): Promise<SiteContent> {
+const SITE_CONTENT_TAG = "site-content";
+
+/**
+ * Inner getter — does the actual MongoDB + Payload work.
+ * Wrapped below in unstable_cache so admin pages reusing it within
+ * a 30s window skip the ~17-query roundtrip. Save handlers call
+ * revalidateTag("site-content") to bust this cache immediately.
+ */
+async function _getSiteContent(): Promise<SiteContent> {
   // 1. Start with the legacy source of truth (Mongo doc or JSON file).
   let base: SiteContent;
   if (process.env.MONGODB_URI) {
@@ -780,6 +789,19 @@ export async function getSiteContent(): Promise<SiteContent> {
 
   return base;
 }
+
+/**
+ * Public, cached wrapper. Subsequent calls within 30s return the cached
+ * result instead of running the 17 Payload queries again. Admin save
+ * handlers should call revalidateTag(SITE_CONTENT_TAG) to invalidate.
+ */
+export const getSiteContent = unstable_cache(
+  _getSiteContent,
+  ["site-content-v1"],
+  { revalidate: 30, tags: [SITE_CONTENT_TAG] }
+);
+
+export { SITE_CONTENT_TAG };
 
 /**
  * One-product lookup for the public detail page. Lighter than calling

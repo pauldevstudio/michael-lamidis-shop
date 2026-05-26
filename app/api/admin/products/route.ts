@@ -5,7 +5,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getPayload } from "payload";
 import config from "@payload-config";
 import { isValidSessionToken } from "@/lib/admin-auth";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
+import { SITE_CONTENT_TAG } from "@/lib/site-content";
 import type { Product } from "@/lib/constants";
 
 function isAuthorized(req: NextRequest): boolean {
@@ -83,7 +84,7 @@ export async function POST(request: NextRequest) {
     const body = (await request.json()) as Partial<Product>;
     const payload = await getPayload({ config });
     const created = await payload.create({ collection: "products", data: toPayloadData(body) });
-    revalidatePath("/", "layout");
+    revalidateTag(SITE_CONTENT_TAG); revalidatePath("/", "layout");
     return NextResponse.json(fromPayloadDoc(created as Record<string, unknown>), { status: 201 });
   } catch (err) {
     return NextResponse.json({ error: String(err) }, { status: 500 });
@@ -101,7 +102,7 @@ export async function PUT(request: NextRequest) {
       id: body.id,
       data: toPayloadData(body),
     });
-    revalidatePath("/", "layout");
+    revalidateTag(SITE_CONTENT_TAG); revalidatePath("/", "layout");
     return NextResponse.json(fromPayloadDoc(updated as Record<string, unknown>));
   } catch (err) {
     return NextResponse.json({ error: String(err) }, { status: 500 });
@@ -115,7 +116,7 @@ export async function DELETE(request: NextRequest) {
   try {
     const payload = await getPayload({ config });
     await payload.delete({ collection: "products", id });
-    revalidatePath("/", "layout");
+    revalidateTag(SITE_CONTENT_TAG); revalidatePath("/", "layout");
     return NextResponse.json({ ok: true });
   } catch (err) {
     return NextResponse.json({ error: String(err) }, { status: 500 });
