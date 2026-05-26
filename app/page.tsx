@@ -13,6 +13,13 @@ import FAQ from "@/components/sections/FAQ";
 import LeadCapture from "@/components/sections/LeadCapture";
 import ContactSection from "@/components/sections/ContactSection";
 import CategoryStrip from "@/components/sections/CategoryStrip";
+import { ContentProvider } from "@/lib/content-context";
+import { getSiteContent } from "@/lib/site-content";
+
+// Cache the page for 30s; admin saves call revalidateTag("site-content")
+// so live edits in Content / Business / SEO etc. flush both this cache
+// and the underlying getSiteContent cache immediately.
+export const revalidate = 30;
 
 export const metadata: Metadata = {
   title: "Michael Lamidis | Premium Open Box Appliances Cyprus",
@@ -20,9 +27,10 @@ export const metadata: Metadata = {
     "Certified open box appliances at 30–70% off retail. Samsung, LG, Bosch, Miele & more. Free delivery, 12-month warranty. Limassol, Cyprus.",
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const content = await getSiteContent();
   return (
-    <>
+    <ContentProvider content={content}>
       <ScrollProgress />
       <Navbar />
       <main>
@@ -39,6 +47,6 @@ export default function HomePage() {
         <ContactSection />
       </main>
       <Footer />
-    </>
+    </ContentProvider>
   );
 }
