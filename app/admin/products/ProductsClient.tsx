@@ -741,7 +741,7 @@ export default function ProductsClient() {
               <div className="flex flex-col gap-1.5">
                 <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Description</label>
                 <textarea value={formData.description} onChange={(e) => updateForm("description", e.target.value)} rows={3} placeholder="Product description…"
-                  className="border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 resize-none" />
+                  className="border border-slate-700 bg-slate-800 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 resize-none" />
               </div>
               <div className="flex flex-col gap-3">
                 <div className="flex items-center justify-between">

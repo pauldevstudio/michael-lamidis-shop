@@ -108,19 +108,19 @@ export default function ContentClient() {
                   <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Badge Text</label>
                   <input value={content.hero.badge} onChange={(e) => setHero("badge", e.target.value)}
                     placeholder="Cyprus's #1 Open Box Destination"
-                    className="border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
+                    className="border border-slate-700 bg-slate-800 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Headline</label>
                   <textarea value={content.hero.headline} onChange={(e) => setHero("headline", e.target.value)} rows={3}
                     placeholder="Premium Appliances.\nOpen Box Prices."
-                    className="border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 resize-none font-display" />
+                    className="border border-slate-700 bg-slate-800 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 resize-none font-display" />
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Subheadline</label>
                   <textarea value={content.hero.subheadline} onChange={(e) => setHero("subheadline", e.target.value)} rows={2}
                     placeholder="Every item certified, warranted & delivered across Cyprus."
-                    className="border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 resize-none" />
+                    className="border border-slate-700 bg-slate-800 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 resize-none" />
                 </div>
                 <div className="rounded-xl bg-navy-950 p-5 text-center">
                   <span className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border border-white/15 text-white/60 mb-4">★ {content.hero.badge}</span>
@@ -140,12 +140,12 @@ export default function ContentClient() {
                 <div className="flex flex-col gap-1.5">
                   <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Headline</label>
                   <input value={content.about.headline} onChange={(e) => setAbout("headline", e.target.value)}
-                    className="border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
+                    className="border border-slate-700 bg-slate-800 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Subheadline</label>
                   <input value={content.about.subheadline} onChange={(e) => setAbout("subheadline", e.target.value)}
-                    className="border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
+                    className="border border-slate-700 bg-slate-800 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
                 </div>
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center justify-between">
@@ -180,7 +180,7 @@ export default function ContentClient() {
                     <div key={key} className="flex flex-col gap-1.5">
                       <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">{labels[key]}</label>
                       <input value={content.stats[key]} onChange={(e) => setStats(key, e.target.value)}
-                        className="border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
+                        className="border border-slate-700 bg-slate-800 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
                     </div>
                   );
                 })}

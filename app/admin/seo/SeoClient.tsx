@@ -174,7 +174,7 @@ export default function SeoClient() {
                 </div>
                 <input value={editData.title} onChange={(e) => setEditData({ ...editData, title: e.target.value })} maxLength={70}
                   placeholder="Page Title | Michael Lamidis"
-                  className="border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
+                  className="border border-slate-700 bg-slate-800 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
                 <div className="w-full bg-slate-800 rounded-full h-1.5">
                   <div className={`h-1.5 rounded-full transition-all ${titleOk ? "bg-emerald-400" : titleLen > 60 ? "bg-red-400" : "bg-amber-400"}`}
                     style={{ width: `${Math.min(100, (titleLen / 60) * 100)}%` }} />
@@ -187,7 +187,7 @@ export default function SeoClient() {
                 </div>
                 <textarea value={editData.description} onChange={(e) => setEditData({ ...editData, description: e.target.value })} maxLength={200} rows={4}
                   placeholder="A compelling description (120–160 characters)…"
-                  className="border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 resize-none" />
+                  className="border border-slate-700 bg-slate-800 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 resize-none" />
                 <div className="w-full bg-slate-800 rounded-full h-1.5">
                   <div className={`h-1.5 rounded-full transition-all ${descOk ? "bg-emerald-400" : descLen > 160 ? "bg-red-400" : "bg-amber-400"}`}
                     style={{ width: `${Math.min(100, (descLen / 160) * 100)}%` }} />

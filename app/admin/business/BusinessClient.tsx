@@ -159,7 +159,7 @@ export default function BusinessClient() {
                       onChange={(e) => update(key, e.target.value)}
                       placeholder={placeholder}
                       rows={3}
-                      className="w-full border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 transition resize-none"
+                      className="w-full border border-slate-700 bg-slate-800 rounded-xl px-4 py-3 text-slate-100 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 transition resize-none"
                     />
                   ) : (
                     <input
@@ -167,7 +167,7 @@ export default function BusinessClient() {
                       value={(b[key] as string) ?? ""}
                       onChange={(e) => update(key, e.target.value)}
                       placeholder={placeholder}
-                      className="w-full border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 transition"
+                      className="w-full border border-slate-700 bg-slate-800 rounded-xl px-4 py-3 text-slate-100 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 transition"
                     />
                   )}
                 </div>
@@ -192,7 +192,7 @@ export default function BusinessClient() {
                     value={b.social[key] ?? ""}
                     onChange={(e) => updateSocial(key, e.target.value)}
                     placeholder={placeholder}
-                    className="w-full border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 transition"
+                    className="w-full border border-slate-700 bg-slate-800 rounded-xl px-4 py-3 text-slate-100 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 transition"
                   />
                 </div>
               ))}
