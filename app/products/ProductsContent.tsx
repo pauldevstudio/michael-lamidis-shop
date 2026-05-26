@@ -9,9 +9,8 @@ import {
   LayoutGrid, Package, ShoppingCart, Check,
 } from "lucide-react";
 import AnimatedSection from "@/components/shared/AnimatedSection";
-import { FEATURED_PRODUCTS, PRODUCT_CATEGORIES } from "@/lib/constants";
+import { FEATURED_PRODUCTS, PRODUCT_CATEGORIES, type Product } from "@/lib/constants";
 import { useCart } from "@/lib/cart-context";
-import { useContent } from "@/lib/content-context";
 import { useLanguage } from "@/lib/i18n-context";
 import { cn } from "@/lib/utils";
 
@@ -205,15 +204,14 @@ function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
 }
 
 /* ══════════════════════════════════════════════════════ */
-export default function ProductsContent() {
+export default function ProductsContent({ products }: { products?: Product[] }) {
   const { t } = useLanguage();
   const [activeCategory, setActiveCategory] = useState("all");
   const [sortBy, setSortBy] = useState<SortKey>("savings");
   const [sortOpen, setSortOpen] = useState(false);
 
-  // Prefer admin-edited products from the CMS; fall back to constants seed.
-  const __content = useContent();
-  const __products = __content?.products?.length ? __content.products : FEATURED_PRODUCTS;
+  // Server-fetched products from MongoDB; fall back to constants seed for SSG/dev.
+  const __products = products?.length ? products : FEATURED_PRODUCTS;
 
   const FILTERS = FILTER_IDS.map((id) => ({
     id,
