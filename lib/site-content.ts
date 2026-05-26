@@ -333,9 +333,31 @@ export async function getSiteContent(): Promise<SiteContent> {
     const { getPayload } = await import("payload");
     const { default: payloadConfig } = await import("@payload-config");
     const payload = await getPayload({ config: payloadConfig });
+
+    // Fire ALL Payload reads in parallel. Each `await pXxx` below resolves
+    // as soon as its single query returns — total time becomes max(query),
+    // not sum. Cuts admin/dashboard from ~17 * ~80ms to ~150ms.
+    const pHomeHero      = payload.findGlobal({ slug: "home-hero" }).catch((e) => { console.error("[Payload] home-hero failed:", e); return null; });
+    const pAbout         = payload.findGlobal({ slug: "about-content" }).catch((e) => { console.error("[Payload] about-content failed:", e); return null; });
+    const pContactInfo   = payload.findGlobal({ slug: "contact-info" }).catch((e) => { console.error("[Payload] contact-info failed:", e); return null; });
+    const pStats         = payload.findGlobal({ slug: "stats" }).catch((e) => { console.error("[Payload] stats failed:", e); return null; });
+    const pAnnouncement  = payload.findGlobal({ slug: "announcement-bar" }).catch((e) => { console.error("[Payload] announcement-bar failed:", e); return null; });
+    const pTrustBadges   = payload.findGlobal({ slug: "trust-badges" }).catch((e) => { console.error("[Payload] trust-badges failed:", e); return null; });
+    const pFeatures      = payload.findGlobal({ slug: "features-section" }).catch((e) => { console.error("[Payload] features failed:", e); return null; });
+    const pCategoryStrip = payload.findGlobal({ slug: "category-strip" }).catch((e) => { console.error("[Payload] category-strip failed:", e); return null; });
+    const pNavigation    = payload.findGlobal({ slug: "navigation" }).catch((e) => { console.error("[Payload] navigation failed:", e); return null; });
+    const pLeadCapture   = payload.findGlobal({ slug: "lead-capture" }).catch((e) => { console.error("[Payload] lead-capture failed:", e); return null; });
+    const pFooter        = payload.findGlobal({ slug: "footer" }).catch((e) => { console.error("[Payload] footer failed:", e); return null; });
+    const pContactSec    = payload.findGlobal({ slug: "contact-section" }).catch((e) => { console.error("[Payload] contact-section failed:", e); return null; });
+    const pServices      = payload.findGlobal({ slug: "services-section" }).catch((e) => { console.error("[Payload] services failed:", e); return null; });
+    const pTestimonials  = payload.findGlobal({ slug: "testimonials-section" }).catch((e) => { console.error("[Payload] testimonials failed:", e); return null; });
+    const pFaq           = payload.findGlobal({ slug: "faq-section" }).catch((e) => { console.error("[Payload] faq failed:", e); return null; });
+    const pBusiness      = payload.findGlobal({ slug: "business-info" }).catch((e) => { console.error("[Payload] business-info failed:", e); return null; });
+    const pProducts      = payload.find({ collection: "products", limit: 500, depth: 1, sort: "displayOrder" }).catch((e) => { console.error("[Payload] products failed:", e); return { docs: [] } as { docs: Array<Record<string, unknown>> }; });
+
     // Home Hero global overlay
     try {
-      const hh = await payload.findGlobal({ slug: "home-hero" });
+      const hh = await pHomeHero;
       if (hh && (hh as { headline?: string }).headline) {
         const h = hh as Record<string, unknown>;
         base = {
@@ -358,7 +380,7 @@ export async function getSiteContent(): Promise<SiteContent> {
 
     // About page overlay
     try {
-      const ac = await payload.findGlobal({ slug: "about-content" });
+      const ac = await pAbout;
       if (ac && (ac as { headline?: string }).headline) {
         const a = ac as Record<string, unknown>;
         const storyArr = Array.isArray(a.story)
@@ -382,12 +404,7 @@ export async function getSiteContent(): Promise<SiteContent> {
     // APPEND with Payload products that are well-formed (have a model and a
     // sale price). Zombie docs from earlier sessions are silently dropped.
     try {
-      const productsRes = await payload.find({
-        collection: "products",
-        limit: 500,
-        depth: 1,
-        sort: "displayOrder",
-      });
+      const productsRes = await pProducts;
       const docs = (productsRes?.docs ?? []) as Array<Record<string, unknown>>;
 
       const valid = docs
@@ -433,7 +450,7 @@ export async function getSiteContent(): Promise<SiteContent> {
 
     // Contact page overlay
     try {
-      const ci = await payload.findGlobal({ slug: "contact-info" });
+      const ci = await pContactInfo;
       if (ci && (ci as { headline?: string }).headline) {
         const c = ci as Record<string, unknown>;
         base = {
@@ -451,7 +468,7 @@ export async function getSiteContent(): Promise<SiteContent> {
 
     // Stats section overlay
     try {
-      const sg = await payload.findGlobal({ slug: "stats" });
+      const sg = await pStats;
       if (sg) {
         const s = sg as Record<string, unknown>;
         const items = Array.isArray(s.items)
@@ -476,7 +493,7 @@ export async function getSiteContent(): Promise<SiteContent> {
 
     // Announcement bar overlay
     try {
-      const ab = await payload.findGlobal({ slug: "announcement-bar" });
+      const ab = await pAnnouncement;
       if (ab) {
         const a = ab as Record<string, unknown>;
         base = {
@@ -493,7 +510,7 @@ export async function getSiteContent(): Promise<SiteContent> {
 
     // Trust badges overlay
     try {
-      const tb = await payload.findGlobal({ slug: "trust-badges" });
+      const tb = await pTrustBadges;
       if (tb) {
         const t = tb as Record<string, unknown>;
         const items = Array.isArray(t.items)
@@ -518,7 +535,7 @@ export async function getSiteContent(): Promise<SiteContent> {
 
     // Features section overlay
     try {
-      const fs2 = await payload.findGlobal({ slug: "features-section" });
+      const fs2 = await pFeatures;
       if (fs2) {
         const f = fs2 as Record<string, unknown>;
         const items = Array.isArray(f.items)
@@ -544,7 +561,7 @@ export async function getSiteContent(): Promise<SiteContent> {
 
     // Category strip overlay
     try {
-      const cs = await payload.findGlobal({ slug: "category-strip" });
+      const cs = await pCategoryStrip;
       if (cs) {
         const c = cs as Record<string, unknown>;
         const items = Array.isArray(c.items)
@@ -567,7 +584,7 @@ export async function getSiteContent(): Promise<SiteContent> {
 
     // Navigation overlay
     try {
-      const ng = await payload.findGlobal({ slug: "navigation" });
+      const ng = await pNavigation;
       if (ng) {
         const n = ng as Record<string, unknown>;
         const items = Array.isArray(n.items)
@@ -588,7 +605,7 @@ export async function getSiteContent(): Promise<SiteContent> {
 
     // Lead capture overlay
     try {
-      const lc = await payload.findGlobal({ slug: "lead-capture" });
+      const lc = await pLeadCapture;
       if (lc) {
         const l = lc as Record<string, unknown>;
         const benefits = Array.isArray(l.benefits)
@@ -610,7 +627,7 @@ export async function getSiteContent(): Promise<SiteContent> {
 
     // Footer overlay
     try {
-      const fg = await payload.findGlobal({ slug: "footer" });
+      const fg = await pFooter;
       if (fg) {
         const f = fg as Record<string, unknown>;
         const mapLinks = (arr: unknown): Array<{ label: string; href: string }> =>
@@ -635,7 +652,7 @@ export async function getSiteContent(): Promise<SiteContent> {
 
     // Contact section overlay
     try {
-      const csec = await payload.findGlobal({ slug: "contact-section" });
+      const csec = await pContactSec;
       if (csec) {
         const c = csec as Record<string, unknown>;
         base = {
@@ -656,7 +673,7 @@ export async function getSiteContent(): Promise<SiteContent> {
 
     // Services overlay
     try {
-      const sv = await payload.findGlobal({ slug: "services-section" });
+      const sv = await pServices;
       if (sv) {
         const s = sv as Record<string, unknown>;
         const items = Array.isArray(s.items)
@@ -684,7 +701,7 @@ export async function getSiteContent(): Promise<SiteContent> {
 
     // Testimonials section overlay
     try {
-      const tg = await payload.findGlobal({ slug: "testimonials-section" });
+      const tg = await pTestimonials;
       if (tg) {
         const t = tg as Record<string, unknown>;
         const items = Array.isArray(t.items)
@@ -712,7 +729,7 @@ export async function getSiteContent(): Promise<SiteContent> {
 
     // FAQ overlay
     try {
-      const fg = await payload.findGlobal({ slug: "faq-section" });
+      const fg = await pFaq;
       if (fg) {
         const f = fg as Record<string, unknown>;
         const items = Array.isArray(f.items)
@@ -735,7 +752,7 @@ export async function getSiteContent(): Promise<SiteContent> {
       }
     } catch (err) { console.error("[Payload] faq overlay failed:", err); }
 
-    const bi = await payload.findGlobal({ slug: "business-info" });
+    const bi = await pBusiness;
     if (bi && (bi as { name?: string }).name) {
       const b = bi as Record<string, unknown>;
       const social = (b.social ?? {}) as Record<string, unknown>;
