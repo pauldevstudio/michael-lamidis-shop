@@ -20,6 +20,8 @@ export const NAV_LINKS = [
 
 export const SOCIAL_LINKS = {
   facebook: "https://www.facebook.com/michaelsappliances",
+  instagram: "",
+  youtube: "",
 };
 
 export const PRODUCT_CATEGORIES = [
