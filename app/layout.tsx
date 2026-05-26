@@ -101,6 +101,7 @@ export default async function RootLayout({
   const pathname = h.get("x-pathname") ?? "";
   const isPayload =
     pathname.startsWith("/cms") || pathname.startsWith("/api/payload");
+  const isAdmin = pathname.startsWith("/admin");
 
   if (isPayload) {
     return (
@@ -126,7 +127,7 @@ export default async function RootLayout({
             <CartProvider>{children}</CartProvider>
           </ContentProvider>
         </LanguageProvider>
-        <WhatsAppButton phone={SITE_WHATSAPP} />
+        {!isAdmin && <WhatsAppButton phone={SITE_WHATSAPP} />}
       </body>
     </html>
   );
