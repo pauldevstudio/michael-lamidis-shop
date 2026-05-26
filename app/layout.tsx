@@ -1,13 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
-import { headers } from "next/headers";
 import "./globals.css";
 import { LanguageProvider } from "@/lib/i18n-context";
 import { CartProvider } from "@/lib/cart-context";
 import { ContentProvider } from "@/lib/content-context";
-import { getSiteContent } from "@/lib/site-content";
-import { SITE_NAME, SITE_DESCRIPTION, SITE_URL, SITE_PHONE, SITE_EMAIL, SITE_WHATSAPP } from "@/lib/constants";
-import WhatsAppButton from "@/components/shared/WhatsAppButton";
+import { DEFAULT_CONTENT } from "@/lib/site-content";
+import { SITE_NAME, SITE_DESCRIPTION, SITE_URL, SITE_PHONE, SITE_EMAIL } from "@/lib/constants";
+import WhatsAppOnPublic from "@/components/shared/WhatsAppOnPublic";
 
 const inter = Inter({
   subsets: ["latin", "greek"],
@@ -89,30 +88,17 @@ const jsonLd = {
   ],
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // Detect if we're on the Payload admin or API routes.
-  // middleware.ts forwards x-pathname. If we're in /cms/* or /api/payload/*,
-  // render a bare-bones shell so Payload's own layout owns the page entirely.
-  const h = await headers();
-  const pathname = h.get("x-pathname") ?? "";
-  const isPayload =
-    pathname.startsWith("/cms") || pathname.startsWith("/api/payload");
-  const isAdmin = pathname.startsWith("/admin");
-
-  if (isPayload) {
-    return (
-      <html lang="en">
-        <body>{children}</body>
-      </html>
-    );
-  }
-
-  // Public site: load CMS content + wrap in providers, fonts, JSON-LD.
-  const content = await getSiteContent();
+  // Layout is intentionally synchronous so Vercel can cache the HTML shell.
+  // The previous version awaited headers() and getSiteContent() on every
+  // request, forcing dynamic rendering and 18 MongoDB queries per page. The
+  // ContentProvider gets a static fallback because useContent() is currently
+  // disabled (returns null); admin/cms route detection moved into the
+  // WhatsAppOnPublic client wrapper.
   return (
     <html lang="en" data-scroll-behavior="smooth" className={`${inter.variable} ${plusJakarta.variable}`}>
       <head>
@@ -123,11 +109,11 @@ export default async function RootLayout({
       </head>
       <body className="font-sans antialiased">
         <LanguageProvider>
-          <ContentProvider content={content}>
+          <ContentProvider content={DEFAULT_CONTENT}>
             <CartProvider>{children}</CartProvider>
           </ContentProvider>
         </LanguageProvider>
-        {!isAdmin && <WhatsAppButton phone={SITE_WHATSAPP} />}
+        <WhatsAppOnPublic />
       </body>
     </html>
   );
