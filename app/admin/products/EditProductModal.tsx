@@ -111,24 +111,30 @@ export default function EditProductModal({
         <div className="p-6 overflow-y-auto max-h-[70vh] space-y-5">
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Brand</label>
+              <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                Brand <span className="text-red-400">*</span>
+              </label>
               <input
                 value={formData.brand}
                 onChange={(e) => updateForm("brand", e.target.value)}
                 placeholder="Samsung"
                 autoComplete="off"
                 spellCheck={false}
+                required
                 className="border border-slate-700 bg-slate-800 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400"
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Model</label>
+              <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                Model <span className="text-red-400">*</span>
+              </label>
               <input
                 value={formData.model}
                 onChange={(e) => updateForm("model", e.target.value)}
                 placeholder="RS68A8820WW"
                 autoComplete="off"
                 spellCheck={false}
+                required
                 className="border border-slate-700 bg-slate-800 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400"
               />
             </div>
@@ -308,17 +314,27 @@ export default function EditProductModal({
             ))}
           </div>
         </div>
-        <div className="flex items-center justify-end gap-3 px-6 py-5 border-t border-slate-100">
-          <button onClick={onClose} className="px-5 py-2.5 rounded-xl border border-slate-700 text-slate-400 text-sm font-medium hover:bg-slate-800">Cancel</button>
-          <button
-            onClick={handleSave}
-            disabled={saving || !formData.brand || !formData.model}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-bold transition-all disabled:opacity-60"
-            style={{ background: "linear-gradient(135deg, #3A5F8A, #5B82A8)" }}
-          >
-            {saving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-            {saving ? "Saving…" : initialProduct ? "Update Product" : "Create Product"}
-          </button>
+        <div className="flex items-center justify-between gap-3 px-6 py-5 border-t border-slate-100">
+          <p className="text-slate-500 text-xs h-5">
+            {!formData.brand || !formData.model ? (
+              <>
+                <span className="text-red-400">*</span> Brand and Model are required
+              </>
+            ) : null}
+          </p>
+          <div className="flex items-center gap-3">
+            <button onClick={onClose} className="px-5 py-2.5 rounded-xl border border-slate-700 text-slate-400 text-sm font-medium hover:bg-slate-800">Cancel</button>
+            <button
+              onClick={handleSave}
+              disabled={saving || !formData.brand || !formData.model}
+              title={!formData.brand || !formData.model ? "Fill Brand and Model first" : undefined}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-bold transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+              style={{ background: "linear-gradient(135deg, #3A5F8A, #5B82A8)" }}
+            >
+              {saving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+              {saving ? "Saving…" : initialProduct ? "Update Product" : "Create Product"}
+            </button>
+          </div>
         </div>
       </div>
     </div>
