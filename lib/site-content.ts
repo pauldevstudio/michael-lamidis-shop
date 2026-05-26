@@ -316,15 +316,23 @@ async function _getSiteContent(): Promise<SiteContent> {
   let base: SiteContent;
   if (process.env.MONGODB_URI) {
     try {
-      const { connectDB }       = await import("@/lib/db");
-      const { SiteContentModel } = await import("@/lib/models");
-      await connectDB();
-      const doc = await SiteContentModel.findOne({ key: "site" }).lean();
+      const { connectDB } = await import("@/lib/db");
+      const conn = await connectDB();
+      // Direct collection query bypasses Mongoose model layer — earlier we hit
+      // a bug where SiteContentModel.findOne(...) on warm Vercel lambdas was
+      // returning stale/empty results while direct collection reads worked.
+      const doc = conn
+        ? await conn.connection.db?.collection("sitecontents").findOne({ key: "site" })
+        : null;
       if (doc?.data) {
         base = mergeDefaults(doc.data as Partial<SiteContent>);
       } else {
         const seed = readFromFile();
-        await SiteContentModel.create({ key: "site", data: seed });
+        if (conn) {
+          await conn.connection.db?.collection("sitecontents").insertOne({
+            key: "site", data: seed, createdAt: new Date(), updatedAt: new Date(),
+          });
+        }
         base = seed;
       }
     } catch (err) {
