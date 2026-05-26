@@ -314,28 +314,20 @@ const SITE_CONTENT_TAG = "site-content";
 async function _getSiteContent(): Promise<SiteContent> {
   // 1. Start with the legacy source of truth (Mongo doc or JSON file).
   let base: SiteContent;
+  let mongoErr: unknown = null;
   if (process.env.MONGODB_URI) {
     try {
       const { connectDB } = await import("@/lib/db");
-      const conn = await connectDB();
-      // Direct collection query bypasses Mongoose model layer — earlier we hit
-      // a bug where SiteContentModel.findOne(...) on warm Vercel lambdas was
-      // returning stale/empty results while direct collection reads worked.
-      const doc = conn
-        ? await conn.connection.db?.collection("sitecontents").findOne({ key: "site" })
-        : null;
+      const { SiteContentModel } = await import("@/lib/models");
+      await connectDB();
+      const doc = await SiteContentModel.findOne({ key: "site" }).lean<{ key: string; data: Partial<SiteContent> } | null>();
       if (doc?.data) {
-        base = mergeDefaults(doc.data as Partial<SiteContent>);
+        base = mergeDefaults(doc.data);
       } else {
-        const seed = readFromFile();
-        if (conn) {
-          await conn.connection.db?.collection("sitecontents").insertOne({
-            key: "site", data: seed, createdAt: new Date(), updatedAt: new Date(),
-          });
-        }
-        base = seed;
+        base = readFromFile();
       }
     } catch (err) {
+      mongoErr = err;
       console.error("[MongoDB] getSiteContent failed, falling back to file:", err);
       base = readFromFile();
     }

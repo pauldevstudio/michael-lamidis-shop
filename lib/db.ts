@@ -28,9 +28,24 @@ export async function connectDB(): Promise<typeof mongoose | null> {
   const uri = process.env.MONGODB_URI;
   if (!uri) return null; // fall back to local JSON
 
-  if (cache.conn) return cache.conn;
+  // 1 = connected. Anything else (0 disconnected, 2 connecting, 3 disconnecting)
+  // means the cached connection is unusable — drop it and reconnect.
+  const ready = cache.conn?.connection?.readyState;
+  if (cache.conn && ready === 1) return cache.conn;
+  if (cache.conn && ready !== 1) {
+    cache.conn = null;
+    cache.promise = null;
+  }
+
   if (!cache.promise) {
-    cache.promise = mongoose.connect(uri, { bufferCommands: false });
+    cache.promise = mongoose
+      .connect(uri, { bufferCommands: false, serverSelectionTimeoutMS: 8000 })
+      .catch((err) => {
+        // Clear the rejected promise so the next call retries instead of
+        // awaiting the same rejection forever.
+        cache.promise = null;
+        throw err;
+      });
   }
   cache.conn = await cache.promise;
   return cache.conn;
