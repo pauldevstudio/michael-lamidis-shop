@@ -764,6 +764,105 @@ export async function getSiteContent(): Promise<SiteContent> {
   return base;
 }
 
+/**
+ * One-product lookup for the public detail page. Lighter than calling
+ * getPublicProducts() (which fetches all 18+) when we only need one.
+ */
+export async function getPublicProductById(id: string): Promise<Product | null> {
+  try {
+    const { getPayload } = await import("payload");
+    const { default: payloadConfig } = await import("@payload-config");
+    const payload = await getPayload({ config: payloadConfig });
+    const d = (await payload.findByID({ collection: "products", id, depth: 1 })) as Record<string, unknown> | null;
+    if (!d) return null;
+    return {
+      id:            String(d.id ?? ""),
+      brand:         (d.brand as string)         ?? "",
+      model:         (d.model as string)         ?? "",
+      category:      (d.category as string)      ?? "all",
+      originalPrice: Number(d.originalPrice ?? 0),
+      salePrice:     Number(d.salePrice ?? 0),
+      savings:       Number(d.savings ?? 0),
+      grade:         (d.grade as string)         ?? "A",
+      warranty:      Number(d.warranty ?? 12),
+      icon:          (d.icon as string)          ?? "Package",
+      colorFrom:     (d.colorFrom as string)     ?? "#3A5F8A",
+      colorTo:       (d.colorTo as string)       ?? "#7FAEDB",
+      imageUrl:      (() => {
+        const img = d.image as Record<string, unknown> | string | null | undefined;
+        if (img && typeof img === "object" && typeof img.url === "string") return img.url;
+        return (d.imageUrl as string) ?? "";
+      })(),
+      description:   (d.description as string)   ?? "",
+      specs:         Array.isArray(d.specs)
+        ? (d.specs as Array<{ label?: string; value?: string }>).map((s) => ({
+            label: s?.label ?? "",
+            value: s?.value ?? "",
+          }))
+        : [],
+    };
+  } catch (err) {
+    console.error("[getPublicProductById] payload read failed:", err);
+    return readFromFile().products.find((p) => p.id === id) ?? null;
+  }
+}
+
+/**
+ * Lightweight read for the public Products page — ONE Payload query instead
+ * of the 17+ queries getSiteContent runs. Falls back to the JSON seed when
+ * Payload is unreachable (e.g. local dev without DATABASE_URI).
+ */
+export async function getPublicProducts(): Promise<Product[]> {
+  try {
+    const { getPayload } = await import("payload");
+    const { default: payloadConfig } = await import("@payload-config");
+    const payload = await getPayload({ config: payloadConfig });
+    const res = await payload.find({
+      collection: "products",
+      limit: 500,
+      depth: 1,
+      sort: "displayOrder",
+    });
+    const docs = (res?.docs ?? []) as Array<Record<string, unknown>>;
+    const list = docs
+      .filter((d) => {
+        const model = (d.model as string) ?? "";
+        const price = Number(d.salePrice ?? 0);
+        return model.trim().length > 0 && price > 0;
+      })
+      .map((d) => ({
+        id:            String(d.id ?? ""),
+        brand:         (d.brand as string)         ?? "",
+        model:         (d.model as string)         ?? "",
+        category:      (d.category as string)      ?? "all",
+        originalPrice: Number(d.originalPrice ?? 0),
+        salePrice:     Number(d.salePrice ?? 0),
+        savings:       Number(d.savings ?? 0),
+        grade:         (d.grade as string)         ?? "A",
+        warranty:      Number(d.warranty ?? 12),
+        icon:          (d.icon as string)          ?? "Package",
+        colorFrom:     (d.colorFrom as string)     ?? "#3A5F8A",
+        colorTo:       (d.colorTo as string)       ?? "#7FAEDB",
+        imageUrl:      (() => {
+          const img = d.image as Record<string, unknown> | string | null | undefined;
+          if (img && typeof img === "object" && typeof img.url === "string") return img.url;
+          return (d.imageUrl as string) ?? "";
+        })(),
+        description:   (d.description as string)   ?? "",
+        specs:         Array.isArray(d.specs)
+          ? (d.specs as Array<{ label?: string; value?: string }>).map((s) => ({
+              label: s?.label ?? "",
+              value: s?.value ?? "",
+            }))
+          : [],
+      })) as Product[];
+    if (list.length > 0) return list;
+  } catch (err) {
+    console.error("[getPublicProducts] payload read failed, falling back to seed:", err);
+  }
+  return readFromFile().products;
+}
+
 export async function writeSiteContent(content: SiteContent): Promise<void> {
   if (process.env.MONGODB_URI) {
     try {

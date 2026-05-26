@@ -3,7 +3,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ScrollProgress from "@/components/shared/ScrollProgress";
 import ProductsContent from "./ProductsContent";
-import { getSiteContent } from "@/lib/site-content";
+import { getPublicProducts } from "@/lib/site-content";
 
 // Cache the rendered page for 30s. The admin's PUT /api/admin/products handler
 // calls revalidatePath("/", "layout") after each save, so edits still appear
@@ -18,13 +18,13 @@ export const metadata: Metadata = {
 };
 
 export default async function ProductsPage() {
-  const content = await getSiteContent();
+  const products = await getPublicProducts();
   return (
     <>
       <ScrollProgress />
       <Navbar />
       <main>
-        <ProductsContent products={content.products} />
+        <ProductsContent products={products} />
       </main>
       <Footer />
     </>
