@@ -20,6 +20,10 @@ export function middleware(request: NextRequest) {
   return NextResponse.next({ request: { headers: requestHeaders } });
 }
 
+// Only run middleware on admin + cms routes:
+// - /admin/*  needs the x-pathname header for admin/layout.tsx's login-page detection
+// - /cms*     gets redirected to /admin
+// Public pages don't need either, and matching them prevents ISR from caching.
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/admin/:path*", "/admin", "/cms/:path*", "/cms"],
 };
