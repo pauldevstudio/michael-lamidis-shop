@@ -3,8 +3,6 @@ import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/lib/i18n-context";
 import { CartProvider } from "@/lib/cart-context";
-import { ContentProvider } from "@/lib/content-context";
-import { DEFAULT_CONTENT } from "@/lib/site-content";
 import { SITE_NAME, SITE_DESCRIPTION, SITE_URL, SITE_PHONE, SITE_EMAIL } from "@/lib/constants";
 import WhatsAppOnPublic from "@/components/shared/WhatsAppOnPublic";
 
@@ -25,8 +23,6 @@ export const viewport: Viewport = {
   initialScale: 1,
   themeColor: "#030813",
 };
-
-export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -109,9 +105,7 @@ export default function RootLayout({
       </head>
       <body className="font-sans antialiased">
         <LanguageProvider>
-          <ContentProvider content={DEFAULT_CONTENT}>
-            <CartProvider>{children}</CartProvider>
-          </ContentProvider>
+          <CartProvider>{children}</CartProvider>
         </LanguageProvider>
         <WhatsAppOnPublic />
       </body>
