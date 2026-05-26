@@ -17,11 +17,13 @@ import {
   ChevronLeft,
   ChevronRight,
   Users,
+  ShoppingBag,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV = [
   { href: "/admin",           label: "Dashboard",    icon: LayoutDashboard, exact: true },
+  { href: "/admin/orders",    label: "Orders",       icon: ShoppingBag },
   { href: "/admin/business",  label: "Business Info", icon: Building2 },
   { href: "/admin/products",  label: "Products",     icon: Package },
   { href: "/admin/content",   label: "Content",      icon: FileText },
