@@ -78,7 +78,13 @@ export default function EditProductModal({
     try {
       const url = "/api/admin/products";
       const method = initialProduct ? "PUT" : "POST";
-      const body = initialProduct ? { ...formData, id: initialProduct.id } : formData;
+      // Payload requires both label and value when a spec row exists,
+      // so drop any half-empty rows (including the default placeholder one).
+      const cleanSpecs = formData.specs.filter(
+        (s) => s.label.trim() && s.value.trim()
+      );
+      const payload = { ...formData, specs: cleanSpecs };
+      const body = initialProduct ? { ...payload, id: initialProduct.id } : payload;
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
