@@ -10,6 +10,7 @@ import { Menu, X, Phone, Lock } from "lucide-react";
 import { useLanguage } from "@/lib/i18n-context";
 import { useContent } from "@/lib/content-context";
 import LanguageSwitcher from "@/components/shared/LanguageSwitcher";
+import CartIndicator from "@/components/layout/CartIndicator";
 import { cn } from "@/lib/utils";
 import { SITE_PHONE } from "@/lib/constants";
 
@@ -126,6 +127,8 @@ export default function Navbar() {
               </Link>
 
               <LanguageSwitcher className="hidden sm:inline-flex" />
+
+              <CartIndicator />
 
               <a
                 href={`tel:${phone.replace(/\s+/g, "")}`}

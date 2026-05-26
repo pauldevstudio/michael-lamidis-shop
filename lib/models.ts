@@ -46,3 +46,63 @@ export interface LeadDoc {
 
 export const LeadModel: Model<LeadDoc> =
   (models.Lead as Model<LeadDoc>) || model<LeadDoc>("Lead", LeadSchema);
+
+/* ─── Orders ───────────────────────────────────────────────────── */
+
+const OrderItemSchema = new Schema(
+  {
+    productId: String,
+    brand:     String,
+    model:     String,
+    salePrice: Number,
+    quantity:  Number,
+  },
+  { _id: false }
+);
+
+const OrderCustomerSchema = new Schema(
+  {
+    fullName:   String,
+    email:      String,
+    phone:      String,
+    address:    String,
+    city:       String,
+    postalCode: String,
+    notes:      String,
+  },
+  { _id: false }
+);
+
+const OrderSchema = new Schema(
+  {
+    customer:   { type: OrderCustomerSchema, required: true },
+    items:      { type: [OrderItemSchema], default: [] },
+    totalPrice: { type: Number, required: true },
+    payment:    {
+      type: String,
+      enum: ["bank_transfer", "cash_on_delivery", "showroom_pickup"],
+      required: true,
+    },
+    status: { type: String, default: "new" },
+  },
+  { timestamps: true }
+);
+
+export interface OrderDoc {
+  _id: string;
+  customer: {
+    fullName: string; email: string; phone: string;
+    address?: string; city?: string; postalCode?: string; notes?: string;
+  };
+  items: Array<{
+    productId: string; brand: string; model: string;
+    salePrice: number; quantity: number;
+  }>;
+  totalPrice: number;
+  payment: "bank_transfer" | "cash_on_delivery" | "showroom_pickup";
+  status: string;
+  createdAt: Date;
+}
+
+export const OrderModel: Model<OrderDoc> =
+  (models.Order as Model<OrderDoc>) || model<OrderDoc>("Order", OrderSchema);

@@ -2,7 +2,14 @@
  * Mongoose connection helper — gracefully skips if MONGODB_URI is not set
  * so local dev without a database still works via the JSON file fallback.
  */
+import dns from "node:dns";
 import mongoose from "mongoose";
+
+// Atlas SRV records time out on Windows' default IPv6 resolver. Force public
+// DNS so local dev can reach the cluster. No-op on Linux (Vercel runtime).
+if (process.platform === "win32") {
+  dns.setServers(["8.8.8.8", "1.1.1.1"]);
+}
 
 interface MongooseCache {
   conn: typeof mongoose | null;
