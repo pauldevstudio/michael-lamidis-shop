@@ -88,7 +88,9 @@ export default function EditProductModal({
         onSaved(initialProduct ? "updated" : "created");
         onClose();
       } else {
-        onError("Failed to save product");
+        const data = await res.json().catch(() => ({}));
+        const detail = (data as { error?: string }).error;
+        onError(detail ? `Save failed: ${detail.slice(0, 120)}` : "Failed to save product");
       }
     } catch {
       onError("Network error");
@@ -154,13 +156,20 @@ export default function EditProductModal({
             </div>
           </div>
           <div className="grid grid-cols-3 gap-4">
-            {([["originalPrice", "Original Price (€)"], ["salePrice", "Sale Price (€)"], ["savings", "Savings %"]] as const).map(([key, label]) => (
+            {([
+              ["originalPrice", "Original Price (€)", true],
+              ["salePrice",     "Sale Price (€)",     true],
+              ["savings",       "Savings %",          false],
+            ] as const).map(([key, label, required]) => (
               <div key={key} className="flex flex-col gap-1.5">
-                <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">{label}</label>
+                <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                  {label}{required && <span className="text-red-400"> *</span>}
+                </label>
                 <input
                   type="number"
                   value={(formData[key] as number) || ""}
                   onChange={(e) => updateForm(key, Number(e.target.value))}
+                  required={required}
                   className="border border-slate-700 bg-slate-800 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400"
                 />
               </div>
@@ -314,28 +323,38 @@ export default function EditProductModal({
             ))}
           </div>
         </div>
-        <div className="flex items-center justify-between gap-3 px-6 py-5 border-t border-slate-100">
-          <p className="text-slate-500 text-xs h-5">
-            {!formData.brand || !formData.model ? (
-              <>
-                <span className="text-red-400">*</span> Brand and Model are required
-              </>
-            ) : null}
-          </p>
-          <div className="flex items-center gap-3">
-            <button onClick={onClose} className="px-5 py-2.5 rounded-xl border border-slate-700 text-slate-400 text-sm font-medium hover:bg-slate-800">Cancel</button>
-            <button
-              onClick={handleSave}
-              disabled={saving || !formData.brand || !formData.model}
-              title={!formData.brand || !formData.model ? "Fill Brand and Model first" : undefined}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-bold transition-all disabled:opacity-60 disabled:cursor-not-allowed"
-              style={{ background: "linear-gradient(135deg, #3A5F8A, #5B82A8)" }}
-            >
-              {saving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-              {saving ? "Saving…" : initialProduct ? "Update Product" : "Create Product"}
-            </button>
-          </div>
-        </div>
+        {(() => {
+          const missing: string[] = [];
+          if (!formData.brand) missing.push("Brand");
+          if (!formData.model) missing.push("Model");
+          if (!formData.originalPrice || formData.originalPrice <= 0) missing.push("Original Price");
+          if (!formData.salePrice || formData.salePrice <= 0) missing.push("Sale Price");
+          const canSave = missing.length === 0;
+          return (
+            <div className="flex items-center justify-between gap-3 px-6 py-5 border-t border-slate-100">
+              <p className="text-slate-500 text-xs h-5">
+                {!canSave && (
+                  <>
+                    <span className="text-red-400">*</span> Required: {missing.join(", ")}
+                  </>
+                )}
+              </p>
+              <div className="flex items-center gap-3">
+                <button onClick={onClose} className="px-5 py-2.5 rounded-xl border border-slate-700 text-slate-400 text-sm font-medium hover:bg-slate-800">Cancel</button>
+                <button
+                  onClick={handleSave}
+                  disabled={saving || !canSave}
+                  title={!canSave ? `Fill ${missing.join(", ")} first` : undefined}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-bold transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                  style={{ background: "linear-gradient(135deg, #3A5F8A, #5B82A8)" }}
+                >
+                  {saving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                  {saving ? "Saving…" : initialProduct ? "Update Product" : "Create Product"}
+                </button>
+              </div>
+            </div>
+          );
+        })()}
       </div>
     </div>
   );

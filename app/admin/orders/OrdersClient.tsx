@@ -158,7 +158,7 @@ export default function OrdersClient() {
     <>
       {toast && (
         <div
-          className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl text-sm font-medium border"
+          className="fixed bottom-6 right-6 z-[60] flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl text-sm font-medium border"
           style={{
             background: toast.type === "success" ? "#F0FDF4" : "#FEF2F2",
             borderColor: toast.type === "success" ? "#BBF7D0" : "#FECACA",
