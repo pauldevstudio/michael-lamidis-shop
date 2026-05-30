@@ -127,13 +127,8 @@ export default buildConfig({
           admin: { description: "Fallback image URL (only used if no Image is uploaded above)." },
         },
         { name: "icon",        type: "text", defaultValue: "Package" },
-        {
-          type: "row",
-          fields: [
-            { name: "colorFrom", type: "text", defaultValue: "#3A5F8A", admin: { width: "50%" } },
-            { name: "colorTo",   type: "text", defaultValue: "#7FAEDB", admin: { width: "50%" } },
-          ],
-        },
+        { name: "colorFrom", type: "text", defaultValue: "#3A5F8A", admin: { hidden: true } },
+        { name: "colorTo",   type: "text", defaultValue: "#7FAEDB", admin: { hidden: true } },
         {
           name: "specs",
           type: "array",

@@ -27,7 +27,7 @@ const PAYMENT_OPTIONS: { id: PaymentMethod; label: string; desc: string; icon: t
   {
     id: "showroom_pickup",
     label: "Pickup at Showroom",
-    desc: "Pay in-store at Al Hassa Village, Limassol.",
+    desc: "Pay in-store at Alassa Village, Limassol.",
     icon: Store,
   },
 ];

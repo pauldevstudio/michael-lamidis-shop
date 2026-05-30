@@ -68,7 +68,7 @@ const jsonLd = {
       "email": SITE_EMAIL,
       "address": {
         "@type": "PostalAddress",
-        "streetAddress": "Al Hassa Village",
+        "streetAddress": "Alassa Village",
         "addressLocality": "Limassol",
         "addressCountry": "CY",
       },

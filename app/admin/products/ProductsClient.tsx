@@ -470,9 +470,11 @@ export default function ProductsClient() {
                           </p>
                         )}
                       </div>
-                      <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[11px] font-black tracking-wide">
-                        −{p.savings}%
-                      </span>
+                      {p.originalPrice > p.salePrice && p.savings > 0 && (
+                        <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[11px] font-black tracking-wide">
+                          −{p.savings}%
+                        </span>
+                      )}
                     </div>
 
                     {/* Subline */}

@@ -14,13 +14,17 @@ function isAuthorized(req: NextRequest): boolean {
 }
 
 function toPayloadData(p: Partial<Product>) {
+  // Single-price model: mirror originalPrice to salePrice so public
+  // displays show one figure (the "real saving" guards hide the badge
+  // + strikethrough when these are equal).
+  const sale = Number(p.salePrice ?? 0);
   return {
     brand:         p.brand ?? "",
     model:         p.model ?? "",
     category:      p.category ?? "refrigerators",
-    originalPrice: p.originalPrice ?? 0,
-    salePrice:     p.salePrice ?? 0,
-    savings:       p.savings,
+    originalPrice: sale,
+    salePrice:     sale,
+    savings:       0,
     grade:         p.grade ?? "A",
     warranty:      p.warranty ?? 12,
     icon:          p.icon ?? "Package",

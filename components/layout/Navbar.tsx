@@ -34,13 +34,12 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const { t, lang, pick } = useLanguage();
+  const { t, pick } = useLanguage();
   const content = useContent();
   const __nav = content?.navigation;
-  // Greek: always use translations. English: prefer CMS if filled.
-  const __navItems = (lang === "en" && __nav?.items && __nav.items.length > 0)
-    ? __nav.items.map((it) => ({ href: it.href, label: it.label, key: it.href as "/" }))
-    : navLinks.map((l) => ({ href: l.href, label: t.nav[l.key], key: l.href }));
+  // Always use translations for nav labels (translations are source of truth after the
+  // catalog pivot). CMS navigation global is no longer authoritative for link text.
+  const __navItems = navLinks.map((l) => ({ href: l.href, label: t.nav[l.key], key: l.href }));
   const __ctaLabel = pick(__nav?.getQuoteLabel, t.nav.getQuote);
   const __ctaHref  = __nav?.getQuoteHref  ?? "/contact";
   const phone = content?.business?.phone ?? SITE_PHONE;

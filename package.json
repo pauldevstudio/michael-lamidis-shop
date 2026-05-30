@@ -9,7 +9,9 @@
     "lint": "next lint",
     "payload": "payload",
     "payload:generate": "payload generate:types && payload generate:importmap",
-    "translate": "node scripts/translate-to-greek.mjs"
+    "translate": "node scripts/translate-to-greek.mjs",
+    "import-products": "node scripts/import-products.mjs",
+    "import-products:apply": "node scripts/import-products.mjs --confirm"
   },
   "dependencies": {
     "@payloadcms/db-mongodb": "^3.84.1",

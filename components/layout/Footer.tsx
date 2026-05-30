@@ -123,7 +123,7 @@ export default function Footer() {
                 <span className="text-white text-xs font-bold uppercase tracking-widest">{title}</span>
                 <ul className="flex flex-col gap-2.5">
                   {links.map(({ label, href }) => (
-                    <li key={href}>
+                    <li key={`${label}-${href}`}>
                       <Link
                         href={href}
                         className="text-white/40 text-sm hover:text-white/80 transition-colors duration-200 leading-snug"

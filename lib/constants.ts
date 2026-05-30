@@ -6,7 +6,7 @@ export const SITE_URL = "https://michaellamidis.com.cy";
 export const SITE_EMAIL = "lamidismichaelshop@gmail.com";
 export const SITE_PHONE = "+357 97 755914";
 export const SITE_WHATSAPP = "+357 99 911871";
-export const SITE_ADDRESS = "Al Hassa Village, Limassol, Cyprus";
+export const SITE_ADDRESS = "Alassa Village, Limassol, Cyprus";
 export const SITE_HOURS = "Mon–Sat: 09:00–20:00";
 
 export const NAV_LINKS = [
@@ -57,7 +57,7 @@ export const DEFAULT_CATEGORY_COLOR = { colorFrom: "#475569", colorTo: "#94A3B8"
 // All images verified from pexels.com (free commercial license)
 
 // Hero — premium appliance lineup (washer, fridge, oven, TV, microwave, vacuum)
-export const HERO_IMAGE = "/hero-appliances.jpg?v=2";
+export const HERO_IMAGE = "/hero-appliances.jpg";
 
 // Floating product card images
 export const HERO_FRIDGE_IMAGE =

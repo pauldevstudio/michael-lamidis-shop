@@ -13,44 +13,41 @@ const en = {
     switchLang: "ΕΛ",
   },
   hero: {
-    badge: "Certified Open Box",
+    badge: "Direct From Warehouse",
     eyebrow: "Michael Lamidis",
     locationLabel: "Limassol, Cyprus",
-    titleLine1: "The Same Appliance.",
-    titleLine2: "50% Less. No Compromise.",
+    titleLine1: "Quality Home Goods.",
+    titleLine2: "Honest Cyprus Prices.",
     subtitle:
-      "Brand-new Samsung, LG, Bosch, Miele & Siemens appliances - certified, warranted, delivered free across Cyprus. Walk into our Limassol showroom or browse online.",
+      "Cookware, mattresses, kitchen appliances and bedding — sourced direct, priced fair, delivered across Cyprus. Visit our Limassol showroom or browse online.",
     cta1: "Shop Now",
     cta2: "Visit Showroom",
     cta3: "Visit Our Showroom",
     scrollHint: "Scroll",
     trustItems: [
-      "Certified Quality",
+      "Quality Tested",
       "12-Month Warranty",
-      "Free Delivery",
+      "Island-Wide Delivery",
     ],
     stats: [
-      { value: "500+", label: "Products In Stock" },
-      { value: "4.9", label: "Star Rating" },
-      { value: "70%", label: "Max Savings" },
+      { value: "45+", label: "Items In Stock" },
+      { value: "€7-€369", label: "Price Range" },
+      { value: "Cyprus", label: "Delivery" },
       { value: "12mo", label: "Warranty" },
     ],
   },
   announcement: {
-    message: "🔥 Summer Sale — Up to 70% off premium open box appliances. Limited stock!",
+    message: "🔥 New stock arrived — Cookware, mattresses and small appliances from €7. Limited quantities!",
     cta: "Shop Now",
   },
   categoryStrip: {
     eyebrow: "Shop by Category",
     items: [
       { id: "all", label: "All Products" },
-      { id: "refrigerators", label: "Refrigerators" },
-      { id: "washing-machines", label: "Washers" },
-      { id: "ovens", label: "Ovens" },
-      { id: "dishwashers", label: "Dishwashers" },
-      { id: "air-conditioners", label: "Air Conditioning" },
-      { id: "tvs", label: "Smart TVs" },
       { id: "small-appliances", label: "Small Appliances" },
+      { id: "kitchenware", label: "Cookware & Kitchen" },
+      { id: "mattresses", label: "Mattresses" },
+      { id: "furniture", label: "Bedding & Furniture" },
     ],
   },
   trust: {
@@ -59,71 +56,71 @@ const en = {
     items: [
       {
         icon: "ShieldCheck",
-        title: "47-Point Inspection",
+        title: "Quality Tested",
         description:
-          "Every appliance passes our rigorous certification process before reaching you.",
+          "Every item is checked before it reaches you. No surprises, no defects, no fuss.",
       },
       {
         icon: "Award",
         title: "12-Month Warranty",
         description:
-          "Full parts and labor coverage on every open box item. Peace of mind, guaranteed.",
+          "Full coverage on every appliance and mattress. Peace of mind, included.",
       },
       {
         icon: "Truck",
-        title: "Free Delivery & Install",
+        title: "Island-Wide Delivery",
         description:
-          "Complimentary white-glove delivery and installation on orders over €200.",
+          "Delivery anywhere in Cyprus. Free on orders over €200, fair flat fee otherwise.",
       },
       {
         icon: "RefreshCw",
-        title: "30-Day Returns",
+        title: "14-Day Returns",
         description:
-          "Not satisfied? Return within 30 days for a full refund, no questions asked.",
+          "Not what you expected? Return within 14 days for a refund or exchange.",
       },
     ],
   },
   features: {
-    eyebrow: "Why Open Box?",
-    title: "The Smart Way to Buy Premium Appliances",
+    eyebrow: "Why Shop With Us?",
+    title: "Quality You Can Trust at Prices That Make Sense",
     subtitle:
-      "Open box means like-new quality at a fraction of retail. Discover why savvy Cypriot families choose Lamidis.",
+      "We source direct from manufacturers and pass the savings on. No middlemen, no retail markup, just honest value for Cypriot families.",
     items: [
       {
         icon: "Tag",
-        title: "Up to 70% Off",
+        title: "Direct Supplier Pricing",
         description:
-          "Genuine savings on Samsung, LG, Bosch, Miele, Siemens — all premium brands, not budget alternatives.",
+          "We buy by the container and pass the savings on. No retail markup — just fair prices.",
       },
       {
         icon: "CheckCircle2",
-        title: "Thoroughly Certified",
+        title: "Quality Checked",
         description:
-          "Our certified technicians test every function of every unit before it's offered for sale.",
+          "Every item is inspected before it goes on the shelf. We only sell what we'd use ourselves.",
       },
       {
         icon: "Zap",
-        title: "In Stock & Ready",
+        title: "Stock On Hand",
         description:
-          "No 8-week backorders. Our inventory ships within 24–48 hours across Cyprus.",
+          "Warehouse in Limassol. Most orders ship within 24–48 hours, anywhere in Cyprus.",
       },
       {
         icon: "Recycle",
-        title: "Eco-Friendly",
+        title: "Cookware Built to Last",
         description:
-          "Give quality appliances a second life and reduce Cyprus's electronic waste footprint.",
+          "Pocket-spring mattresses, multi-piece cookware sets, durable kitchen appliances.",
       },
       {
         icon: "Star",
-        title: "50+ Premium Brands",
+        title: "Real Range",
         description:
-          "Samsung, LG, Bosch, Miele, Siemens, Electrolux, Philips, AEG, Gorenje, and more.",
+          "From €7 kitchen essentials to €369 premium mattresses — something for every budget.",
       },
       {
         icon: "HeartHandshake",
-        title: "Expert Guidance",
+        title: "Family Business",
         description:
-          "Our appliance specialists help you find the perfect match for your home and budget.",
+          "Locally owned, locally accountable. Walk into our Limassol showroom — Michael will help you choose.",
       },
     ],
   },
@@ -497,7 +494,7 @@ const en = {
 const gr: typeof en = {
   nav: {
     home: "Αρχική",
-    products: "Κατάστημα",
+    products: "Προϊόντα",
     about: "Σχετικά",
     services: "Υπηρεσίες",
     testimonials: "Αξιολογήσεις",
@@ -507,117 +504,114 @@ const gr: typeof en = {
     switchLang: "EN",
   },
   hero: {
-    badge: "Πιστοποιημένα Open Box",
+    badge: "Απευθείας Από Την Αποθήκη",
     eyebrow: "Michael Lamidis",
     locationLabel: "Λεμεσός, Κύπρος",
-    titleLine1: "Η Ίδια Συσκευή.",
-    titleLine2: "50% Λιγότερο. Κανένας Συμβιβασμός.",
+    titleLine1: "Ποιοτικά Είδη Σπιτιού.",
+    titleLine2: "Δίκαιες Τιμές Κύπρου.",
     subtitle:
-      "Ολοκαίνουργιες συσκευές Samsung, LG, Bosch, Miele & Siemens — πιστοποιημένες, με εγγύηση και δωρεάν παράδοση σε όλη την Κύπρο. Επισκεφθείτε το showroom μας στη Λεμεσό ή περιηγηθείτε online.",
+      "Μαγειρικά σκεύη, στρώματα, μικρές συσκευές και κλινοσκεπάσματα — απευθείας από τον προμηθευτή, σε δίκαιες τιμές, με παράδοση σε όλη την Κύπρο. Επισκεφθείτε το showroom μας στη Λεμεσό ή περιηγηθείτε online.",
     cta1: "Αγοράστε Τώρα",
     cta2: "Επισκεφθείτε το Showroom",
     cta3: "Επισκεφθείτε το Showroom",
     scrollHint: "Κύλιση",
     trustItems: [
-      "Πιστοποιημένη Ποιότητα",
+      "Ελεγμένη Ποιότητα",
       "Εγγύηση 12 Μηνών",
-      "Δωρεάν Παράδοση",
+      "Παράδοση σε Όλη την Κύπρο",
     ],
     stats: [
-      { value: "500+", label: "Διαθέσιμα Προϊόντα" },
-      { value: "4.9", label: "Βαθμολογία" },
-      { value: "70%", label: "Μέγιστη Εξοικονόμηση" },
+      { value: "45+", label: "Διαθέσιμα Είδη" },
+      { value: "€7-€369", label: "Εύρος Τιμών" },
+      { value: "Κύπρος", label: "Παράδοση" },
       { value: "12μη", label: "Εγγύηση" },
     ],
   },
   announcement: {
-    message: "🔥 Καλοκαιρινές Εκπτώσεις — Έως 70% σε premium open box συσκευές. Περιορισμένο απόθεμα!",
+    message: "🔥 Νέο απόθεμα — Μαγειρικά σκεύη, στρώματα και μικρές συσκευές από €7. Περιορισμένες ποσότητες!",
     cta: "Αγοράστε Τώρα",
   },
   categoryStrip: {
     eyebrow: "Αγορά ανά Κατηγορία",
     items: [
       { id: "all", label: "Όλα τα Προϊόντα" },
-      { id: "refrigerators", label: "Ψυγεία" },
-      { id: "washing-machines", label: "Πλυντήρια" },
-      { id: "ovens", label: "Φούρνοι" },
-      { id: "dishwashers", label: "Πλυντήρια Πιάτων" },
-      { id: "air-conditioners", label: "Κλιματιστικά" },
-      { id: "tvs", label: "Τηλεοράσεις" },
       { id: "small-appliances", label: "Μικρές Συσκευές" },
+      { id: "kitchenware", label: "Σκεύη Κουζίνας" },
+      { id: "mattresses", label: "Στρώματα" },
+      { id: "furniture", label: "Κλινοσκεπάσματα & Έπιπλα" },
     ],
   },
   trust: {
-    eyebrow: "Εμπιστευμένοι από Χιλιάδες",
+    eyebrow: "Εμπιστευμένοι στην Κύπρο",
     title: "Γιατί Οι Οικογένειες Επιλέγουν Lamidis",
     items: [
       {
         icon: "ShieldCheck",
-        title: "Έλεγχος 47 Σημείων",
+        title: "Ελεγμένη Ποιότητα",
         description:
-          "Κάθε συσκευή περνά τη διαδικασία πιστοποίησής μας πριν φτάσει σε εσάς.",
+          "Κάθε προϊόν ελέγχεται πριν φτάσει σε εσάς. Καμία έκπληξη, κανένα ελάττωμα.",
       },
       {
         icon: "Award",
         title: "Εγγύηση 12 Μηνών",
         description:
-          "Πλήρης κάλυψη ανταλλακτικών και εργασίας σε κάθε open box προϊόν.",
+          "Πλήρης κάλυψη σε κάθε συσκευή και στρώμα. Σιγουριά, συμπεριλαμβανόμενη.",
       },
       {
         icon: "Truck",
-        title: "Δωρεάν Παράδοση & Εγκατάσταση",
+        title: "Παράδοση σε Όλη την Κύπρο",
         description:
-          "Δωρεάν white-glove παράδοση και εγκατάσταση σε παραγγελίες άνω €200.",
+          "Παράδοση οπουδήποτε στην Κύπρο. Δωρεάν σε παραγγελίες άνω €200.",
       },
       {
         icon: "RefreshCw",
-        title: "Επιστροφή 30 Ημερών",
+        title: "Επιστροφή 14 Ημερών",
         description:
-          "Δεν είστε ικανοποιημένοι; Επιστρέψτε εντός 30 ημερών για πλήρη επιστροφή.",
+          "Δεν ήταν αυτό που περιμένατε; Επιστρέψτε εντός 14 ημερών για επιστροφή ή αλλαγή.",
       },
     ],
   },
   features: {
-    eyebrow: "Γιατί Open Box;",
-    title: "Ο Έξυπνος Τρόπος για Premium Συσκευές",
+    eyebrow: "Γιατί Να Ψωνίσετε Μαζί Μας;",
+    title: "Ποιότητα που Εμπιστεύεστε σε Τιμές που Βγάζουν Νόημα",
     subtitle:
-      "Το Open Box σημαίνει ποιότητα σαν καινούρια σε ένα κλάσμα του κόστους.",
+      "Προμηθευόμαστε απευθείας από κατασκευαστές και περνάμε την εξοικονόμηση σε εσάς. Χωρίς μεσάζοντες, χωρίς λιανικές προσαυξήσεις, μόνο τίμια αξία για κυπριακές οικογένειες.",
     items: [
       {
         icon: "Tag",
-        title: "Έως 70% Έκπτωση",
+        title: "Τιμές Απευθείας Από Προμηθευτή",
         description:
-          "Πραγματική εξοικονόμηση σε Samsung, LG, Bosch, Miele, Siemens — premium μάρκες.",
+          "Αγοράζουμε ανά container και περνάμε την εξοικονόμηση. Χωρίς λιανικές προσαυξήσεις — μόνο δίκαιες τιμές.",
       },
       {
         icon: "CheckCircle2",
-        title: "Πλήρης Πιστοποίηση",
+        title: "Ελεγχόμενη Ποιότητα",
         description:
-          "Πιστοποιημένοι τεχνικοί ελέγχουν κάθε λειτουργία πριν την πώληση.",
+          "Κάθε προϊόν ελέγχεται πριν μπει στο ράφι. Πουλάμε μόνο ό,τι θα χρησιμοποιούσαμε εμείς.",
       },
       {
         icon: "Zap",
-        title: "Σε Απόθεμα & Έτοιμο",
+        title: "Διαθέσιμο Απόθεμα",
         description:
-          "Χωρίς αναμονή μηνών. Παράδοση εντός 24–48 ωρών σε όλη την Κύπρο.",
+          "Αποθήκη στη Λεμεσό. Οι περισσότερες παραγγελίες αποστέλλονται εντός 24–48 ωρών.",
       },
       {
         icon: "Recycle",
-        title: "Οικολογική Επιλογή",
+        title: "Σκεύη Φτιαγμένα να Αντέχουν",
         description:
-          "Δώστε δεύτερη ζωή σε ποιοτικές συσκευές και μειώστε τα ηλεκτρονικά απόβλητα.",
+          "Στρώματα με pocket springs, σετ μαγειρικών σκευών, ανθεκτικές συσκευές κουζίνας.",
       },
       {
         icon: "Star",
-        title: "50+ Premium Μάρκες",
+        title: "Πραγματική Γκάμα",
         description:
-          "Samsung, LG, Bosch, Miele, Siemens, Electrolux, Philips, AEG, Gorenje και άλλες.",
+          "Από €7 βασικά κουζίνας μέχρι €369 premium στρώματα — κάτι για κάθε προϋπολογισμό.",
       },
       {
         icon: "HeartHandshake",
-        title: "Εξειδικευμένη Υποστήριξη",
+        title: "Οικογενειακή Επιχείρηση",
         description:
-          "Οι ειδικοί μας σε συσκευές σας καθοδηγούν στην καλύτερη επιλογή.",
+          "Τοπική επιχείρηση, με τοπική ευθύνη. Επισκεφθείτε το showroom μας στη Λεμεσό — ο Michael θα σας βοηθήσει.",
       },
     ],
   },

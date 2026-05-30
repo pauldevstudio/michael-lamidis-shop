@@ -14,12 +14,12 @@ import LeadCapture from "@/components/sections/LeadCapture";
 import ContactSection from "@/components/sections/ContactSection";
 import CategoryStrip from "@/components/sections/CategoryStrip";
 import { ContentProvider } from "@/lib/content-context";
-import { getSiteContent } from "@/lib/site-content";
+import { getSiteContent, getPublicProducts } from "@/lib/site-content";
 
-// Cache the page for 30s; admin saves call revalidateTag("site-content")
-// so live edits in Content / Business / SEO etc. flush both this cache
-// and the underlying getSiteContent cache immediately.
-export const revalidate = 30;
+// Always render fresh so admin product edits show on /  without
+// waiting for revalidate or relying on build-time Payload init
+// (PAYLOAD_SECRET isn't always available during prerender on Vercel).
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Michael Lamidis | Premium Open Box Appliances Cyprus",
@@ -28,7 +28,10 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const content = await getSiteContent();
+  const [content, products] = await Promise.all([
+    getSiteContent(),
+    getPublicProducts(),
+  ]);
   return (
     <ContentProvider content={content}>
       <ScrollProgress />
@@ -39,7 +42,7 @@ export default async function HomePage() {
         <CategoryStrip />
         <Features />
         <Services />
-        <ProductGallery />
+        <ProductGallery products={products} />
         <Testimonials />
         <Statistics />
         <FAQ />
