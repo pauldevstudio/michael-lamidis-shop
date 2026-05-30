@@ -11,7 +11,7 @@ import Link from "next/link";
 import { useLanguage } from "@/lib/i18n-context";
 import { useContent } from "@/lib/content-context";
 import SectionHeader from "@/components/shared/SectionHeader";
-import { FEATURED_PRODUCTS, PRODUCT_CATEGORIES, CATEGORY_COLOR_MAP, DEFAULT_CATEGORY_COLOR } from "@/lib/constants";
+import { FEATURED_PRODUCTS, PRODUCT_CATEGORIES, CATEGORY_COLOR_MAP, DEFAULT_CATEGORY_COLOR, type Product } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 const ICONS: Record<string, React.ElementType> = {
@@ -24,6 +24,10 @@ function ProductCard({
   warranty, colorFrom, colorTo, icon, imageUrl,
 }: (typeof FEATURED_PRODUCTS)[0]) {
   const Icon = ICONS[icon] ?? Square;
+  // Hide the strikethrough + discount badge unless there's a real saving.
+  // Guards against typo'd data (sale ≥ original) and 0% rows from looking
+  // like nonsense to shoppers.
+  const hasRealSaving = originalPrice > salePrice && savings > 0;
 
   return (
     <motion.div
@@ -62,13 +66,15 @@ function ProductCard({
           </div>
         )}
 
-        {/* Savings badge */}
-        <div
-          className="absolute top-3 left-3 text-[11px] font-bold px-2.5 py-1 rounded-full text-white shadow-md"
-          style={{ background: `linear-gradient(135deg, ${colorFrom}, ${colorTo})` }}
-        >
-          -{savings}%
-        </div>
+        {/* Savings badge — only when there's a real saving */}
+        {hasRealSaving && (
+          <div
+            className="absolute top-3 left-3 text-[11px] font-bold px-2.5 py-1 rounded-full text-white shadow-md"
+            style={{ background: `linear-gradient(135deg, ${colorFrom}, ${colorTo})` }}
+          >
+            -{savings}%
+          </div>
+        )}
 
         {/* Grade badge */}
         <div className="absolute top-3 right-3 badge-blue text-[10px]">
@@ -90,9 +96,11 @@ function ProductCard({
           <span className="text-navy-950 font-display font-black text-xl" style={{ fontFamily: "var(--font-jakarta)" }}>
             €{salePrice.toLocaleString("el-GR")}
           </span>
-          <span className="text-navy-300 text-sm line-through font-medium">
-            €{originalPrice.toLocaleString("el-GR")}
-          </span>
+          {hasRealSaving && (
+            <span className="text-navy-300 text-sm line-through font-medium">
+              €{originalPrice.toLocaleString("el-GR")}
+            </span>
+          )}
         </div>
 
         {/* Meta */}
@@ -120,10 +128,13 @@ function ProductCard({
   );
 }
 
-export default function ProductGallery() {
+export default function ProductGallery({ products }: { products?: Product[] } = {}) {
   const { t } = useLanguage();
   const __content = useContent();
-  const __products = (__content?.products && __content.products.length > 0) ? __content.products : FEATURED_PRODUCTS;
+  // Live products are always passed in from the server (getPublicProducts on
+  // the homepage). No static-seed fallback — an empty list simply renders
+  // nothing rather than stale ghost products whose IDs 404 when clicked.
+  const __products = products ?? [];
   const [activeCategory, setActiveCategory] = useState("all");
 
   const filtered =

@@ -71,13 +71,15 @@ function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
           />
         )}
 
-        {/* Savings badge */}
-        <div
-          className="absolute top-3 left-3 text-[11px] font-bold px-2.5 py-1 rounded-full text-white shadow-md"
-          style={{ background: `linear-gradient(135deg, ${cat?.colorFrom ?? "#3A5F8A"}, ${cat?.colorTo ?? "#7FAEDB"})` }}
-        >
-          −{product.savings}%
-        </div>
+        {/* Savings badge — only when there's a real saving */}
+        {product.originalPrice > product.salePrice && product.savings > 0 && (
+          <div
+            className="absolute top-3 left-3 text-[11px] font-bold px-2.5 py-1 rounded-full text-white shadow-md"
+            style={{ background: `linear-gradient(135deg, ${cat?.colorFrom ?? "#3A5F8A"}, ${cat?.colorTo ?? "#7FAEDB"})` }}
+          >
+            −{product.savings}%
+          </div>
+        )}
 
         {/* Grade badge */}
         <div className="absolute top-3 right-3 badge-blue text-[10px] font-bold">
@@ -149,9 +151,11 @@ function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
           >
             €{product.salePrice.toLocaleString("el-GR")}
           </span>
-          <span className="text-navy-300 text-sm line-through font-medium">
-            €{product.originalPrice.toLocaleString("el-GR")}
-          </span>
+          {product.originalPrice > product.salePrice && (
+            <span className="text-navy-300 text-sm line-through font-medium">
+              €{product.originalPrice.toLocaleString("el-GR")}
+            </span>
+          )}
         </div>
 
         {/* Meta row */}
@@ -210,8 +214,10 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
   const [sortBy, setSortBy] = useState<SortKey>("savings");
   const [sortOpen, setSortOpen] = useState(false);
 
-  // Server-fetched products from MongoDB; fall back to constants seed for SSG/dev.
-  const __products = products?.length ? products : FEATURED_PRODUCTS;
+  // Server-fetched live products (Payload/Mongo). No static-seed fallback:
+  // an empty list renders the empty state below rather than stale ghost
+  // products whose IDs 404 when clicked.
+  const __products = products ?? [];
 
   const FILTERS = FILTER_IDS.map((id) => ({
     id,
