@@ -45,8 +45,12 @@ export default function EditProductModal({
   const updateForm = (key: keyof Omit<Product, "id">, value: string | number) => {
     setFormData((prev) => {
       const next = { ...prev, [key]: value };
-      if ((key === "originalPrice" || key === "salePrice") && next.originalPrice > 0) {
-        next.savings = Math.round(((next.originalPrice - next.salePrice) / next.originalPrice) * 100);
+      // Single-price model: keep originalPrice mirrored to salePrice and
+      // savings at 0 so the public site's "real saving" guard hides the
+      // discount badge + strikethrough. Schema stays intact for back-compat.
+      if (key === "salePrice") {
+        next.originalPrice = next.salePrice;
+        next.savings = 0;
       }
       return next;
     });
@@ -83,7 +87,15 @@ export default function EditProductModal({
       const cleanSpecs = formData.specs.filter(
         (s) => s.label.trim() && s.value.trim()
       );
-      const payload = { ...formData, specs: cleanSpecs };
+      // Single-price model: force originalPrice = salePrice and savings = 0
+      // on the payload, in case an older record loaded with a different
+      // originalPrice and the user never touched the Price input.
+      const payload = {
+        ...formData,
+        originalPrice: formData.salePrice,
+        savings: 0,
+        specs: cleanSpecs,
+      };
       const body = initialProduct ? { ...payload, id: initialProduct.id } : payload;
       const res = await fetch(url, {
         method,
@@ -161,25 +173,17 @@ export default function EditProductModal({
               </select>
             </div>
           </div>
-          <div className="grid grid-cols-3 gap-4">
-            {([
-              ["originalPrice", "Original Price (€)", true],
-              ["salePrice",     "Sale Price (€)",     true],
-              ["savings",       "Savings %",          false],
-            ] as const).map(([key, label, required]) => (
-              <div key={key} className="flex flex-col gap-1.5">
-                <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">
-                  {label}{required && <span className="text-red-400"> *</span>}
-                </label>
-                <input
-                  type="number"
-                  value={(formData[key] as number) || ""}
-                  onChange={(e) => updateForm(key, Number(e.target.value))}
-                  required={required}
-                  className="border border-slate-700 bg-slate-800 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400"
-                />
-              </div>
-            ))}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">
+              Price (€) <span className="text-red-400">*</span>
+            </label>
+            <input
+              type="number"
+              value={formData.salePrice || ""}
+              onChange={(e) => updateForm("salePrice", Number(e.target.value))}
+              required
+              className="w-48 border border-slate-700 bg-slate-800 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400"
+            />
           </div>
           <div className="flex flex-col gap-1.5">
             <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Warranty (months)</label>
@@ -267,25 +271,6 @@ export default function EditProductModal({
             </div>
 
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            {(["colorFrom", "colorTo"] as const).map((key) => (
-              <div key={key} className="flex flex-col gap-1.5">
-                <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">
-                  {key === "colorFrom" ? "Color From" : "Color To"}
-                </label>
-                <div className="flex items-center gap-2">
-                  <input type="color" value={formData[key]} onChange={(e) => updateForm(key, e.target.value)} className="w-9 h-9 rounded-lg border border-slate-700 cursor-pointer" />
-                  <input
-                    value={formData[key]}
-                    onChange={(e) => updateForm(key, e.target.value)}
-                    autoComplete="off"
-                    spellCheck={false}
-                    className="flex-1 border border-slate-700 bg-slate-800 rounded-xl px-3 py-2 text-slate-100 text-sm font-mono focus:outline-none"
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
           <div className="flex flex-col gap-1.5">
             <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Description</label>
             <textarea
@@ -333,13 +318,12 @@ export default function EditProductModal({
           const missing: string[] = [];
           if (!formData.brand) missing.push("Brand");
           if (!formData.model) missing.push("Model");
-          if (!formData.originalPrice || formData.originalPrice <= 0) missing.push("Original Price");
-          if (!formData.salePrice || formData.salePrice <= 0) missing.push("Sale Price");
+          if (!formData.salePrice || formData.salePrice <= 0) missing.push("Price");
           const canSave = missing.length === 0;
           return (
             <div className="flex items-center justify-between gap-3 px-6 py-5 border-t border-slate-100">
               <p className="text-slate-500 text-xs h-5">
-                {!canSave && (
+                {missing.length > 0 && (
                   <>
                     <span className="text-red-400">*</span> Required: {missing.join(", ")}
                   </>
