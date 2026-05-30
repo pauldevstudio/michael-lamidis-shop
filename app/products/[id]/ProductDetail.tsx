@@ -10,7 +10,7 @@ import {
   Package, Zap,
 } from "lucide-react";
 import type { Product } from "@/lib/constants";
-import { FEATURED_PRODUCTS, SITE_PHONE } from "@/lib/constants";
+import { SITE_PHONE } from "@/lib/constants";
 import { useCart } from "@/lib/cart-context";
 import AnimatedSection, { StaggerChildren, StaggerItem } from "@/components/shared/AnimatedSection";
 import { cn } from "@/lib/utils";
@@ -63,6 +63,7 @@ const REVIEWS = [
 
 /* ── Related product card ───────────────────────────── */
 function RelatedCard({ product }: { product: Product }) {
+  const hasRealSaving = product.originalPrice > product.salePrice && product.savings > 0;
   return (
     <Link
       href={`/products/${product.id}`}
@@ -79,12 +80,14 @@ function RelatedCard({ product }: { product: Product }) {
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-        <div
-          className="absolute top-2.5 left-2.5 text-[10px] font-bold px-2 py-0.5 rounded-full text-white"
-          style={{ background: `linear-gradient(135deg, ${product.colorFrom}, ${product.colorTo})` }}
-        >
-          −{product.savings}%
-        </div>
+        {hasRealSaving && (
+          <div
+            className="absolute top-2.5 left-2.5 text-[10px] font-bold px-2 py-0.5 rounded-full text-white"
+            style={{ background: `linear-gradient(135deg, ${product.colorFrom}, ${product.colorTo})` }}
+          >
+            −{product.savings}%
+          </div>
+        )}
       </div>
       <div className="p-4">
         <p className="text-navy-400 text-[10px] font-bold uppercase tracking-widest mb-1">{product.brand}</p>
@@ -95,7 +98,9 @@ function RelatedCard({ product }: { product: Product }) {
           <span className="text-navy-950 font-black text-lg" style={{ fontFamily: "var(--font-jakarta)" }}>
             €{product.salePrice.toLocaleString("el-GR")}
           </span>
-          <span className="text-navy-300 text-xs line-through">€{product.originalPrice.toLocaleString("el-GR")}</span>
+          {hasRealSaving && (
+            <span className="text-navy-300 text-xs line-through">€{product.originalPrice.toLocaleString("el-GR")}</span>
+          )}
         </div>
       </div>
     </Link>
@@ -105,8 +110,9 @@ function RelatedCard({ product }: { product: Product }) {
 /* ══════════════════════════════════════════════════════ */
 type Tab = "features" | "details" | "reviews";
 
-export default function ProductDetail({ product }: { product: Product }) {
+export default function ProductDetail({ product, related = [] }: { product: Product; related?: Product[] }) {
   const gc = gradeColor(product.grade);
+  const hasRealSaving = product.originalPrice > product.salePrice && product.savings > 0;
   const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [activeThumb, setActiveThumb] = useState(0);
@@ -123,14 +129,9 @@ export default function ProductDetail({ product }: { product: Product }) {
 
   const activeImage = thumbs[activeThumb] ?? product.imageUrl;
 
-  // Related products: same category, exclude current
-  const related = FEATURED_PRODUCTS.filter(
-    (p) => p.category === product.category && p.id !== product.id
-  ).slice(0, 3);
-  const suggestions =
-    related.length > 0
-      ? related
-      : FEATURED_PRODUCTS.filter((p) => p.id !== product.id).slice(0, 3);
+  // Related products are computed server-side from the live product list and
+  // passed in as a prop — so every card links to a product that actually exists.
+  const suggestions = related;
 
   const handleAddToCart = () => {
     addToCart(product, quantity);
@@ -207,13 +208,15 @@ export default function ProductDetail({ product }: { product: Product }) {
                   </motion.div>
                 </AnimatePresence>
 
-                {/* Savings badge overlay */}
-                <div
-                  className="absolute top-5 left-5 text-sm font-bold px-3.5 py-1.5 rounded-full text-white shadow-lg z-10"
-                  style={{ background: `linear-gradient(135deg, ${product.colorFrom}, ${product.colorTo})` }}
-                >
-                  −{product.savings}% OFF
-                </div>
+                {/* Savings badge overlay — only when there's a real saving */}
+                {hasRealSaving && (
+                  <div
+                    className="absolute top-5 left-5 text-sm font-bold px-3.5 py-1.5 rounded-full text-white shadow-lg z-10"
+                    style={{ background: `linear-gradient(135deg, ${product.colorFrom}, ${product.colorTo})` }}
+                  >
+                    −{product.savings}% OFF
+                  </div>
+                )}
 
                 {/* Availability badge */}
                 <div className="absolute top-5 right-5 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-emerald-700 text-[11px] font-bold px-3 py-1.5 rounded-full shadow z-10">
@@ -319,17 +322,19 @@ export default function ProductDetail({ product }: { product: Product }) {
                     €{product.salePrice.toLocaleString("el-GR")}
                   </div>
                 </div>
-                <div className="pb-1 flex flex-col gap-1">
-                  <span className="text-navy-300 text-sm font-medium line-through">
-                    €{product.originalPrice.toLocaleString("el-GR")}
-                  </span>
-                  <span
-                    className="text-[11px] font-bold px-2 py-0.5 rounded-full text-white"
-                    style={{ background: `linear-gradient(135deg, ${product.colorFrom}, ${product.colorTo})` }}
-                  >
-                    Save €{(product.originalPrice - product.salePrice).toLocaleString("el-GR")}
-                  </span>
-                </div>
+                {hasRealSaving && (
+                  <div className="pb-1 flex flex-col gap-1">
+                    <span className="text-navy-300 text-sm font-medium line-through">
+                      €{product.originalPrice.toLocaleString("el-GR")}
+                    </span>
+                    <span
+                      className="text-[11px] font-bold px-2 py-0.5 rounded-full text-white"
+                      style={{ background: `linear-gradient(135deg, ${product.colorFrom}, ${product.colorTo})` }}
+                    >
+                      Save €{(product.originalPrice - product.salePrice).toLocaleString("el-GR")}
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Availability + delivery */}
@@ -626,6 +631,7 @@ export default function ProductDetail({ product }: { product: Product }) {
       </section>
 
       {/* ── Related products ──────────────────────────────── */}
+      {suggestions.length > 0 && (
       <section className="section-py" style={{ background: "#F8FAFF" }}>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
           <AnimatedSection className="mb-10">
@@ -658,6 +664,7 @@ export default function ProductDetail({ product }: { product: Product }) {
           </StaggerChildren>
         </div>
       </section>
+      )}
 
       {/* ── Contact CTA ───────────────────────────────────── */}
       <section className="section-py bg-navy-950 noise-overlay relative overflow-hidden">
