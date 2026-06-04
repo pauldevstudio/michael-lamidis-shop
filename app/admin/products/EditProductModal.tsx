@@ -15,7 +15,7 @@ const CATEGORY_OPTIONS = [
 const EMPTY_PRODUCT: Omit<Product, "id"> = {
   brand: "", model: "", category: "refrigerators", originalPrice: 0, salePrice: 0, savings: 0,
   grade: "A", warranty: 12, icon: "Package", colorFrom: "#3A5F8A", colorTo: "#5B82A8",
-  imageUrl: "", images: [], description: "", specs: [{ label: "", value: "" }],
+  imageUrl: "", images: [], sold: false, description: "", specs: [{ label: "", value: "" }],
 };
 
 /** Normalise a product into a gallery array (images[0] is the primary/cover). */
@@ -232,6 +232,34 @@ export default function EditProductModal({
               className="w-32 border border-slate-700 bg-slate-800 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400"
             />
           </div>
+          {/* Availability / Sold toggle */}
+          <div className={`flex items-center justify-between rounded-xl border px-4 py-3 transition-colors ${
+            formData.sold ? "border-red-500/40 bg-red-500/10" : "border-slate-700 bg-slate-800"
+          }`}>
+            <div>
+              <p className="text-slate-100 text-sm font-semibold">
+                {formData.sold ? "This product is SOLD" : "Mark as Sold"}
+              </p>
+              <p className="text-slate-400 text-xs mt-0.5">
+                Hides Add to Cart and shows a SOLD badge on the storefront.
+              </p>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={!!formData.sold}
+              aria-label="Toggle sold status"
+              onClick={() => setFormData((p) => ({ ...p, sold: !p.sold }))}
+              className={`relative w-12 h-7 rounded-full transition-colors shrink-0 ${
+                formData.sold ? "bg-red-500" : "bg-slate-600"
+              }`}
+            >
+              <span className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white shadow transition-transform ${
+                formData.sold ? "translate-x-5" : ""
+              }`} />
+            </button>
+          </div>
+
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
               <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Product Images</label>
