@@ -17,6 +17,7 @@ export interface HeroContent {
   badge: string;
   headline: string;
   subheadline: string;
+  imageUrl?: string;
   locationLabel?: string;
   primaryCtaLabel?: string;
   primaryCtaHref?: string;
@@ -85,6 +86,7 @@ export const DEFAULT_CONTENT: SiteContent = {
     badge: "Cyprus's #1 Open Box Destination",
     headline: "Premium Appliances.\nOpen Box Prices.",
     subheadline: "Every item certified, warranted & delivered across Cyprus.",
+    imageUrl: "",
     locationLabel: "Limassol, Cyprus",
     primaryCtaLabel: "Browse Products",
     primaryCtaHref: "/products",

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { Save, RefreshCw, CheckCircle, AlertCircle, Plus, X } from "lucide-react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { Save, RefreshCw, CheckCircle, AlertCircle, Plus, X, Upload, Loader2 } from "lucide-react";
 import AdminHeader from "@/components/admin/AdminHeader";
 import type { SiteContent } from "@/lib/site-content";
 
@@ -14,6 +14,9 @@ export default function ContentClient() {
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<Toast>(null);
   const [tab, setTab] = useState<Tab>("hero");
+  const [uploading, setUploading] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const showToast = (type: "success" | "error", msg: string) => { setToast({ type, msg }); setTimeout(() => setToast(null), 4000); };
 
@@ -38,6 +41,26 @@ export default function ContentClient() {
   const setHero = (key: keyof SiteContent["hero"], val: string) => {
     if (!content) return;
     setContent({ ...content, hero: { ...content.hero, [key]: val } });
+  };
+
+  // Upload a hero background image to the media store and store its URL.
+  const uploadHeroImage = async (file: File) => {
+    if (!file.type.startsWith("image/")) { showToast("error", "Please choose an image file"); return; }
+    if (file.size > 5 * 1024 * 1024) { showToast("error", "Image is too large (max 5 MB)"); return; }
+    setUploading(true);
+    try {
+      const fd = new FormData(); fd.append("file", file);
+      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: "Upload failed" }));
+        showToast("error", err.error ?? "Upload failed");
+        return;
+      }
+      const data = (await res.json()) as { url: string };
+      setHero("imageUrl", data.url);
+      showToast("success", "Image uploaded — Save & Publish to go live");
+    } catch { showToast("error", "Network error during upload"); }
+    finally { setUploading(false); }
   };
   const setAbout = (key: keyof SiteContent["about"], val: string | string[]) => {
     if (!content) return;
@@ -121,6 +144,71 @@ export default function ContentClient() {
                   <textarea value={content.hero.subheadline} onChange={(e) => setHero("subheadline", e.target.value)} rows={2}
                     placeholder="Every item certified, warranted & delivered across Cyprus."
                     className="border border-slate-700 bg-slate-800 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 resize-none" />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Background Image</label>
+                  <div
+                    onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                    onDragLeave={() => setDragOver(false)}
+                    onDrop={(e) => {
+                      e.preventDefault(); setDragOver(false);
+                      const file = e.dataTransfer.files?.[0];
+                      if (file) uploadHeroImage(file);
+                    }}
+                    onClick={() => fileInputRef.current?.click()}
+                    className={`relative border-2 border-dashed rounded-2xl p-4 cursor-pointer transition-colors ${
+                      dragOver ? "border-blue-400 bg-blue-50" : "border-slate-700 hover:border-slate-300 bg-slate-800"
+                    }`}
+                  >
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      className="sr-only"
+                      onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadHeroImage(f); e.currentTarget.value = ""; }}
+                    />
+                    {content.hero.imageUrl ? (
+                      <div className="flex items-center gap-4">
+                        <div className="relative w-28 h-20 rounded-xl overflow-hidden bg-slate-900 border border-slate-700 shrink-0">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={content.hero.imageUrl} alt="Hero preview" className="absolute inset-0 w-full h-full object-cover" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-slate-200 text-sm font-semibold truncate">{content.hero.imageUrl}</p>
+                          <p className="text-slate-400 text-xs mt-1">Click to replace · or drop a new image</p>
+                        </div>
+                        {uploading ? (
+                          <Loader2 className="w-4 h-4 animate-spin text-slate-400" />
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); setHero("imageUrl", ""); }}
+                            className="p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50"
+                            aria-label="Remove image"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center gap-2 py-6 text-center">
+                        {uploading ? (
+                          <>
+                            <Loader2 className="w-6 h-6 text-blue-500 animate-spin" />
+                            <p className="text-slate-400 text-sm font-medium">Uploading…</p>
+                          </>
+                        ) : (
+                          <>
+                            <div className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center">
+                              <Upload className="w-4 h-4 text-slate-500" />
+                            </div>
+                            <p className="text-slate-200 text-sm font-semibold">Drop an image or click to browse</p>
+                            <p className="text-slate-400 text-xs">PNG, JPG, WebP up to 5 MB · leave empty to use the default hero</p>
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div className="rounded-xl bg-navy-950 p-5 text-center">
                   <span className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border border-white/15 text-white/60 mb-4">★ {content.hero.badge}</span>

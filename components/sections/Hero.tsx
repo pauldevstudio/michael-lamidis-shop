@@ -131,7 +131,7 @@ export default function Hero() {
         transition={{ duration: 10, ease: "easeOut" }}
       >
         <Image
-          src={HERO_IMAGE}
+          src={__h?.imageUrl || HERO_IMAGE}
           alt="Premium open box home appliance lineup — washing machine, refrigerator, oven, smart TV, microwave and vacuum — Michael Lamidis, Limassol Cyprus"
           fill
           priority
