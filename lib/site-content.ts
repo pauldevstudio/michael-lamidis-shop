@@ -344,6 +344,13 @@ export const getSiteContent = _getSiteContent;
 
 export { SITE_CONTENT_TAG };
 
+/** Extract gallery image URLs from a Payload product doc. */
+function galleryFromDoc(d: Record<string, unknown>): string[] {
+  return Array.isArray(d.gallery)
+    ? (d.gallery as Array<{ url?: string }>).map((g) => g?.url ?? "").filter(Boolean)
+    : [];
+}
+
 /**
  * One-product lookup for the public detail page. Lighter than calling
  * getPublicProducts() (which fetches all 18+) when we only need one.
@@ -369,9 +376,20 @@ export async function getPublicProductById(id: string): Promise<Product | null> 
       colorFrom:     (d.colorFrom as string)     ?? "#3A5F8A",
       colorTo:       (d.colorTo as string)       ?? "#7FAEDB",
       imageUrl:      (() => {
+        const gallery = galleryFromDoc(d);
+        if (gallery.length > 0) return gallery[0];
         const img = d.image as Record<string, unknown> | string | null | undefined;
         if (img && typeof img === "object" && typeof img.url === "string") return img.url;
         return (d.imageUrl as string) ?? "";
+      })(),
+      images:        (() => {
+        const gallery = galleryFromDoc(d);
+        if (gallery.length > 0) return gallery;
+        const img = d.image as Record<string, unknown> | string | null | undefined;
+        const fallback = (img && typeof img === "object" && typeof img.url === "string")
+          ? img.url
+          : ((d.imageUrl as string) ?? "");
+        return fallback ? [fallback] : [];
       })(),
       description:   (d.description as string)   ?? "",
       specs:         Array.isArray(d.specs)
@@ -424,10 +442,13 @@ export async function getPublicProducts(): Promise<Product[]> {
         colorFrom:     (d.colorFrom as string)     ?? "#3A5F8A",
         colorTo:       (d.colorTo as string)       ?? "#7FAEDB",
         imageUrl:      (() => {
+          const gallery = galleryFromDoc(d);
+          if (gallery.length > 0) return gallery[0];
           const img = d.image as Record<string, unknown> | string | null | undefined;
           if (img && typeof img === "object" && typeof img.url === "string") return img.url;
           return (d.imageUrl as string) ?? "";
         })(),
+        images:        galleryFromDoc(d),
         description:   (d.description as string)   ?? "",
         specs:         Array.isArray(d.specs)
           ? (d.specs as Array<{ label?: string; value?: string }>).map((s) => ({

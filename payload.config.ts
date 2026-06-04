@@ -124,7 +124,16 @@ export default buildConfig({
         {
           name: "imageUrl",
           type: "text",
-          admin: { description: "Fallback image URL (only used if no Image is uploaded above)." },
+          admin: { description: "Primary image URL (mirrors the first gallery image)." },
+        },
+        {
+          name: "gallery",
+          type: "array",
+          labels: { singular: "Photo", plural: "Gallery Photos" },
+          admin: { description: "All product photos. The first one is the primary image." },
+          fields: [
+            { name: "url", type: "text", required: true },
+          ],
         },
         { name: "icon",        type: "text", defaultValue: "Package" },
         { name: "colorFrom", type: "text", defaultValue: "#3A5F8A", admin: { hidden: true } },

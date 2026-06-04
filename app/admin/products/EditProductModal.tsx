@@ -15,8 +15,15 @@ const CATEGORY_OPTIONS = [
 const EMPTY_PRODUCT: Omit<Product, "id"> = {
   brand: "", model: "", category: "refrigerators", originalPrice: 0, salePrice: 0, savings: 0,
   grade: "A", warranty: 12, icon: "Package", colorFrom: "#3A5F8A", colorTo: "#5B82A8",
-  imageUrl: "", description: "", specs: [{ label: "", value: "" }],
+  imageUrl: "", images: [], description: "", specs: [{ label: "", value: "" }],
 };
+
+/** Normalise a product into a gallery array (images[0] is the primary/cover). */
+function initialGallery(p: Product | null): string[] {
+  if (!p) return [];
+  if (p.images && p.images.length > 0) return p.images.filter(Boolean);
+  return p.imageUrl ? [p.imageUrl] : [];
+}
 
 interface Props {
   initialProduct: Product | null;
@@ -35,7 +42,9 @@ export default function EditProductModal({
   initialProduct, onClose, onSaved, onError, uploadFile,
 }: Props) {
   const [formData, setFormData] = useState<Omit<Product, "id">>(
-    initialProduct ? { ...initialProduct } : EMPTY_PRODUCT
+    initialProduct
+      ? { ...initialProduct, images: initialGallery(initialProduct) }
+      : EMPTY_PRODUCT
   );
   const [saving, setSaving] = useState(false);
   const [dragOver, setDragOver] = useState(false);
@@ -67,15 +76,40 @@ export default function EditProductModal({
   const removeSpec = (idx: number) =>
     setFormData((p) => ({ ...p, specs: p.specs.filter((_, i) => i !== idx) }));
 
-  const handleUpload = async (file: File) => {
+  // Append one or more uploaded images to the gallery. images[0] stays the
+  // primary/cover and is mirrored to imageUrl for the grid + public pages.
+  const handleUpload = async (files: FileList | File[]) => {
+    const arr = Array.from(files);
+    if (arr.length === 0) return;
     setUploading(true);
     try {
-      const url = await uploadFile(file);
-      if (url) updateForm("imageUrl", url);
+      for (const file of arr) {
+        const url = await uploadFile(file);
+        if (!url) continue;
+        setFormData((prev) => {
+          const images = [...(prev.images ?? []), url];
+          return { ...prev, images, imageUrl: images[0] };
+        });
+      }
     } finally {
       setUploading(false);
     }
   };
+
+  const removeImage = (idx: number) =>
+    setFormData((prev) => {
+      const images = (prev.images ?? []).filter((_, i) => i !== idx);
+      return { ...prev, images, imageUrl: images[0] ?? "" };
+    });
+
+  const makePrimary = (idx: number) =>
+    setFormData((prev) => {
+      const images = [...(prev.images ?? [])];
+      if (idx <= 0 || idx >= images.length) return prev;
+      const [pick] = images.splice(idx, 1);
+      const next = [pick, ...images];
+      return { ...prev, images: next, imageUrl: next[0] ?? "" };
+    });
 
   const handleSave = async () => {
     setSaving(true);
@@ -90,10 +124,13 @@ export default function EditProductModal({
       // Single-price model: force originalPrice = salePrice and savings = 0
       // on the payload, in case an older record loaded with a different
       // originalPrice and the user never touched the Price input.
+      const images = (formData.images ?? []).filter(Boolean);
       const payload = {
         ...formData,
         originalPrice: formData.salePrice,
         savings: 0,
+        images,
+        imageUrl: images[0] ?? "",
         specs: cleanSpecs,
       };
       const body = initialProduct ? { ...payload, id: initialProduct.id } : payload;
@@ -196,16 +233,59 @@ export default function EditProductModal({
             />
           </div>
           <div className="flex flex-col gap-2">
-            <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Product Image</label>
+            <div className="flex items-center justify-between">
+              <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Product Images</label>
+              {(formData.images?.length ?? 0) > 0 && (
+                <span className="text-slate-500 text-[11px] font-medium">
+                  {formData.images!.length} photo{formData.images!.length > 1 ? "s" : ""} · first is the cover
+                </span>
+              )}
+            </div>
 
+            {/* Uploaded gallery — hover a non-cover photo to set it as cover */}
+            {(formData.images?.length ?? 0) > 0 && (
+              <div className="grid grid-cols-4 gap-2">
+                {formData.images!.map((url, i) => (
+                  <div
+                    key={url + i}
+                    className="group relative aspect-square rounded-xl overflow-hidden border border-slate-700 bg-slate-900"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={url} alt={`Product photo ${i + 1}`} className="absolute inset-0 w-full h-full object-contain p-1.5" />
+                    {i === 0 ? (
+                      <span className="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-gold-500 text-[9px] font-black text-white tracking-wider shadow">
+                        COVER
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => makePrimary(i)}
+                        className="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-slate-900/85 text-[9px] font-bold text-slate-200 opacity-0 group-hover:opacity-100 hover:bg-slate-900 transition-opacity"
+                      >
+                        Set cover
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => removeImage(i)}
+                      aria-label="Remove image"
+                      className="absolute top-1 right-1 w-5 h-5 rounded-md bg-slate-900/85 flex items-center justify-center text-slate-300 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Dropzone — always available so more photos can be added */}
             <div
               onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
               onDragLeave={() => setDragOver(false)}
               onDrop={(e) => {
                 e.preventDefault();
                 setDragOver(false);
-                const file = e.dataTransfer.files?.[0];
-                if (file) handleUpload(file);
+                if (e.dataTransfer.files?.length) handleUpload(e.dataTransfer.files);
               }}
               onClick={() => fileInputRef.current?.click()}
               className={`relative border-2 border-dashed rounded-2xl p-4 cursor-pointer transition-colors ${
@@ -216,58 +296,31 @@ export default function EditProductModal({
                 ref={fileInputRef}
                 type="file"
                 accept="image/*"
+                multiple
                 className="sr-only"
                 onChange={(e) => {
-                  const f = e.target.files?.[0];
-                  if (f) handleUpload(f);
+                  if (e.target.files?.length) handleUpload(e.target.files);
                   e.currentTarget.value = "";
                 }}
               />
-              {formData.imageUrl ? (
-                <div className="flex items-center gap-4">
-                  <div className="relative w-24 h-24 rounded-xl overflow-hidden bg-slate-900 border border-slate-700 shrink-0">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={formData.imageUrl} alt="Preview" className="absolute inset-0 w-full h-full object-contain p-2" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-slate-200 text-sm font-semibold truncate">
-                      {formData.imageUrl.startsWith("/uploads/")
-                        ? formData.imageUrl.replace("/uploads/", "")
-                        : formData.imageUrl}
+              <div className="flex flex-col items-center justify-center gap-2 py-5 text-center">
+                {uploading ? (
+                  <>
+                    <Loader2 className="w-6 h-6 text-blue-500 animate-spin" />
+                    <p className="text-slate-400 text-sm font-medium">Uploading…</p>
+                  </>
+                ) : (
+                  <>
+                    <div className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center">
+                      <Upload className="w-4 h-4 text-slate-500" />
+                    </div>
+                    <p className="text-slate-200 text-sm font-semibold">
+                      {(formData.images?.length ?? 0) > 0 ? "Add more photos" : "Drop images or click to browse"}
                     </p>
-                    <p className="text-slate-400 text-xs mt-1">Click to replace · or drop a new image</p>
-                  </div>
-                  {uploading ? (
-                    <Loader2 className="w-4 h-4 animate-spin text-slate-400" />
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={(e) => { e.stopPropagation(); updateForm("imageUrl", ""); }}
-                      className="p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50"
-                      aria-label="Remove image"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  )}
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center gap-2 py-6 text-center">
-                  {uploading ? (
-                    <>
-                      <Loader2 className="w-6 h-6 text-blue-500 animate-spin" />
-                      <p className="text-slate-400 text-sm font-medium">Uploading…</p>
-                    </>
-                  ) : (
-                    <>
-                      <div className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center">
-                        <Upload className="w-4 h-4 text-slate-500" />
-                      </div>
-                      <p className="text-slate-200 text-sm font-semibold">Drop an image or click to browse</p>
-                      <p className="text-slate-400 text-xs">PNG, JPG, WebP, GIF up to 5 MB</p>
-                    </>
-                  )}
-                </div>
-              )}
+                    <p className="text-slate-400 text-xs">PNG, JPG, WebP, GIF up to 5 MB · select several at once</p>
+                  </>
+                )}
+              </div>
             </div>
 
           </div>

@@ -119,13 +119,12 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
   const [activeTab, setActiveTab] = useState<Tab>("features");
   const [addedToCart, setAddedToCart] = useState(false);
 
-  /* Simulate 4 thumbnails from the same image with different crops */
-  const thumbs = [
-    product.imageUrl,
-    product.imageUrl ? `${product.imageUrl.split("?")[0]}?auto=compress&cs=tinysrgb&w=600&h=360&fit=crop&crop=top` : "",
-    product.imageUrl ? `${product.imageUrl.split("?")[0]}?auto=compress&cs=tinysrgb&w=600&h=360&fit=crop&crop=center` : "",
-    product.imageUrl ? `${product.imageUrl.split("?")[0]}?auto=compress&cs=tinysrgb&w=600&h=360&fit=crop&crop=bottom` : "",
-  ].filter(Boolean);
+  /* Real product gallery — every uploaded photo. Falls back to the single
+     primary image for older products that have no gallery yet. */
+  const thumbs = (product.images && product.images.length > 0
+    ? product.images
+    : (product.imageUrl ? [product.imageUrl] : [])
+  ).filter(Boolean);
 
   const activeImage = thumbs[activeThumb] ?? product.imageUrl;
 

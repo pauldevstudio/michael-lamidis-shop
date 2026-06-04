@@ -18,6 +18,15 @@ function toPayloadData(p: Partial<Product>) {
   // displays show one figure (the "real saving" guards hide the badge
   // + strikethrough when these are equal).
   const sale = Number(p.salePrice ?? 0);
+  // Reconcile the gallery with the primary imageUrl. The modal sends
+  // images[] with imageUrl === images[0]; the grid's quick-replace sends a
+  // new imageUrl without reordering images[] — promote it to primary while
+  // keeping the rest of the gallery intact.
+  let images = Array.isArray(p.images) ? p.images.filter(Boolean) : [];
+  if (p.imageUrl && images[0] !== p.imageUrl) {
+    images = [p.imageUrl, ...images.filter((u) => u !== p.imageUrl)];
+  }
+  const primary = images[0] ?? p.imageUrl ?? "";
   return {
     brand:         p.brand ?? "",
     model:         p.model ?? "",
@@ -30,18 +39,30 @@ function toPayloadData(p: Partial<Product>) {
     icon:          p.icon ?? "Package",
     colorFrom:     p.colorFrom ?? "#3A5F8A",
     colorTo:       p.colorTo ?? "#7FAEDB",
-    imageUrl:      p.imageUrl ?? "",
+    imageUrl:      primary,
+    gallery:       images.map((url) => ({ url })),
     description:   p.description ?? "",
     specs:         Array.isArray(p.specs) ? p.specs : [],
   };
 }
 
+/** Extract gallery URLs from a Payload product doc. */
+function galleryFromDoc(d: Record<string, unknown>): string[] {
+  return Array.isArray(d.gallery)
+    ? (d.gallery as Array<{ url?: string }>).map((g) => g?.url ?? "").filter(Boolean)
+    : [];
+}
+
 function fromPayloadDoc(d: Record<string, unknown>): Product {
   const img = d.image as { url?: string } | string | undefined;
-  const imageUrl =
+  const uploadUrl =
     (img && typeof img === "object" && typeof img.url === "string")
       ? img.url
       : ((d.imageUrl as string) ?? "");
+  const gallery = galleryFromDoc(d);
+  // images[0] is the primary; fall back to the legacy upload/imageUrl field.
+  const images = gallery.length > 0 ? gallery : (uploadUrl ? [uploadUrl] : []);
+  const imageUrl = images[0] ?? "";
   return {
     id:            String(d.id ?? ""),
     brand:         (d.brand as string)         ?? "",
@@ -56,6 +77,7 @@ function fromPayloadDoc(d: Record<string, unknown>): Product {
     colorFrom:     (d.colorFrom as string)     ?? "#3A5F8A",
     colorTo:       (d.colorTo as string)       ?? "#7FAEDB",
     imageUrl,
+    images,
     description:   (d.description as string)   ?? "",
     specs:         Array.isArray(d.specs)
       ? (d.specs as Array<{ label?: string; value?: string }>).map((s) => ({

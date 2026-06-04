@@ -92,6 +92,8 @@ export interface Product {
   colorFrom: string;
   colorTo: string;
   imageUrl: string;
+  /** Full product gallery. images[0] mirrors imageUrl (the primary photo). */
+  images?: string[];
   description: string;
   specs: ProductSpec[];
 }
