@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowLeft, ArrowRight, Shield, Truck, RotateCcw, Award,
   CheckCircle2, Phone, Mail, ShoppingCart, Minus, Plus, Star,
-  Package, Zap,
+  Package, Zap, ZoomIn, ZoomOut, X, ChevronLeft, ChevronRight,
 } from "lucide-react";
 import type { Product } from "@/lib/constants";
 import { SITE_PHONE } from "@/lib/constants";
@@ -125,6 +125,14 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
   const [activeTab, setActiveTab] = useState<Tab>("features");
   const [addedToCart, setAddedToCart] = useState(false);
 
+  // ── Lightbox / zoom viewer ──
+  const [lightbox, setLightbox] = useState(false);
+  const [zoom, setZoom] = useState(1);
+  const openLightbox = () => { setZoom(1); setLightbox(true); };
+  const closeLightbox = () => { setLightbox(false); setZoom(1); };
+  const zoomIn = () => setZoom((z) => Math.min(4, +(z + 0.5).toFixed(1)));
+  const zoomOut = () => setZoom((z) => Math.max(1, +(z - 0.5).toFixed(1)));
+
   /* Real product gallery — every uploaded photo. Falls back to the single
      primary image for older products that have no gallery yet. */
   const thumbs = (product.images && product.images.length > 0
@@ -133,6 +141,26 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
   ).filter(Boolean);
 
   const activeImage = thumbs[activeThumb] ?? product.imageUrl;
+
+  const goPrev = () => { setZoom(1); setActiveThumb((i) => (i - 1 + thumbs.length) % thumbs.length); };
+  const goNext = () => { setZoom(1); setActiveThumb((i) => (i + 1) % thumbs.length); };
+
+  // Keyboard controls for the lightbox + lock body scroll while open.
+  useEffect(() => {
+    if (!lightbox) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeLightbox();
+      else if (e.key === "ArrowLeft" && thumbs.length > 1) goPrev();
+      else if (e.key === "ArrowRight" && thumbs.length > 1) goNext();
+      else if (e.key === "+" || e.key === "=") zoomIn();
+      else if (e.key === "-") zoomOut();
+    };
+    window.addEventListener("keydown", onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = prevOverflow; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lightbox, thumbs.length]);
 
   // Related products are computed server-side from the live product list and
   // passed in as a prop — so every card links to a product that actually exists.
@@ -186,7 +214,12 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
               className="lg:sticky lg:top-28 flex flex-col gap-4"
             >
               {/* Main image */}
-              <div className="relative w-full aspect-[4/3] rounded-3xl overflow-hidden shadow-[0_24px_64px_rgba(3,8,19,0.15)]">
+              <div
+                className="group/main relative w-full aspect-[4/3] rounded-3xl overflow-hidden shadow-[0_24px_64px_rgba(3,8,19,0.15)] bg-white border border-navy-100/60 cursor-zoom-in"
+                onClick={() => activeImage && openLightbox()}
+                role="button"
+                aria-label="Zoom product image"
+              >
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeThumb}
@@ -201,7 +234,7 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
                         src={activeImage}
                         alt={`${product.brand} ${product.model}`}
                         fill
-                        className="object-cover"
+                        className="object-contain p-4"
                         sizes="(max-width: 1024px) 100vw, 50vw"
                         priority
                       />
@@ -232,6 +265,14 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
                   <span className={cn("w-1.5 h-1.5 rounded-full", product.sold ? "bg-red-500" : "bg-emerald-500 animate-pulse")} />
                   {product.sold ? "Sold" : "In Stock"}
                 </div>
+
+                {/* Zoom hint */}
+                {activeImage && (
+                  <div className="absolute bottom-4 right-4 z-10 flex items-center gap-1.5 bg-navy-950/75 backdrop-blur-sm text-white text-[11px] font-semibold px-3 py-1.5 rounded-full shadow opacity-0 group-hover/main:opacity-100 transition-opacity pointer-events-none">
+                    <ZoomIn className="w-3.5 h-3.5" />
+                    Click to zoom
+                  </div>
+                )}
               </div>
 
               {/* Thumbnail strip */}
@@ -242,7 +283,7 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
                       key={i}
                       onClick={() => setActiveThumb(i)}
                       className={cn(
-                        "relative flex-1 aspect-[4/3] rounded-xl overflow-hidden border-2 transition-all duration-200",
+                        "relative flex-1 aspect-[4/3] rounded-xl overflow-hidden border-2 transition-all duration-200 bg-white",
                         activeThumb === i
                           ? "border-gold-500 shadow-md"
                           : "border-navy-100 hover:border-navy-200 opacity-60 hover:opacity-90"
@@ -252,7 +293,7 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
                         src={src}
                         alt={`View ${i + 1}`}
                         fill
-                        className="object-cover"
+                        className="object-contain p-1.5"
                         sizes="120px"
                       />
                     </button>
@@ -713,6 +754,96 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
           </AnimatedSection>
         </div>
       </section>
+
+      {/* ── Zoom lightbox ─────────────────────────────── */}
+      <AnimatePresence>
+        {lightbox && activeImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[100] bg-navy-950/95 backdrop-blur-sm flex items-center justify-center"
+            onClick={closeLightbox}
+          >
+            {/* Top controls */}
+            <div className="absolute top-4 right-4 z-20 flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+              <button
+                onClick={zoomOut}
+                disabled={zoom <= 1}
+                aria-label="Zoom out"
+                className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <ZoomOut className="w-5 h-5" />
+              </button>
+              <span className="text-white/80 text-sm font-bold w-14 text-center tabular-nums">{Math.round(zoom * 100)}%</span>
+              <button
+                onClick={zoomIn}
+                disabled={zoom >= 4}
+                aria-label="Zoom in"
+                className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <ZoomIn className="w-5 h-5" />
+              </button>
+              <button
+                onClick={closeLightbox}
+                aria-label="Close"
+                className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors ml-1"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Prev / Next */}
+            {thumbs.length > 1 && (
+              <>
+                <button
+                  onClick={(e) => { e.stopPropagation(); goPrev(); }}
+                  aria-label="Previous image"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); goNext(); }}
+                  aria-label="Next image"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+              </>
+            )}
+
+            {/* Image stage — fits fully at 100%, scrolls to pan when zoomed */}
+            <div
+              className="w-[92vw] h-[84vh] overflow-auto flex items-center justify-center"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={activeImage}
+                alt={`${product.brand} ${product.model}`}
+                onClick={() => (zoom === 1 ? zoomIn() : setZoom(1))}
+                draggable={false}
+                className={cn(
+                  "select-none m-auto transition-[width] duration-150",
+                  zoom === 1
+                    ? "max-w-full max-h-full object-contain cursor-zoom-in"
+                    : "max-w-none h-auto cursor-zoom-out"
+                )}
+                style={zoom === 1 ? undefined : { width: `${zoom * 100}%` }}
+              />
+            </div>
+
+            {/* Counter */}
+            {thumbs.length > 1 && (
+              <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 text-white/70 text-sm font-semibold tabular-nums">
+                {activeThumb + 1} / {thumbs.length}
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
