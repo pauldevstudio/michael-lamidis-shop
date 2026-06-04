@@ -6,7 +6,7 @@ import {
 } from "lucide-react";
 import type { Product } from "@/lib/constants";
 
-const GRADE_OPTIONS = ["A++", "A+", "A", "B"];
+const GRADE_OPTIONS = ["A", "B", "C", "D", "E", "F"];
 const CATEGORY_OPTIONS = [
   "refrigerators", "washing-machines", "ovens", "dishwashers",
   "air-conditioners", "tvs", "small-appliances",

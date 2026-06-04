@@ -17,9 +17,15 @@ import { cn } from "@/lib/utils";
 
 /* ── Grade color helper ─────────────────────────────── */
 function gradeColor(grade: string) {
-  if (grade === "A++") return { bg: "#D1FAE5", text: "#059669", border: "#6EE7B7" };
-  if (grade === "A+")  return { bg: "#DBEAFE", text: "#1D4ED8", border: "#93C5FD" };
-  return                      { bg: "#EDE9FE", text: "#7C3AED", border: "#C4B5FD" };
+  switch (grade) {
+    case "A": return { bg: "#D1FAE5", text: "#059669", border: "#6EE7B7" };
+    case "B": return { bg: "#DBEAFE", text: "#1D4ED8", border: "#93C5FD" };
+    case "C": return { bg: "#EDE9FE", text: "#7C3AED", border: "#C4B5FD" };
+    case "D": return { bg: "#FEF3C7", text: "#B45309", border: "#FCD34D" };
+    case "E": return { bg: "#FFEDD5", text: "#C2410C", border: "#FDBA74" };
+    case "F": return { bg: "#FEE2E2", text: "#B91C1C", border: "#FCA5A5" };
+    default:  return { bg: "#EDE9FE", text: "#7C3AED", border: "#C4B5FD" };
+  }
 }
 
 /* ── Spec row ───────────────────────────────────────── */
@@ -133,6 +139,7 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
   const suggestions = related;
 
   const handleAddToCart = () => {
+    if (product.sold) return;
     addToCart(product, quantity);
     setAddedToCart(true);
     setTimeout(() => setAddedToCart(false), 2000);
@@ -218,9 +225,12 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
                 )}
 
                 {/* Availability badge */}
-                <div className="absolute top-5 right-5 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-emerald-700 text-[11px] font-bold px-3 py-1.5 rounded-full shadow z-10">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  In Stock
+                <div className={cn(
+                  "absolute top-5 right-5 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-[11px] font-bold px-3 py-1.5 rounded-full shadow z-10",
+                  product.sold ? "text-red-600" : "text-emerald-700"
+                )}>
+                  <span className={cn("w-1.5 h-1.5 rounded-full", product.sold ? "bg-red-500" : "bg-emerald-500 animate-pulse")} />
+                  {product.sold ? "Sold" : "In Stock"}
                 </div>
               </div>
 
@@ -338,9 +348,9 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
 
               {/* Availability + delivery */}
               <div className="flex items-center gap-4 text-sm">
-                <div className="flex items-center gap-1.5 text-emerald-600 font-semibold">
+                <div className={cn("flex items-center gap-1.5 font-semibold", product.sold ? "text-red-600" : "text-emerald-600")}>
                   <Package className="w-4 h-4" />
-                  In Stock
+                  {product.sold ? "Sold" : "In Stock"}
                 </div>
                 <div className="flex items-center gap-1.5 text-navy-500 font-medium">
                   <Truck className="w-4 h-4 text-gold-500" />
@@ -381,26 +391,36 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
                 {/* Add to Cart */}
                 <button
                   onClick={handleAddToCart}
+                  disabled={product.sold}
                   className={cn(
                     "flex-1 flex items-center justify-center gap-2.5 h-11 rounded-xl font-bold text-sm transition-all duration-300",
-                    addedToCart
-                      ? "bg-emerald-500 text-white"
-                      : "bg-gold-500 hover:bg-gold-600 text-white shadow-[0_4px_16px_rgba(58,95,138,0.35)] hover:shadow-[0_6px_24px_rgba(58,95,138,0.45)]"
+                    product.sold
+                      ? "bg-navy-200 text-navy-500 cursor-not-allowed"
+                      : addedToCart
+                        ? "bg-emerald-500 text-white"
+                        : "bg-gold-500 hover:bg-gold-600 text-white shadow-[0_4px_16px_rgba(58,95,138,0.35)] hover:shadow-[0_6px_24px_rgba(58,95,138,0.45)]"
                   )}
                 >
-                  <AnimatePresence mode="wait" initial={false}>
-                    <motion.span
-                      key={addedToCart ? "added" : "add"}
-                      initial={{ opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -6 }}
-                      transition={{ duration: 0.2 }}
-                      className="flex items-center gap-2"
-                    >
-                      <ShoppingCart className="w-4 h-4" />
-                      {addedToCart ? "Added to Cart!" : "Add to Cart"}
-                    </motion.span>
-                  </AnimatePresence>
+                  {product.sold ? (
+                    <span className="flex items-center gap-2">
+                      <Package className="w-4 h-4" />
+                      Sold Out
+                    </span>
+                  ) : (
+                    <AnimatePresence mode="wait" initial={false}>
+                      <motion.span
+                        key={addedToCart ? "added" : "add"}
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -6 }}
+                        transition={{ duration: 0.2 }}
+                        className="flex items-center gap-2"
+                      >
+                        <ShoppingCart className="w-4 h-4" />
+                        {addedToCart ? "Added to Cart!" : "Add to Cart"}
+                      </motion.span>
+                    </AnimatePresence>
+                  )}
                 </button>
               </div>
 

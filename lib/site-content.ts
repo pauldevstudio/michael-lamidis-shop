@@ -391,6 +391,7 @@ export async function getPublicProductById(id: string): Promise<Product | null> 
           : ((d.imageUrl as string) ?? "");
         return fallback ? [fallback] : [];
       })(),
+      sold:          Boolean(d.sold),
       description:   (d.description as string)   ?? "",
       specs:         Array.isArray(d.specs)
         ? (d.specs as Array<{ label?: string; value?: string }>).map((s) => ({
@@ -449,6 +450,7 @@ export async function getPublicProducts(): Promise<Product[]> {
           return (d.imageUrl as string) ?? "";
         })(),
         images:        galleryFromDoc(d),
+        sold:          Boolean(d.sold),
         description:   (d.description as string)   ?? "",
         specs:         Array.isArray(d.specs)
           ? (d.specs as Array<{ label?: string; value?: string }>).map((s) => ({

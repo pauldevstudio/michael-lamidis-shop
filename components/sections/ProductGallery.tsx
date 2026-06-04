@@ -21,7 +21,7 @@ const ICONS: Record<string, React.ElementType> = {
 
 function ProductCard({
   brand, model, originalPrice, salePrice, savings, grade,
-  warranty, colorFrom, colorTo, icon, imageUrl,
+  warranty, colorFrom, colorTo, icon, imageUrl, sold,
 }: (typeof FEATURED_PRODUCTS)[0]) {
   const Icon = ICONS[icon] ?? Square;
   // Hide the strikethrough + discount badge unless there's a real saving.
@@ -80,6 +80,15 @@ function ProductCard({
         <div className="absolute top-3 right-3 badge-blue text-[10px]">
           Grade {grade}
         </div>
+
+        {/* SOLD ribbon */}
+        {sold && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+            <span className="px-4 py-1.5 rounded-md bg-red-600 text-white text-sm font-black tracking-[0.2em] uppercase shadow-lg -rotate-12">
+              Sold
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Card body */}

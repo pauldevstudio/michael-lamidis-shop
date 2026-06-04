@@ -37,6 +37,7 @@ function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
+    if (product.sold) return;
     addToCart(product, 1);
     setAdded(true);
     setTimeout(() => setAdded(false), 1800);
@@ -86,11 +87,21 @@ function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
           {t.pages.products.gradeLabel} {product.grade}
         </div>
 
+        {/* SOLD ribbon */}
+        {product.sold && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/30 z-10">
+            <span className="px-4 py-1.5 rounded-md bg-red-600 text-white text-sm font-black tracking-[0.2em] uppercase shadow-lg -rotate-12">
+              Sold
+            </span>
+          </div>
+        )}
+
         {/* Quick add-to-cart circle button (appears on hover) */}
+        {!product.sold && (
         <button
           onClick={handleAddToCart}
           className={cn(
-            "absolute bottom-3 right-3 w-9 h-9 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0",
+            "absolute bottom-3 right-3 w-9 h-9 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 z-20",
             added
               ? "bg-emerald-500 scale-110"
               : "bg-white hover:bg-gold-500 hover:text-white text-navy-700"
@@ -113,6 +124,7 @@ function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
             </motion.span>
           </AnimatePresence>
         </button>
+        )}
       </div>
 
       {/* Body */}
@@ -179,6 +191,7 @@ function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
             {t.pages.products.viewDetails}
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
+          {!product.sold && (
           <button
             onClick={handleAddToCart}
             className={cn(
@@ -201,6 +214,7 @@ function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
               </motion.span>
             </AnimatePresence>
           </button>
+          )}
         </div>
       </div>
     </motion.div>

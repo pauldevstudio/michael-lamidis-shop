@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   Plus, Pencil, Trash2, Search, X, RefreshCw, CheckCircle, AlertCircle, Package,
-  Eye, Star, Check, ImagePlus, Loader2,
+  Eye, Star, Check, ImagePlus, Loader2, Tag, RotateCcw,
 } from "lucide-react";
 import AdminHeader from "@/components/admin/AdminHeader";
 import EditProductModal from "./EditProductModal";
@@ -13,7 +13,7 @@ import type { Product } from "@/lib/constants";
 
 type Toast = { type: "success" | "error"; msg: string } | null;
 
-const GRADE_OPTIONS = ["A++", "A+", "A", "B"];
+const GRADE_OPTIONS = ["A", "B", "C", "D", "E", "F"];
 const CATEGORY_OPTIONS = [
   "refrigerators","washing-machines","ovens","dishwashers","air-conditioners","tvs","small-appliances",
 ];
@@ -201,6 +201,24 @@ export default function ProductsClient() {
     });
   };
 
+  /** Persisted Sold toggle — flips product.sold and saves to the catalog. */
+  const toggleSold = async (p: Product) => {
+    const next = !p.sold;
+    setProducts((prev) => prev.map((x) => (x.id === p.id ? { ...x, sold: next } : x)));
+    try {
+      const res = await fetch("/api/admin/products", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...p, sold: next }),
+      });
+      if (res.ok) showToast("success", next ? "Marked as SOLD" : "Back in stock");
+      else { await fetchProducts(); showToast("error", "Failed to update status"); }
+    } catch {
+      await fetchProducts();
+      showToast("error", "Network error");
+    }
+  };
+
   const matchesSearch = (p: Product) =>
     p.brand.toLowerCase().includes(search.toLowerCase()) ||
     p.model.toLowerCase().includes(search.toLowerCase()) ||
@@ -216,7 +234,7 @@ export default function ProductsClient() {
   );
 
   const gradeColor: Record<string, string> = {
-    "A++": "#059669", "A+": "#2563EB", "A": "#7C3AED", "B": "#D97706",
+    "A": "#059669", "B": "#2563EB", "C": "#7C3AED", "D": "#D97706", "E": "#EA580C", "F": "#DC2626",
   };
 
   return (
@@ -347,7 +365,7 @@ export default function ProductsClient() {
                   className="group bg-slate-900 rounded-2xl border border-slate-700 shadow-sm hover:shadow-lg hover:border-slate-300 transition-all overflow-hidden flex flex-col"
                 >
                   {/* Image area */}
-                  <div className="relative aspect-square bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden">
+                  <div className={`relative aspect-square bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden ${p.sold ? "opacity-60" : ""}`}>
                     {p.imageUrl ? (
                       <Image
                         src={p.imageUrl}
@@ -362,6 +380,15 @@ export default function ProductsClient() {
                         style={{ background: `linear-gradient(135deg, ${p.colorFrom}, ${p.colorTo})` }}
                       >
                         {p.brand[0]}
+                      </div>
+                    )}
+
+                    {/* SOLD ribbon overlay */}
+                    {p.sold && (
+                      <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+                        <span className="px-4 py-1.5 rounded-md bg-red-600 text-white text-sm font-black tracking-[0.2em] uppercase shadow-lg -rotate-12">
+                          Sold
+                        </span>
                       </div>
                     )}
 
@@ -482,8 +509,20 @@ export default function ProductsClient() {
                       {p.category.replace("-", " ")} · {p.warranty}-mo warranty
                     </p>
 
+                    {/* Sold toggle */}
+                    <button
+                      onClick={() => toggleSold(p)}
+                      className={`w-full inline-flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg text-xs font-bold transition-colors mt-auto ${
+                        p.sold
+                          ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/40 hover:bg-emerald-500/25"
+                          : "bg-red-500/15 text-red-400 border border-red-500/40 hover:bg-red-500/25"
+                      }`}
+                    >
+                      {p.sold ? <><RotateCcw className="w-3.5 h-3.5" /> Mark Available</> : <><Tag className="w-3.5 h-3.5" /> Mark as Sold</>}
+                    </button>
+
                     {/* Actions */}
-                    <div className="flex items-stretch gap-1.5 mt-auto pt-1">
+                    <div className="flex items-stretch gap-1.5 pt-1">
                       <Link
                         href={`/products/${p.id}`}
                         target="_blank"

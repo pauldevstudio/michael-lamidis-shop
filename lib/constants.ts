@@ -94,6 +94,8 @@ export interface Product {
   imageUrl: string;
   /** Full product gallery. images[0] mirrors imageUrl (the primary photo). */
   images?: string[];
+  /** When true, the item is sold — storefront hides Add to Cart + shows a Sold badge. */
+  sold?: boolean;
   description: string;
   specs: ProductSpec[];
 }
