@@ -41,7 +41,7 @@ const PAYMENT_META: Record<Payment, { label: string; icon: typeof CreditCard }> 
 };
 
 function fmtPrice(n: number) {
-  return `€${n.toLocaleString("el-GR")}`;
+  return `€${n.toLocaleString("en-US")}`;
 }
 
 function fmtDate(iso: string) {

@@ -161,11 +161,11 @@ function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
             className="text-navy-950 font-black text-xl"
             style={{ fontFamily: "var(--font-jakarta)" }}
           >
-            €{product.salePrice.toLocaleString("el-GR")}
+            €{product.salePrice.toLocaleString("en-US")}
           </span>
           {product.originalPrice > product.salePrice && (
             <span className="text-navy-300 text-sm line-through font-medium">
-              €{product.originalPrice.toLocaleString("el-GR")}
+              €{product.originalPrice.toLocaleString("en-US")}
             </span>
           )}
         </div>

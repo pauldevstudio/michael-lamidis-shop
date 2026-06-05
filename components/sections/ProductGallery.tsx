@@ -103,11 +103,11 @@ function ProductCard({
         {/* Price */}
         <div className="flex items-baseline gap-2">
           <span className="text-navy-950 font-display font-black text-xl" style={{ fontFamily: "var(--font-jakarta)" }}>
-            €{salePrice.toLocaleString("el-GR")}
+            €{salePrice.toLocaleString("en-US")}
           </span>
           {hasRealSaving && (
             <span className="text-navy-300 text-sm line-through font-medium">
-              €{originalPrice.toLocaleString("el-GR")}
+              €{originalPrice.toLocaleString("en-US")}
             </span>
           )}
         </div>

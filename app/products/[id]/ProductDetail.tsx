@@ -102,10 +102,10 @@ function RelatedCard({ product }: { product: Product }) {
         </p>
         <div className="flex items-baseline gap-2">
           <span className="text-navy-950 font-black text-lg" style={{ fontFamily: "var(--font-jakarta)" }}>
-            €{product.salePrice.toLocaleString("el-GR")}
+            €{product.salePrice.toLocaleString("en-US")}
           </span>
           {hasRealSaving && (
-            <span className="text-navy-300 text-xs line-through">€{product.originalPrice.toLocaleString("el-GR")}</span>
+            <span className="text-navy-300 text-xs line-through">€{product.originalPrice.toLocaleString("en-US")}</span>
           )}
         </div>
       </div>
@@ -369,19 +369,19 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
                     className="text-navy-950 font-black leading-none mt-1"
                     style={{ fontFamily: "var(--font-jakarta)", fontSize: "clamp(2rem, 4vw, 3rem)" }}
                   >
-                    €{product.salePrice.toLocaleString("el-GR")}
+                    €{product.salePrice.toLocaleString("en-US")}
                   </div>
                 </div>
                 {hasRealSaving && (
                   <div className="pb-1 flex flex-col gap-1">
                     <span className="text-navy-300 text-sm font-medium line-through">
-                      €{product.originalPrice.toLocaleString("el-GR")}
+                      €{product.originalPrice.toLocaleString("en-US")}
                     </span>
                     <span
                       className="text-[11px] font-bold px-2 py-0.5 rounded-full text-white"
                       style={{ background: `linear-gradient(135deg, ${product.colorFrom}, ${product.colorTo})` }}
                     >
-                      Save €{(product.originalPrice - product.salePrice).toLocaleString("el-GR")}
+                      Save €{(product.originalPrice - product.salePrice).toLocaleString("en-US")}
                     </span>
                   </div>
                 )}

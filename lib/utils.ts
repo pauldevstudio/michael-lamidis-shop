@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatPrice(price: number, currency = "€"): string {
-  return `${currency}${price.toLocaleString("el-GR")}`;
+  return `${currency}${price.toLocaleString("en-US")}`;
 }
 
 export function truncate(str: string, length: number): string {
