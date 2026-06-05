@@ -136,10 +136,10 @@ function ProductCard({
 
         {/* CTA */}
         <Link
-          href="/contact"
+          href={`/products/${id}`}
           className="btn-primary text-xs !px-4 !py-2.5 mt-1 w-full justify-center"
         >
-          Get This Deal
+          View Details
           <ArrowRight className="w-3.5 h-3.5" />
         </Link>
       </div>
