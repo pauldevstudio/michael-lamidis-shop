@@ -39,7 +39,16 @@ body {
   background-color: var(--off-white);
   color: var(--navy-950);
   overflow-x: hidden;
+  /* Premium type rendering: enable kerning, common + contextual ligatures */
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  font-kerning: normal;
 }
+
+/* Headings: tighter optical tracking for a refined, high-end feel */
+h1, h2, h3 { letter-spacing: -0.02em; }
+
+/* Tabular figures for prices, stats and any aligned numbers */
+.tnum { font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
 
 /* ─── Custom Scrollbar ───────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; }
@@ -58,6 +67,18 @@ body {
 
 /* ─── Typography Utilities ───────────────────────────────── */
 .font-display { font-family: var(--font-jakarta), system-ui, sans-serif; }
+
+/* Section eyebrow label — consistent premium kicker above headings */
+.eyebrow {
+  @apply inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-gold-500;
+}
+.eyebrow::before {
+  content: "";
+  width: 1.5rem;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.5;
+}
 
 /* Gradient text */
 .text-gradient-gold {

@@ -11,7 +11,9 @@ import Link from "next/link";
 import { useLanguage } from "@/lib/i18n-context";
 import { useContent } from "@/lib/content-context";
 import SectionHeader from "@/components/shared/SectionHeader";
+import StarRating from "@/components/shared/StarRating";
 import { FEATURED_PRODUCTS, PRODUCT_CATEGORIES, CATEGORY_COLOR_MAP, DEFAULT_CATEGORY_COLOR, type Product } from "@/lib/constants";
+import { productSocialProof } from "@/lib/social-proof";
 import { cn } from "@/lib/utils";
 
 const ICONS: Record<string, React.ElementType> = {
@@ -20,10 +22,11 @@ const ICONS: Record<string, React.ElementType> = {
 };
 
 function ProductCard({
-  brand, model, originalPrice, salePrice, savings, grade,
+  id, brand, model, originalPrice, salePrice, savings, grade,
   warranty, colorFrom, colorTo, icon, imageUrl, sold,
 }: (typeof FEATURED_PRODUCTS)[0]) {
   const Icon = ICONS[icon] ?? Square;
+  const proof = productSocialProof(id);
   // Hide the strikethrough + discount badge unless there's a real saving.
   // Guards against typo'd data (sale ≥ original) and 0% rows from looking
   // like nonsense to shoppers.
@@ -100,13 +103,20 @@ function ProductCard({
           </h3>
         </div>
 
+        {/* Rating */}
+        <div className="flex items-center gap-1.5">
+          <StarRating rating={proof.rating} size={13} />
+          <span className="text-navy-800 text-xs font-bold tnum">{proof.rating.toFixed(1)}</span>
+          <span className="text-navy-300 text-xs tnum">({proof.reviews})</span>
+        </div>
+
         {/* Price */}
         <div className="flex items-baseline gap-2">
-          <span className="text-navy-950 font-display font-black text-xl" style={{ fontFamily: "var(--font-jakarta)" }}>
+          <span className="text-navy-950 font-display font-black text-xl tnum" style={{ fontFamily: "var(--font-jakarta)" }}>
             €{salePrice.toLocaleString("en-US")}
           </span>
           {hasRealSaving && (
-            <span className="text-navy-300 text-sm line-through font-medium">
+            <span className="text-navy-300 text-sm line-through font-medium tnum">
               €{originalPrice.toLocaleString("en-US")}
             </span>
           )}

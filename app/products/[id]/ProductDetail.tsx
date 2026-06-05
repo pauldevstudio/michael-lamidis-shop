@@ -13,6 +13,8 @@ import type { Product } from "@/lib/constants";
 import { SITE_PHONE } from "@/lib/constants";
 import { useCart } from "@/lib/cart-context";
 import AnimatedSection, { StaggerChildren, StaggerItem } from "@/components/shared/AnimatedSection";
+import StarRating from "@/components/shared/StarRating";
+import { productSocialProof } from "@/lib/social-proof";
 import { cn } from "@/lib/utils";
 
 /* ── Grade color helper ─────────────────────────────── */
@@ -119,6 +121,7 @@ type Tab = "features" | "details" | "reviews";
 export default function ProductDetail({ product, related = [] }: { product: Product; related?: Product[] }) {
   const gc = gradeColor(product.grade);
   const hasRealSaving = product.originalPrice > product.salePrice && product.savings > 0;
+  const proof = productSocialProof(product.id);
   const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [activeThumb, setActiveThumb] = useState(0);
@@ -351,14 +354,14 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
                 </h1>
               </div>
 
-              {/* Stars (decorative) */}
-              <div className="flex items-center gap-1.5">
-                {[1, 2, 3, 4, 5].map((s) => (
-                  <Star key={s} className="w-4 h-4 text-amber-400 fill-amber-400" />
-                ))}
-                <span className="text-navy-400 text-sm font-medium ml-1">4.9</span>
+              {/* Rating + social proof */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <StarRating rating={proof.rating} size={16} />
+                <span className="text-navy-700 text-sm font-bold tnum">{proof.rating.toFixed(1)}</span>
                 <span className="text-navy-300 text-sm">·</span>
-                <span className="text-navy-400 text-sm">48 reviews</span>
+                <span className="text-navy-500 text-sm tnum">{proof.reviews} reviews</span>
+                <span className="text-navy-200">·</span>
+                <span className="text-emerald-600 text-sm font-semibold tnum">{proof.sold}+ sold</span>
               </div>
 
               {/* Pricing */}
@@ -366,7 +369,7 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
                 <div>
                   <span className="text-navy-300 text-sm font-medium">Sale Price</span>
                   <div
-                    className="text-navy-950 font-black leading-none mt-1"
+                    className="text-navy-950 font-black leading-none mt-1 tnum"
                     style={{ fontFamily: "var(--font-jakarta)", fontSize: "clamp(2rem, 4vw, 3rem)" }}
                   >
                     €{product.salePrice.toLocaleString("en-US")}
@@ -374,7 +377,7 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
                 </div>
                 {hasRealSaving && (
                   <div className="pb-1 flex flex-col gap-1">
-                    <span className="text-navy-300 text-sm font-medium line-through">
+                    <span className="text-navy-300 text-sm font-medium line-through tnum">
                       €{product.originalPrice.toLocaleString("en-US")}
                     </span>
                     <span
@@ -504,6 +507,43 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
         </div>
       </section>
 
+      {/* ── Open Box, Explained — confidence band ──────────── */}
+      <section className="bg-navy-950 text-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-14 sm:py-20">
+          <div className="max-w-2xl">
+            <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-gold-300">
+              <span className="w-6 h-px bg-gold-300/50" />
+              Buy with confidence
+            </span>
+            <h2 className="font-display font-black text-2xl sm:text-[2rem] mt-4 leading-[1.12] tracking-tight">
+              Open box. The same appliance — <span className="text-gradient-gold">at an honest price.</span>
+            </h2>
+            <p className="text-white/55 mt-4 leading-relaxed text-[15px]">
+              Every unit is a genuine brand-name appliance — a return, overstock or ex-display piece — put
+              through our 47-point inspection and backed by a full 12-month warranty. You get flagship
+              quality without the flagship markup.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-10">
+            {[
+              { icon: CheckCircle2, title: "47-Point Inspected", desc: "Tested and certified by our technicians before it ships." },
+              { icon: Award,        title: "12-Month Warranty",  desc: "Full parts & labour cover on every appliance we sell." },
+              { icon: Truck,        title: "Free Island Delivery", desc: "Delivered anywhere in Cyprus within 24–48 hours." },
+              { icon: RotateCcw,    title: "30-Day Returns",      desc: "Changed your mind? Send it back for a full refund." },
+            ].map(({ icon: Icon, title, desc }) => (
+              <div key={title} className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 transition-colors hover:bg-white/[0.07]">
+                <div className="w-10 h-10 rounded-xl bg-gold-500/15 border border-gold-500/25 flex items-center justify-center mb-3.5">
+                  <Icon className="w-5 h-5 text-gold-300" />
+                </div>
+                <p className="font-bold text-sm">{title}</p>
+                <p className="text-white/45 text-xs mt-1.5 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── Tabs: Features / Details / Reviews ─────────────── */}
       <section className="bg-white border-t border-navy-100/60">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
@@ -626,17 +666,15 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
                   <div className="flex items-center gap-6 mb-8 p-5 rounded-2xl bg-navy-50/60 border border-navy-100/50">
                     <div className="text-center">
                       <div
-                        className="font-black text-5xl text-navy-950 leading-none"
+                        className="font-black text-5xl text-navy-950 leading-none tnum"
                         style={{ fontFamily: "var(--font-jakarta)" }}
                       >
-                        4.9
+                        {proof.rating.toFixed(1)}
                       </div>
-                      <div className="flex items-center justify-center gap-0.5 mt-1.5">
-                        {[1, 2, 3, 4, 5].map((s) => (
-                          <Star key={s} className="w-4 h-4 text-amber-400 fill-amber-400" />
-                        ))}
+                      <div className="flex items-center justify-center mt-1.5">
+                        <StarRating rating={proof.rating} size={16} />
                       </div>
-                      <p className="text-navy-400 text-xs mt-1 font-medium">48 reviews</p>
+                      <p className="text-navy-400 text-xs mt-1 font-medium tnum">{proof.reviews} reviews</p>
                     </div>
                     <div className="flex-1 flex flex-col gap-1.5">
                       {[5, 4, 3, 2, 1].map((stars) => {

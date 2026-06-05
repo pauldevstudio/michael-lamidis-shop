@@ -9,9 +9,11 @@ import {
   LayoutGrid, Package, ShoppingCart, Check,
 } from "lucide-react";
 import AnimatedSection from "@/components/shared/AnimatedSection";
+import StarRating from "@/components/shared/StarRating";
 import { FEATURED_PRODUCTS, PRODUCT_CATEGORIES, type Product } from "@/lib/constants";
 import { useCart } from "@/lib/cart-context";
 import { useLanguage } from "@/lib/i18n-context";
+import { productSocialProof } from "@/lib/social-proof";
 import { cn } from "@/lib/utils";
 
 /* ── Filter ids (labels come from translations) ───────── */
@@ -34,6 +36,7 @@ function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
   const { addToCart } = useCart();
   const { t } = useLanguage();
   const [added, setAdded] = useState(false);
+  const proof = productSocialProof(product.id);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -144,6 +147,15 @@ function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
           </p>
         </div>
 
+        {/* Rating + social proof */}
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <StarRating rating={proof.rating} size={13} />
+          <span className="text-navy-800 text-xs font-bold tnum">{proof.rating.toFixed(1)}</span>
+          <span className="text-navy-300 text-xs tnum">({proof.reviews})</span>
+          <span className="text-navy-200">·</span>
+          <span className="text-emerald-600 text-[11px] font-semibold tnum">{proof.sold}+ sold</span>
+        </div>
+
         {/* Mini specs */}
         {product.specs.length > 0 && (
           <div className="flex flex-wrap gap-x-4 gap-y-1">
@@ -158,13 +170,13 @@ function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
         {/* Price */}
         <div className="flex items-baseline gap-2 mt-auto pt-1">
           <span
-            className="text-navy-950 font-black text-xl"
+            className="text-navy-950 font-black text-xl tnum"
             style={{ fontFamily: "var(--font-jakarta)" }}
           >
             €{product.salePrice.toLocaleString("en-US")}
           </span>
           {product.originalPrice > product.salePrice && (
-            <span className="text-navy-300 text-sm line-through font-medium">
+            <span className="text-navy-300 text-sm line-through font-medium tnum">
               €{product.originalPrice.toLocaleString("en-US")}
             </span>
           )}
