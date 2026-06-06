@@ -5,6 +5,9 @@ import { LanguageProvider } from "@/lib/i18n-context";
 import { CartProvider } from "@/lib/cart-context";
 import { SITE_NAME, SITE_DESCRIPTION, SITE_URL, SITE_PHONE, SITE_EMAIL } from "@/lib/constants";
 import AIChatOnPublic from "@/components/shared/AIChatOnPublic";
+import Analytics from "@/components/shared/Analytics";
+import AutoTrack from "@/components/shared/AutoTrack";
+import WhatsAppButton from "@/components/shared/WhatsAppButton";
 
 const inter = Inter({
   subsets: ["latin", "greek"],
@@ -102,10 +105,13 @@ export default function RootLayout({
         />
       </head>
       <body className="font-sans antialiased">
+        <Analytics />
+        <AutoTrack />
         <LanguageProvider>
           <CartProvider>{children}</CartProvider>
         </LanguageProvider>
         <AIChatOnPublic />
+        <WhatsAppButton />
       </body>
     </html>
   );

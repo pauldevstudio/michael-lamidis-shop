@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import {
   LayoutDashboard,
+  BarChart3,
   Building2,
   Package,
   FileText,
@@ -23,6 +24,7 @@ import { cn } from "@/lib/utils";
 
 const NAV = [
   { href: "/admin",           label: "Dashboard",    icon: LayoutDashboard, exact: true },
+  { href: "/admin/analytics", label: "Analytics",    icon: BarChart3 },
   { href: "/admin/orders",    label: "Orders",       icon: ShoppingBag },
   { href: "/admin/business",  label: "Business Info", icon: Building2 },
   { href: "/admin/products",  label: "Products",     icon: Package },

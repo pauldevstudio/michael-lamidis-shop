@@ -2,7 +2,13 @@ export const SITE_NAME = "Michael Lamidis";
 export const SITE_TAGLINE = "Open Box. Open Savings.";
 export const SITE_DESCRIPTION =
   "Cyprus's premier destination for certified open box appliances. Premium brands at 30–70% off retail. Tested, warranted, delivered.";
-export const SITE_URL = "https://michaellamidis.com.cy";
+// Canonical site origin. Env-driven so the production domain can change without
+// a code edit. Defaults to the domain actually serving the site today.
+// To switch to michaellamidis.com.cy: set NEXT_PUBLIC_SITE_URL in Vercel and
+// add that domain to the project — no code change needed. Trailing slash stripped.
+export const SITE_URL = (
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.michaellamidisshop.com"
+).replace(/\/+$/, "");
 export const SITE_EMAIL = "lamidismichaelshop@gmail.com";
 export const SITE_PHONE = "+357 97 755914";
 export const SITE_WHATSAPP = "+357 99 911871";

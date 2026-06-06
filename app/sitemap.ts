@@ -1,7 +1,10 @@
 import type { MetadataRoute } from "next";
-import { SITE_URL } from "@/lib/constants";
+import { SITE_URL, BLOG_POSTS } from "@/lib/constants";
+import { getPublicProducts } from "@/lib/site-content";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export const revalidate = 3600; // refresh the generated sitemap hourly
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = SITE_URL;
   const now = new Date();
 
@@ -16,5 +19,27 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/testimonials`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
   ];
 
-  return staticPages;
+  // Product detail pages — sourced live so new products are discoverable.
+  // Wrapped so a DB hiccup never breaks the sitemap (static pages still serve).
+  let productPages: MetadataRoute.Sitemap = [];
+  try {
+    const products = await getPublicProducts();
+    productPages = products.map((p) => ({
+      url: `${base}/products/${p.id}`,
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    }));
+  } catch {
+    /* keep static pages only */
+  }
+
+  const blogPages: MetadataRoute.Sitemap = BLOG_POSTS.map((post) => ({
+    url: `${base}/blog/${post.slug}`,
+    lastModified: now,
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+
+  return [...staticPages, ...productPages, ...blogPages];
 }

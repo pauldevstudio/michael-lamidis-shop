@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Phone, Mail, Clock, Send, CheckCircle, ArrowRight } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Send, CheckCircle, ArrowRight, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/lib/i18n-context";
 import { useContent } from "@/lib/content-context";
 import SectionHeader from "@/components/shared/SectionHeader";
 import AnimatedSection from "@/components/shared/AnimatedSection";
-import { SITE_ADDRESS, SITE_EMAIL, SITE_HOURS, SITE_PHONE } from "@/lib/constants";
+import { SITE_ADDRESS, SITE_EMAIL, SITE_HOURS, SITE_PHONE, SITE_WHATSAPP } from "@/lib/constants";
 
 export default function ContactSection() {
   const { t, pick } = useLanguage();
@@ -44,6 +44,7 @@ export default function ContactSection() {
   const contactItems = [
     { icon: MapPin, label: __csAddressLabel, value: __biAddress, href: null },
     { icon: Phone, label: __csPhoneLabel, value: __biPhone, href: `tel:${__biPhone.replace(/\s/g, "")}` },
+    { icon: MessageCircle, label: "WhatsApp", value: SITE_WHATSAPP, href: `https://wa.me/${SITE_WHATSAPP.replace(/\D/g, "")}` },
     { icon: Mail, label: __csEmailLabel, value: __biEmail, href: `mailto:${__biEmail}` },
     { icon: Clock, label: __csHoursLabel, value: __biHours, href: null },
   ];
