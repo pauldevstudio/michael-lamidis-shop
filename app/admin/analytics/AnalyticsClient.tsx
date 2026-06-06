@@ -119,10 +119,10 @@ export default function AnalyticsClient() {
                 <CardTitle>Visitors over time</CardTitle>
                 <div className="flex items-end gap-1 h-44 mt-4">
                   {data.trend.map((t, i) => (
-                    <div key={i} className="flex-1 flex flex-col items-center justify-end group" title={`${t.date}: ${t.visitors}`}>
+                    <div key={i} className="flex-1 h-full flex flex-col justify-end group" title={`${t.date}: ${t.visitors}`}>
                       <div
                         className="w-full rounded-t bg-gradient-to-t from-gold-600 to-gold-400 group-hover:from-gold-500 group-hover:to-gold-300 transition-colors"
-                        style={{ height: `${(t.visitors / maxTrend) * 100}%` }}
+                        style={{ height: `${Math.max((t.visitors / maxTrend) * 100, 3)}%` }}
                       />
                     </div>
                   ))}
