@@ -11,7 +11,7 @@ export const SITE_URL = (
 ).replace(/\/+$/, "");
 export const SITE_EMAIL = "lamidismichaelshop@gmail.com";
 export const SITE_PHONE = "+357 97 755914";
-export const SITE_WHATSAPP = "+357 99 911871";
+export const SITE_WHATSAPP = "+357 97 755914";
 export const SITE_ADDRESS = "Alassa Village, Limassol, Cyprus";
 export const SITE_HOURS = "Mon–Sat: 09:00–20:00";
 
