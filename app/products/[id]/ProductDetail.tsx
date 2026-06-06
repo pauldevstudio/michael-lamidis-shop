@@ -7,10 +7,10 @@ import Link from "next/link";
 import {
   ArrowLeft, ArrowRight, Shield, Truck, RotateCcw, Award,
   CheckCircle2, Phone, Mail, ShoppingCart, Minus, Plus, Star,
-  Package, Zap, ZoomIn, ZoomOut, X, ChevronLeft, ChevronRight,
+  Package, Zap, ZoomIn, ZoomOut, X, ChevronLeft, ChevronRight, MessageCircle,
 } from "lucide-react";
 import type { Product } from "@/lib/constants";
-import { SITE_PHONE } from "@/lib/constants";
+import { SITE_PHONE, SITE_WHATSAPP } from "@/lib/constants";
 import { useCart } from "@/lib/cart-context";
 import AnimatedSection, { StaggerChildren, StaggerItem } from "@/components/shared/AnimatedSection";
 import StarRating from "@/components/shared/StarRating";
@@ -481,6 +481,16 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
                   <Phone className="w-4 h-4" />
                   Call Us
                 </a>
+                <a
+                  href={`https://wa.me/${SITE_WHATSAPP.replace(/\D/g, "")}?text=${encodeURIComponent(`Hi! I'm interested in the ${product.brand} ${product.model}.`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-cta="Product WhatsApp"
+                  className="btn-ghost-dark text-sm flex-1 justify-center"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  WhatsApp
+                </a>
               </div>
 
               {/* Financing note */}
@@ -882,6 +892,40 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* ── Sticky mobile enquiry bar (mobile/tablet only) ── */}
+      <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-navy-100 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] pb-[env(safe-area-inset-bottom)]">
+        <div className="flex items-center gap-3 px-4 py-3">
+          <div className="shrink-0">
+            <p className="text-[11px] text-navy-400 font-medium leading-none">Price</p>
+            <p className="text-lg font-display font-black text-navy-950 tabular-nums leading-tight">
+              €{product.salePrice.toLocaleString("en-US")}
+            </p>
+          </div>
+          <a
+            href={`tel:${SITE_PHONE.replace(/\s+/g, "")}`}
+            aria-label="Call about this product"
+            data-cta="Mobile Sticky Call"
+            className="flex-1 inline-flex items-center justify-center gap-2 min-h-[48px] rounded-xl bg-navy-950 text-white text-sm font-semibold active:scale-95 transition-transform"
+          >
+            <Phone className="w-4 h-4" />
+            Call
+          </a>
+          <a
+            href={`https://wa.me/${SITE_WHATSAPP.replace(/\D/g, "")}?text=${encodeURIComponent(`Hi! I'm interested in the ${product.brand} ${product.model}.`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Message about this product on WhatsApp"
+            data-cta="Mobile Sticky WhatsApp"
+            className="flex-1 inline-flex items-center justify-center gap-2 min-h-[48px] rounded-xl bg-[#25D366] text-white text-sm font-semibold active:scale-95 transition-transform"
+          >
+            <MessageCircle className="w-4 h-4" />
+            WhatsApp
+          </a>
+        </div>
+      </div>
+      {/* Clearance so the sticky bar never covers page content on mobile */}
+      <div className="lg:hidden h-20" aria-hidden="true" />
     </>
   );
 }

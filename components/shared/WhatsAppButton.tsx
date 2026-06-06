@@ -12,6 +12,9 @@ import { SITE_WHATSAPP } from "@/lib/constants";
 export default function WhatsAppButton() {
   const pathname = usePathname();
   if (pathname?.startsWith("/admin") || pathname?.startsWith("/cms")) return null;
+  // Product detail pages have a sticky mobile bar with its own WhatsApp button —
+  // hide the floating FAB there so they don't overlap.
+  if (/^\/products\/[^/]+$/.test(pathname ?? "")) return null;
 
   const number = SITE_WHATSAPP.replace(/\D/g, "");
   if (!number) return null;
