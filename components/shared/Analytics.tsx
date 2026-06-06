@@ -56,7 +56,9 @@ export default function Analytics() {
               function gtag(){dataLayer.push(arguments);}
               window.gtag = gtag;
               gtag('js', new Date());
-              gtag('config', '${ga4Id}', { send_page_view: true });`}
+              // send_page_view:false — AutoTrack fires page_view on initial load
+              // AND every SPA route change, so gtag must not also auto-send it.
+              gtag('config', '${ga4Id}', { send_page_view: false });`}
           </Script>
         </>
       )}

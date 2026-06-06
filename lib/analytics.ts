@@ -31,7 +31,11 @@ declare global {
   }
 }
 
-/** Push a named event with arbitrary params into the dataLayer / GA4. */
+/** Push a named event into the dataLayer (GTM) and, if present, GA4 via gtag.
+ *
+ * GTM listens to dataLayer events; direct GA4 (gtag.js without GTM) does NOT —
+ * it needs an explicit gtag('event', ...). Firing both makes events work under
+ * either setup with no double-counting (only one of GTM / gtag is ever wired). */
 export function track(
   event: AnalyticsEvent | string,
   params: Record<string, unknown> = {},
@@ -39,6 +43,9 @@ export function track(
   if (typeof window === "undefined") return;
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push({ event, ...params });
+  if (typeof window.gtag === "function") {
+    window.gtag("event", event, params);
+  }
 }
 
 /** Convenience wrappers for the high-value conversion events. */
