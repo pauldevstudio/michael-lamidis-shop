@@ -84,14 +84,17 @@ export default function AnalyticsClient() {
       />
 
       <main className="flex-1 p-6 space-y-6 overflow-auto">
+        {/* Discreet, non-alarming indicator while GA4 isn't returning live data.
+            Auto-disappears the moment source === "ga4" (real data flows in). */}
         {data?.source === "sample" && (
-          <div className="flex items-start gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3">
-            <Info className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
-            <p className="text-sm text-amber-200">
-              <span className="font-bold">Sample data.</span>{" "}
-              {data.note || "Connect GA4 to display live numbers."}{" "}
-              See <span className="font-mono">ANALYTICS_SETUP.md</span> for the 3 env vars to go live.
-            </p>
+          <div className="flex justify-end -mb-3">
+            <span
+              className="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-400 px-2.5 py-1 rounded-full bg-slate-800/60 border border-slate-700/60"
+              title="Illustrative figures. Live Google Analytics data appears here automatically once the GA4 connection is active."
+            >
+              <Info className="w-3 h-3" />
+              Demo data
+            </span>
           </div>
         )}
 
