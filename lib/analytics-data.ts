@@ -63,15 +63,24 @@ function sampleData(range: RangeKey): AnalyticsData {
   const scale = days; // visitors roughly proportional to window length
   const base = 38; // avg visitors/day
 
-  const trend = Array.from({ length: Math.min(days, 30) }, (_, i) => {
-    const d = new Date();
-    d.setDate(d.getDate() - (Math.min(days, 30) - 1 - i));
-    // gentle deterministic wave (weekend dips)
-    const dow = d.getDay();
-    const weekend = dow === 0 || dow === 6 ? 0.7 : 1;
-    const wave = 1 + 0.25 * Math.sin(i / 2.2);
-    return { date: d.toISOString().slice(5, 10), visitors: Math.round(base * weekend * wave) };
-  });
+  // "Today" → 24 hourly buckets so the chart isn't a single full-width bar.
+  // Other ranges → up to 30 daily points.
+  const trend =
+    range === "today"
+      ? Array.from({ length: 24 }, (_, h) => {
+          const daytime = h >= 8 && h <= 21 ? 1 : 0.25; // quiet overnight
+          const wave = 1 + 0.4 * Math.sin((h - 6) / 3.2);
+          return { date: `${String(h).padStart(2, "0")}:00`, visitors: Math.max(0, Math.round((base / 9) * daytime * wave)) };
+        })
+      : Array.from({ length: Math.min(days, 30) }, (_, i) => {
+          const points = Math.min(days, 30);
+          const d = new Date();
+          d.setDate(d.getDate() - (points - 1 - i));
+          const dow = d.getDay();
+          const weekend = dow === 0 || dow === 6 ? 0.7 : 1; // weekend dips
+          const wave = 1 + 0.25 * Math.sin(i / 2.2);
+          return { date: d.toISOString().slice(5, 10), visitors: Math.round(base * weekend * wave) };
+        });
 
   const totalVisitors = Math.round(base * scale * 1.0);
   const uniqueVisitors = Math.round(totalVisitors * 0.82);
