@@ -90,10 +90,10 @@ export default function AnalyticsClient() {
           <div className="flex justify-end -mb-3">
             <span
               className="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-400 px-2.5 py-1 rounded-full bg-slate-800/60 border border-slate-700/60"
-              title="Illustrative figures. Live Google Analytics data appears here automatically once the GA4 connection is active."
+              title="Live Google Analytics data appears here automatically once the GA4 connection is active."
             >
               <Info className="w-3 h-3" />
-              Demo data
+              No live data yet
             </span>
           </div>
         )}
@@ -174,6 +174,9 @@ export default function AnalyticsClient() {
                         <td className="py-2 text-right text-slate-400">{dur(p.avgTime)}</td>
                       </tr>
                     ))}
+                    {data.topPages.length === 0 && (
+                      <tr><td colSpan={3} className="py-6 text-center text-slate-500 text-xs">No data yet</td></tr>
+                    )}
                   </tbody>
                 </table>
               </Card>
@@ -211,6 +214,9 @@ export default function AnalyticsClient() {
               <Card>
                 <CardTitle>Most Clicked Elements ({fmt(data.clicks.totalClicks)} total)</CardTitle>
                 <div className="space-y-3 mt-4">
+                  {data.clicks.items.length === 0 && (
+                    <p className="text-slate-500 text-xs py-4 text-center">No clicks recorded yet</p>
+                  )}
                   {data.clicks.items.map((it) => {
                     const max = Math.max(...data.clicks.items.map((x) => x.count), 1);
                     return (
@@ -253,6 +259,9 @@ export default function AnalyticsClient() {
                         <td className="py-2 text-right text-slate-300">{fmt(l.visitors)}</td>
                       </tr>
                     ))}
+                    {data.locations.length === 0 && (
+                      <tr><td colSpan={3} className="py-6 text-center text-slate-500 text-xs">No data yet</td></tr>
+                    )}
                   </tbody>
                 </table>
               </Card>
@@ -263,12 +272,13 @@ export default function AnalyticsClient() {
                 <div className="space-y-2 mt-4">
                   {data.behavior.funnel.map((f, i) => {
                     const w = (f.visitors / maxFunnel) * 100;
-                    const drop = i > 0 ? Math.round((1 - f.visitors / data.behavior.funnel[i - 1].visitors) * 100) : 0;
+                    const prev = i > 0 ? data.behavior.funnel[i - 1].visitors : 0;
+                    const drop = i > 0 && prev > 0 ? Math.round((1 - f.visitors / prev) * 100) : 0;
                     return (
                       <div key={f.step}>
                         <div className="flex items-center justify-between text-xs mb-1">
                           <span className="text-slate-200">{f.step}</span>
-                          <span className="text-slate-400">{fmt(f.visitors)}{i > 0 && <span className="text-rose-400 ml-2">−{drop}%</span>}</span>
+                          <span className="text-slate-400">{fmt(f.visitors)}{i > 0 && prev > 0 && <span className="text-rose-400 ml-2">−{drop}%</span>}</span>
                         </div>
                         <div className="h-6 rounded-lg bg-slate-800 overflow-hidden">
                           <div className="h-full bg-gradient-to-r from-gold-500 to-gold-400 rounded-lg flex items-center pl-2 text-[10px] font-bold text-navy-950" style={{ width: `${w}%` }}>
@@ -337,6 +347,9 @@ function PathList({ rows }: { rows: { path: string; count: number }[] }) {
   const max = Math.max(...rows.map((r) => r.count), 1);
   return (
     <div className="space-y-3 mt-4">
+      {rows.length === 0 && (
+        <p className="text-slate-500 text-xs py-4 text-center">No data yet</p>
+      )}
       {rows.map((r) => (
         <div key={r.path}>
           <div className="flex items-center justify-between text-xs mb-1">

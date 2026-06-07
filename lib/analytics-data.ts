@@ -56,126 +56,70 @@ function pct(part: number, total: number): number {
   return total > 0 ? Math.round((part / total) * 1000) / 10 : 0;
 }
 
-// ── Sample data ───────────────────────────────────────────────────────────
-// Deterministic per range so the dashboard looks stable between refreshes.
+// ── Zero baseline (shown until GA4 returns live data) ───────────────────────
+// Keeps the full dashboard structure (KPI cards, chart axis, category labels,
+// funnel steps) but every value is 0 / empty — no fabricated numbers. Real
+// figures overlay this once GA4 is connected.
 function sampleData(range: RangeKey): AnalyticsData {
   const days = RANGE_DAYS[range];
-  const scale = days; // visitors roughly proportional to window length
-  const base = 38; // avg visitors/day
 
-  // "Today" → 24 hourly buckets so the chart isn't a single full-width bar.
-  // Other ranges → up to 30 daily points.
+  // Keep the time-axis buckets so the chart renders a flat baseline, all zero.
   const trend =
     range === "today"
-      ? Array.from({ length: 24 }, (_, h) => {
-          const daytime = h >= 8 && h <= 21 ? 1 : 0.25; // quiet overnight
-          const wave = 1 + 0.4 * Math.sin((h - 6) / 3.2);
-          return { date: `${String(h).padStart(2, "0")}:00`, visitors: Math.max(0, Math.round((base / 9) * daytime * wave)) };
-        })
+      ? Array.from({ length: 24 }, (_, h) => ({ date: `${String(h).padStart(2, "0")}:00`, visitors: 0 }))
       : Array.from({ length: Math.min(days, 30) }, (_, i) => {
           const points = Math.min(days, 30);
           const d = new Date();
           d.setDate(d.getDate() - (points - 1 - i));
-          const dow = d.getDay();
-          const weekend = dow === 0 || dow === 6 ? 0.7 : 1; // weekend dips
-          const wave = 1 + 0.25 * Math.sin(i / 2.2);
-          return { date: d.toISOString().slice(5, 10), visitors: Math.round(base * weekend * wave) };
+          return { date: d.toISOString().slice(5, 10), visitors: 0 };
         });
-
-  const totalVisitors = Math.round(base * scale * 1.0);
-  const uniqueVisitors = Math.round(totalVisitors * 0.82);
-  const returningVisitors = totalVisitors - uniqueVisitors;
-  const pageViews = Math.round(totalVisitors * 2.7);
-
-  const sources = [
-    { label: "Organic Search", sessions: Math.round(totalVisitors * 0.41) },
-    { label: "Direct", sessions: Math.round(totalVisitors * 0.27) },
-    { label: "Social Media", sessions: Math.round(totalVisitors * 0.16) },
-    { label: "Referral", sessions: Math.round(totalVisitors * 0.1) },
-    { label: "Paid Advertising", sessions: Math.round(totalVisitors * 0.06) },
-  ];
-  const srcTotal = sources.reduce((a, s) => a + s.sessions, 0);
-
-  const devices = [
-    { device: "Mobile", sessions: Math.round(totalVisitors * 0.63) },
-    { device: "Desktop", sessions: Math.round(totalVisitors * 0.31) },
-    { device: "Tablet", sessions: Math.round(totalVisitors * 0.06) },
-  ];
-  const devTotal = devices.reduce((a, d) => a + d.sessions, 0);
-
-  const phone = Math.round(totalVisitors * 0.07);
-  const whatsapp = Math.round(totalVisitors * 0.05);
-  const email = Math.round(totalVisitors * 0.03);
-  const formSubmissions = Math.round(totalVisitors * 0.025);
 
   return {
     source: "sample",
     range,
     generatedAt: new Date().toISOString(),
-    note: "Sample data — connect GA4 (see ANALYTICS_SETUP.md) to show live numbers.",
+    note: "No live data yet — connects automatically once GA4 access is active.",
     overview: {
-      totalVisitors,
-      uniqueVisitors,
-      returningVisitors,
-      visitorsToday: trend[trend.length - 1]?.visitors ?? base,
-      visitorsThisWeek: Math.round(base * 7),
-      visitorsThisMonth: Math.round(base * 30),
-      pageViews,
-      avgSessionDuration: 142,
-      bounceRate: 46.8,
+      totalVisitors: 0,
+      uniqueVisitors: 0,
+      returningVisitors: 0,
+      visitorsToday: 0,
+      visitorsThisWeek: 0,
+      visitorsThisMonth: 0,
+      pageViews: 0,
+      avgSessionDuration: 0,
+      bounceRate: 0,
     },
     trend,
-    trafficSources: sources.map((s) => ({ ...s, pct: pct(s.sessions, srcTotal) })),
-    topPages: [
-      { path: "/", views: Math.round(pageViews * 0.34), avgTime: 78 },
-      { path: "/products", views: Math.round(pageViews * 0.23), avgTime: 124 },
-      { path: "/products/[id]", views: Math.round(pageViews * 0.18), avgTime: 156 },
-      { path: "/contact", views: Math.round(pageViews * 0.09), avgTime: 64 },
-      { path: "/about", views: Math.round(pageViews * 0.07), avgTime: 52 },
-      { path: "/testimonials", views: Math.round(pageViews * 0.05), avgTime: 41 },
-      { path: "/faq", views: Math.round(pageViews * 0.04), avgTime: 38 },
+    trafficSources: [
+      { label: "Organic Search", sessions: 0, pct: 0 },
+      { label: "Direct", sessions: 0, pct: 0 },
+      { label: "Social Media", sessions: 0, pct: 0 },
+      { label: "Referral", sessions: 0, pct: 0 },
+      { label: "Paid Advertising", sessions: 0, pct: 0 },
     ],
-    locations: [
-      { country: "Cyprus", city: "Limassol", region: "Limassol", visitors: Math.round(totalVisitors * 0.52) },
-      { country: "Cyprus", city: "Nicosia", region: "Nicosia", visitors: Math.round(totalVisitors * 0.18) },
-      { country: "Cyprus", city: "Larnaca", region: "Larnaca", visitors: Math.round(totalVisitors * 0.11) },
-      { country: "Greece", city: "Athens", region: "Attica", visitors: Math.round(totalVisitors * 0.08) },
-      { country: "United Kingdom", city: "London", region: "England", visitors: Math.round(totalVisitors * 0.06) },
-      { country: "Cyprus", city: "Paphos", region: "Paphos", visitors: Math.round(totalVisitors * 0.05) },
+    topPages: [],
+    locations: [],
+    devices: [
+      { device: "Desktop", sessions: 0, pct: 0 },
+      { device: "Mobile", sessions: 0, pct: 0 },
+      { device: "Tablet", sessions: 0, pct: 0 },
     ],
-    devices: devices.map((d) => ({ ...d, pct: pct(d.sessions, devTotal) })),
     clicks: {
-      totalClicks: phone + whatsapp + email + Math.round(totalVisitors * 0.6),
-      items: [
-        { label: "View Products (Hero CTA)", type: "CTA", count: Math.round(totalVisitors * 0.22) },
-        { label: "Product card → details", type: "Product", count: Math.round(totalVisitors * 0.19) },
-        { label: "Get a Quote", type: "CTA", count: Math.round(totalVisitors * 0.11) },
-        { label: "Call now", type: "Button", count: phone },
-        { label: "WhatsApp chat", type: "Button", count: whatsapp },
-        { label: "Footer: Contact", type: "Link", count: Math.round(totalVisitors * 0.06) },
-      ],
-      channels: { phone, email, whatsapp, formSubmissions },
+      totalClicks: 0,
+      items: [],
+      channels: { phone: 0, email: 0, whatsapp: 0, formSubmissions: 0 },
     },
     behavior: {
-      entryPages: [
-        { path: "/", count: Math.round(totalVisitors * 0.55) },
-        { path: "/products", count: Math.round(totalVisitors * 0.21) },
-        { path: "/products/[id]", count: Math.round(totalVisitors * 0.15) },
-        { path: "/contact", count: Math.round(totalVisitors * 0.05) },
-      ],
-      exitPages: [
-        { path: "/products", count: Math.round(totalVisitors * 0.28) },
-        { path: "/", count: Math.round(totalVisitors * 0.22) },
-        { path: "/products/[id]", count: Math.round(totalVisitors * 0.2) },
-        { path: "/contact", count: Math.round(totalVisitors * 0.12) },
-      ],
-      bounceRate: 46.8,
+      entryPages: [],
+      exitPages: [],
+      bounceRate: 0,
       funnel: [
-        { step: "Landing", visitors: totalVisitors },
-        { step: "Viewed Products", visitors: Math.round(totalVisitors * 0.58) },
-        { step: "Viewed a Product", visitors: Math.round(totalVisitors * 0.36) },
-        { step: "Reached Contact", visitors: Math.round(totalVisitors * 0.14) },
-        { step: "Enquiry (call/WA/form)", visitors: phone + whatsapp + formSubmissions },
+        { step: "Landing", visitors: 0 },
+        { step: "Viewed Products", visitors: 0 },
+        { step: "Viewed a Product", visitors: 0 },
+        { step: "Reached Contact", visitors: 0 },
+        { step: "Enquiry (call/WA/form)", visitors: 0 },
       ],
     },
   };
