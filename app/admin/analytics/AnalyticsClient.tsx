@@ -41,12 +41,17 @@ export default function AnalyticsClient() {
 
   useEffect(() => {
     let alive = true;
-    setLoading(true);
-    fetch(`/api/admin/analytics?range=${range}`, { cache: "no-store" })
-      .then((r) => r.json())
-      .then((d) => { if (alive) { setData(d); setLoading(false); } })
-      .catch(() => { if (alive) setLoading(false); });
-    return () => { alive = false; };
+    const load = (spinner: boolean) => {
+      if (spinner) setLoading(true);
+      fetch(`/api/admin/analytics?range=${range}`, { cache: "no-store" })
+        .then((r) => r.json())
+        .then((d) => { if (alive) { setData(d); setLoading(false); } })
+        .catch(() => { if (alive) setLoading(false); });
+    };
+    load(true);
+    // Real-time: silently refresh every 30s.
+    const id = setInterval(() => load(false), 30_000);
+    return () => { alive = false; clearInterval(id); };
   }, [range]);
 
   const maxTrend = data ? Math.max(...data.trend.map((t) => t.visitors), 1) : 1;
@@ -305,7 +310,11 @@ export default function AnalyticsClient() {
             </div>
 
             <p className="text-center text-xs text-slate-600 pt-2">
-              {data.source === "ga4" ? "Live data from Google Analytics 4" : "Sample data"} ·
+              {data.source === "live"
+                ? "Live first-party analytics · real-time"
+                : data.source === "ga4"
+                  ? "Live data from Google Analytics 4"
+                  : "No live data yet"} ·
               generated {new Date(data.generatedAt).toLocaleString()}
             </p>
           </>

@@ -17,7 +17,7 @@ import crypto from "crypto";
 export type RangeKey = "today" | "7d" | "30d" | "90d";
 
 export interface AnalyticsData {
-  source: "ga4" | "sample";
+  source: "ga4" | "sample" | "live";
   range: RangeKey;
   generatedAt: string;
   note?: string;
@@ -271,15 +271,201 @@ function mapGA4(range: RangeKey, reports: Ga4Report[]): AnalyticsData {
 const GA4_CONFIGURED = () =>
   !!process.env.GA4_PROPERTY_ID && !!process.env.GA4_CLIENT_EMAIL && !!process.env.GA4_PRIVATE_KEY;
 
-export async function getAnalytics(range: RangeKey): Promise<AnalyticsData> {
-  if (GA4_CONFIGURED()) {
-    try {
-      return await fetchFromGA4(range);
-    } catch (err) {
-      const fallback = sampleData(range);
-      fallback.note = `GA4 fetch failed (${String(err)}). Showing sample data.`;
-      return fallback;
+// ── First-party real-time analytics (our own MongoDB events) ────────────────
+const COUNTRY_NAMES: Record<string, string> = {
+  CY: "Cyprus", GR: "Greece", GB: "United Kingdom", US: "United States",
+  DE: "Germany", FR: "France", IT: "Italy", ES: "Spain", NL: "Netherlands",
+  RU: "Russia", UA: "Ukraine", RO: "Romania", BG: "Bulgaria", PL: "Poland",
+  IN: "India", AE: "UAE", IL: "Israel", TR: "Turkey", AU: "Australia", CA: "Canada",
+};
+const SOURCE_ORDER = ["Organic Search", "Direct", "Social Media", "Referral", "Paid Advertising"];
+
+function clickType(name: string): string {
+  if (name === "cta_click") return "CTA";
+  if (name === "product_click") return "Product";
+  if (name === "phone_click" || name === "email_click" || name === "whatsapp_click") return "Button";
+  if (name === "outbound_click") return "Link";
+  if (name === "generate_lead" || name === "contact_form_submit") return "Form";
+  return "Event";
+}
+
+interface RawEvent {
+  ts: Date; vid: string; sid: string; kind: string; name: string;
+  path: string; source: string; device: string; country: string; city: string; region: string; label: string; isNew: boolean;
+}
+
+async function getRealtimeAnalytics(range: RangeKey): Promise<AnalyticsData | null> {
+  if (!process.env.MONGODB_URI) return null;
+  const { connectDB } = await import("@/lib/db");
+  const conn = await connectDB();
+  if (!conn) return null;
+  const { AnalyticsEventModel } = await import("@/lib/models");
+
+  const days = RANGE_DAYS[range];
+  const now = Date.now();
+  const startMs = now - days * 86_400_000;
+  const start = new Date(startMs);
+
+  const docs = (await AnalyticsEventModel.find({ ts: { $gte: start } })
+    .sort({ ts: 1 }).limit(200_000).lean()) as unknown as RawEvent[];
+  if (!docs.length) return null; // no data yet → caller shows the zero baseline
+
+  const ms = (d: Date) => +new Date(d);
+
+  // Build per-session rollups (first doc per sid is earliest since sorted asc).
+  interface Sess { vid: string; views: { path: string; t: number }[]; first: number; last: number; source: string; device: string; country: string; city: string; region: string; }
+  const sessions = new Map<string, Sess>();
+  const allVids = new Set<string>();
+  const newVids = new Set<string>();
+  const convSids = new Set<string>();
+  const events = docs.filter((d) => d.kind === "event");
+  let pageViews = 0;
+
+  for (const d of docs) {
+    allVids.add(d.vid);
+    if (d.isNew) newVids.add(d.vid);
+    let s = sessions.get(d.sid);
+    if (!s) {
+      s = { vid: d.vid, views: [], first: ms(d.ts), last: ms(d.ts), source: d.source || "Direct", device: d.device || "Desktop", country: d.country, city: d.city, region: d.region };
+      sessions.set(d.sid, s);
+    }
+    const t = ms(d.ts);
+    s.first = Math.min(s.first, t); s.last = Math.max(s.last, t);
+    if (d.kind === "pageview") { s.views.push({ path: d.path || "/", t }); pageViews++; }
+    if (["phone_click", "whatsapp_click", "email_click", "generate_lead", "contact_form_submit"].includes(d.name)) convSids.add(d.sid);
+  }
+
+  const sess = [...sessions.values()];
+  const totalVisitors = sess.length;                  // visits / sessions
+  const uniqueVisitors = allVids.size;                // distinct people
+  const returningVisitors = Math.max(0, uniqueVisitors - newVids.size);
+  const durations = sess.map((s) => (s.last - s.first) / 1000);
+  const avgSessionDuration = durations.length ? Math.round(durations.reduce((a, b) => a + b, 0) / durations.length) : 0;
+  const bounced = sess.filter((s) => s.views.length <= 1).length;
+  const bounceRate = sess.length ? Math.round((bounced / sess.length) * 1000) / 10 : 0;
+
+  const distinctVids = async (sinceMs: number) =>
+    (await AnalyticsEventModel.distinct("vid", { ts: { $gte: new Date(now - sinceMs) } })).length;
+  const [visitorsToday, visitorsThisWeek, visitorsThisMonth] = await Promise.all([
+    distinctVids(86_400_000), distinctVids(7 * 86_400_000), distinctVids(30 * 86_400_000),
+  ]);
+
+  // Trend buckets (distinct visitors per bucket).
+  const bucketCount = range === "today" ? 24 : Math.min(days, 30);
+  const bucketMs = (now - startMs) / bucketCount;
+  const bucketSets = Array.from({ length: bucketCount }, () => new Set<string>());
+  for (const d of docs) {
+    const i = Math.min(bucketCount - 1, Math.max(0, Math.floor((ms(d.ts) - startMs) / bucketMs)));
+    bucketSets[i].add(d.vid);
+  }
+  const trend = bucketSets.map((set, i) => {
+    const bAt = new Date(startMs + i * bucketMs);
+    const date = range === "today" ? `${String(bAt.getUTCHours()).padStart(2, "0")}:00` : bAt.toISOString().slice(5, 10);
+    return { date, visitors: set.size };
+  });
+
+  // Traffic sources (by session).
+  const srcCount: Record<string, number> = {};
+  for (const s of sess) srcCount[s.source] = (srcCount[s.source] || 0) + 1;
+  const srcTotal = sess.length || 1;
+  const trafficSources = SOURCE_ORDER.map((label) => ({ label, sessions: srcCount[label] || 0, pct: pct(srcCount[label] || 0, srcTotal) }))
+    .filter((s) => s.sessions > 0 || SOURCE_ORDER.indexOf(s.label) < 3);
+
+  // Top pages (+ approx avg time on page from dwell between consecutive views).
+  const pageViewsCount: Record<string, number> = {};
+  const pageDwell: Record<string, number> = {};
+  for (const s of sess) {
+    for (let i = 0; i < s.views.length; i++) {
+      const v = s.views[i];
+      pageViewsCount[v.path] = (pageViewsCount[v.path] || 0) + 1;
+      if (i < s.views.length - 1) pageDwell[v.path] = (pageDwell[v.path] || 0) + (s.views[i + 1].t - v.t) / 1000;
     }
   }
+  const topPages = Object.entries(pageViewsCount)
+    .map(([path, views]) => ({ path, views, avgTime: Math.round((pageDwell[path] || 0) / views) }))
+    .sort((a, b) => b.views - a.views).slice(0, 8);
+
+  // Locations (by session).
+  const locMap = new Map<string, { country: string; city: string; region: string; visitors: number }>();
+  for (const s of sess) {
+    if (!s.country && !s.city) continue;
+    const key = `${s.country}|${s.city}|${s.region}`;
+    const e = locMap.get(key) || { country: COUNTRY_NAMES[s.country] || s.country || "Unknown", city: s.city || "—", region: s.region || "", visitors: 0 };
+    e.visitors++; locMap.set(key, e);
+  }
+  const locations = [...locMap.values()].sort((a, b) => b.visitors - a.visitors).slice(0, 8);
+
+  // Devices (by session).
+  const devCount: Record<string, number> = { Desktop: 0, Mobile: 0, Tablet: 0 };
+  for (const s of sess) devCount[s.device] = (devCount[s.device] || 0) + 1;
+  const devTotal = sess.length || 1;
+  const devices = ["Desktop", "Mobile", "Tablet"].map((device) => ({ device, sessions: devCount[device] || 0, pct: pct(devCount[device] || 0, devTotal) }));
+
+  // Clicks.
+  const channels = {
+    phone: events.filter((e) => e.name === "phone_click").length,
+    email: events.filter((e) => e.name === "email_click").length,
+    whatsapp: events.filter((e) => e.name === "whatsapp_click").length,
+    formSubmissions: events.filter((e) => e.name === "generate_lead" || e.name === "contact_form_submit").length,
+  };
+  const itemMap = new Map<string, { label: string; type: string; count: number }>();
+  for (const e of events) {
+    const label = e.label || e.name || "click";
+    const key = `${e.name}|${label}`;
+    const it = itemMap.get(key) || { label, type: clickType(e.name), count: 0 };
+    it.count++; itemMap.set(key, it);
+  }
+  const clickItems = [...itemMap.values()].sort((a, b) => b.count - a.count).slice(0, 8);
+
+  // Behavior.
+  const entryMap: Record<string, number> = {};
+  const exitMap: Record<string, number> = {};
+  for (const s of sess) {
+    if (!s.views.length) continue;
+    const entry = s.views[0].path; const exit = s.views[s.views.length - 1].path;
+    entryMap[entry] = (entryMap[entry] || 0) + 1;
+    exitMap[exit] = (exitMap[exit] || 0) + 1;
+  }
+  const toRows = (m: Record<string, number>) => Object.entries(m).map(([path, count]) => ({ path, count })).sort((a, b) => b.count - a.count).slice(0, 6);
+
+  const hasView = (s: Sess, test: (p: string) => boolean) => s.views.some((v) => test(v.path));
+  const funnel = [
+    { step: "Landing", visitors: sess.filter((s) => s.views.length > 0).length },
+    { step: "Viewed Products", visitors: sess.filter((s) => hasView(s, (p) => p === "/products" || p.startsWith("/products"))).length },
+    { step: "Viewed a Product", visitors: sess.filter((s) => hasView(s, (p) => /^\/products\/.+/.test(p))).length },
+    { step: "Reached Contact", visitors: sess.filter((s) => hasView(s, (p) => p.startsWith("/contact"))).length },
+    { step: "Enquiry (call/WA/form)", visitors: [...convSids].length },
+  ];
+
+  return {
+    source: "live",
+    range,
+    generatedAt: new Date().toISOString(),
+    overview: {
+      totalVisitors, uniqueVisitors, returningVisitors,
+      visitorsToday, visitorsThisWeek, visitorsThisMonth,
+      pageViews, avgSessionDuration, bounceRate,
+    },
+    trend,
+    trafficSources,
+    topPages,
+    locations,
+    devices,
+    clicks: { totalClicks: events.length, items: clickItems, channels },
+    behavior: { entryPages: toRows(entryMap), exitPages: toRows(exitMap), bounceRate, funnel },
+  };
+}
+
+export async function getAnalytics(range: RangeKey): Promise<AnalyticsData> {
+  // 1) First-party real-time data (our own tracking) — primary, no Google deps.
+  try {
+    const rt = await getRealtimeAnalytics(range);
+    if (rt) return rt;
+  } catch { /* fall through */ }
+  // 2) GA4 Data API, if configured (secondary).
+  if (GA4_CONFIGURED()) {
+    try { return await fetchFromGA4(range); } catch { /* fall through */ }
+  }
+  // 3) Clean zero baseline until data arrives.
   return sampleData(range);
 }

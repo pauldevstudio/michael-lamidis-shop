@@ -106,3 +106,47 @@ export interface OrderDoc {
 
 export const OrderModel: Model<OrderDoc> =
   (models.Order as Model<OrderDoc>) || model<OrderDoc>("Order", OrderSchema);
+
+/* ─── Analytics events (first-party, real-time) ─────────────────── */
+
+const AnalyticsEventSchema = new Schema(
+  {
+    ts:       { type: Date, default: Date.now, index: true },
+    vid:      { type: String, index: true }, // anonymous visitor id (cookie)
+    sid:      { type: String, index: true }, // session id (cookie, ~30 min)
+    kind:     { type: String, enum: ["pageview", "event"], required: true },
+    name:     { type: String, default: "" },  // event name (phone_click, cta_click, …)
+    path:     { type: String, default: "" },
+    referrer: { type: String, default: "" },
+    source:   { type: String, default: "Direct" }, // classified channel
+    device:   { type: String, default: "Desktop" }, // Desktop | Mobile | Tablet
+    country:  { type: String, default: "" },
+    city:     { type: String, default: "" },
+    region:   { type: String, default: "" },
+    label:    { type: String, default: "" },  // CTA/button/link label
+    isNew:    { type: Boolean, default: false }, // first time we ever saw this vid
+  },
+  { timestamps: false }
+);
+
+export interface AnalyticsEventDoc {
+  _id: string;
+  ts: Date;
+  vid: string;
+  sid: string;
+  kind: "pageview" | "event";
+  name: string;
+  path: string;
+  referrer: string;
+  source: string;
+  device: string;
+  country: string;
+  city: string;
+  region: string;
+  label: string;
+  isNew: boolean;
+}
+
+export const AnalyticsEventModel: Model<AnalyticsEventDoc> =
+  (models.AnalyticsEvent as Model<AnalyticsEventDoc>) ||
+  model<AnalyticsEventDoc>("AnalyticsEvent", AnalyticsEventSchema);

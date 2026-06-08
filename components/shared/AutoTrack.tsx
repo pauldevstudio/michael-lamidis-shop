@@ -4,6 +4,21 @@ import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { track, analytics, ANALYTICS_EVENTS } from "@/lib/analytics";
 
+/** Non-blocking first-party beacon to our own analytics endpoint. */
+function beacon(payload: Record<string, unknown>) {
+  if (typeof window === "undefined") return;
+  try {
+    const body = JSON.stringify({ ...payload, referrer: document.referrer });
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon("/api/track", new Blob([body], { type: "application/json" }));
+    } else {
+      fetch("/api/track", { method: "POST", body, keepalive: true, headers: { "content-type": "application/json" } });
+    }
+  } catch {
+    /* never let tracking break the page */
+  }
+}
+
 /**
  * Zero-touch event tracking. One delegated click listener on the document
  * auto-fires the right event for any phone / email / WhatsApp / product /
@@ -25,6 +40,7 @@ export default function AutoTrack() {
       page_location: typeof window !== "undefined" ? window.location.href : pathname,
       page_title: typeof document !== "undefined" ? document.title : undefined,
     });
+    beacon({ kind: "pageview", path: pathname });
   }, [pathname]);
 
   // Delegated click tracking.
@@ -46,13 +62,13 @@ export default function AutoTrack() {
           }
         }
         track(name, params);
+        beacon({ kind: "event", name, path: pathname, label: name });
       }
 
       if (ctaEl) {
-        analytics.ctaClick(
-          ctaEl.getAttribute("data-cta") || ctaEl.textContent?.trim() || "cta",
-          pathname,
-        );
+        const label = ctaEl.getAttribute("data-cta") || ctaEl.textContent?.trim() || "cta";
+        analytics.ctaClick(label, pathname);
+        beacon({ kind: "event", name: ANALYTICS_EVENTS.CTA_CLICK, path: pathname, label });
       }
 
       if (!a) return;
@@ -60,17 +76,23 @@ export default function AutoTrack() {
 
       if (href.startsWith("tel:")) {
         analytics.phoneClick(href.replace("tel:", ""));
+        beacon({ kind: "event", name: ANALYTICS_EVENTS.PHONE_CLICK, path: pathname, label: "Phone" });
       } else if (href.startsWith("mailto:")) {
         analytics.emailClick(href.replace("mailto:", ""));
+        beacon({ kind: "event", name: ANALYTICS_EVENTS.EMAIL_CLICK, path: pathname, label: "Email" });
       } else if (/wa\.me|api\.whatsapp\.com|whatsapp/i.test(href)) {
         analytics.whatsappClick(href);
+        beacon({ kind: "event", name: ANALYTICS_EVENTS.WHATSAPP_CLICK, path: pathname, label: "WhatsApp" });
       } else if (/^\/products\/[^/]+$/.test(href)) {
-        analytics.productClick(href.split("/").pop() || "", a.textContent?.trim());
+        const label = a.textContent?.trim() || "Product";
+        analytics.productClick(href.split("/").pop() || "", label);
+        beacon({ kind: "event", name: ANALYTICS_EVENTS.PRODUCT_CLICK, path: pathname, label });
       } else if (/^https?:\/\//i.test(href)) {
         try {
           const u = new URL(href);
           if (u.host !== window.location.host) {
             track(ANALYTICS_EVENTS.OUTBOUND_CLICK, { url: href, host: u.host });
+            beacon({ kind: "event", name: ANALYTICS_EVENTS.OUTBOUND_CLICK, path: pathname, label: u.host });
           }
         } catch {
           /* ignore malformed href */
