@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   LayoutGrid, Square, Loader, Droplets, Wind, Monitor, Coffee,
   Star, Shield, ArrowRight, Zap,
@@ -34,11 +34,9 @@ function ProductCard({
 
   return (
     <motion.div
-      layout
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
       className="group relative bg-white rounded-2xl border border-navy-100/70 overflow-hidden hover:border-navy-200 hover:shadow-card-lift transition-all duration-400 cursor-default"
     >
       {/* Card visual — real photo */}
@@ -209,13 +207,11 @@ export default function ProductGallery({ products }: { products?: Product[] } = 
         </div>
 
         {/* Product grid */}
-        <motion.div layout className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          <AnimatePresence mode="popLayout">
-            {filtered.map((product) => (
-              <ProductCard key={product.id} {...product} />
-            ))}
-          </AnimatePresence>
-        </motion.div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {filtered.map((product) => (
+            <ProductCard key={product.id} {...product} />
+          ))}
+        </div>
 
         {/* View all */}
         <div className="mt-10 flex justify-center">

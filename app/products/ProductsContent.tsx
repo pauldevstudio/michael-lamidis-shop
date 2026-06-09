@@ -48,9 +48,8 @@ function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
 
   return (
     <motion.div
-      layout
-      initial={{ opacity: 0, scale: 0.94 }}
-      animate={{ opacity: 1, scale: 1 }}
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.94 }}
       transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
       className="group bg-white rounded-2xl border border-navy-100/70 overflow-hidden hover:border-navy-200 hover:shadow-card-lift transition-all duration-400 flex flex-col"
@@ -449,13 +448,11 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
           </div>
 
           {/* Grid */}
-          <motion.div layout className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            <AnimatePresence mode="popLayout">
-              {filtered.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </AnimatePresence>
-          </motion.div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            {filtered.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
 
           {/* Empty state */}
           {filtered.length === 0 && (
