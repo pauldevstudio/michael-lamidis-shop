@@ -547,22 +547,6 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
                         title: `${product.warranty}-Month Warranty`,
                         desc: "Full Lamidis warranty covering parts and labour. Peace of mind from day one.",
                       },
-                      {
-                        title: "47-Point Inspection",
-                        desc: "Every appliance passes our comprehensive 47-point quality inspection before sale.",
-                      },
-                      {
-                        title: "Ready to Ship in 24–48h",
-                        desc: "Stock checked daily. Your order is packaged and dispatched within two business days.",
-                      },
-                      {
-                        title: "Free Delivery",
-                        desc: "Complimentary doorstep delivery anywhere in Cyprus. White-glove service available.",
-                      },
-                      {
-                        title: "30-Day Returns",
-                        desc: "Not satisfied? Return within 30 days for a full refund, no questions asked.",
-                      },
                     ].map(({ title, desc }) => (
                       <div
                         key={title}
