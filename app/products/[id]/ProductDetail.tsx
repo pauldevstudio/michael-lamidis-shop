@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  ArrowLeft, ArrowRight, Shield, Truck, RotateCcw, Award,
+  ArrowLeft, ArrowRight, Truck, Award,
   CheckCircle2, Phone, Mail, ShoppingCart, Minus, Plus, Star,
   Package, Zap, ZoomIn, ZoomOut, X, ChevronLeft, ChevronRight, MessageCircle,
 } from "lucide-react";
@@ -304,22 +304,6 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
                 </div>
               )}
 
-              {/* Trust mini-row below thumbnails */}
-              <div className="grid grid-cols-3 gap-3">
-                {[
-                  { icon: Shield,    label: "12-Month Warranty" },
-                  { icon: Truck,     label: "Free Delivery" },
-                  { icon: RotateCcw, label: "30-Day Returns" },
-                ].map(({ icon: Icon, label }) => (
-                  <div
-                    key={label}
-                    className="flex flex-col items-center gap-2 p-3 rounded-xl bg-navy-50 border border-navy-100/60 text-center"
-                  >
-                    <Icon className="w-4 h-4 text-gold-500" />
-                    <span className="text-navy-600 text-[10px] font-semibold leading-tight">{label}</span>
-                  </div>
-                ))}
-              </div>
             </motion.div>
 
             {/* ── Right: Details ── */}
@@ -493,19 +477,12 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
                 </a>
               </div>
 
-              {/* Financing note */}
-              <div className="flex items-center gap-2 text-xs text-navy-400 font-medium">
-                <span className="w-4 h-px bg-navy-200" />
-                Available on installment plan — ask us for details
-                <span className="w-4 h-px bg-navy-200" />
-              </div>
-
-              {/* Warranty note */}
+              {/* Warranty note — mirrors the product's warranty set in admin */}
               <div className="flex items-start gap-3 p-4 rounded-xl bg-navy-50 border border-navy-100/60">
                 <Award className="w-5 h-5 text-gold-500 flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-navy-950 font-semibold text-sm">
-                    12-Month Lamidis Warranty Included
+                    {product.warranty > 0 ? `${product.warranty}-Month ` : ""}Lamidis Warranty Included
                   </p>
                   <p className="text-navy-400 text-xs mt-0.5 leading-relaxed">
                     Full parts &amp; labor coverage. If anything goes wrong, we fix it — no questions asked.
@@ -513,43 +490,6 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
                 </div>
               </div>
             </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Open Box, Explained — confidence band ──────────── */}
-      <section className="bg-navy-950 text-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-14 sm:py-20">
-          <div className="max-w-2xl">
-            <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-gold-300">
-              <span className="w-6 h-px bg-gold-300/50" />
-              Buy with confidence
-            </span>
-            <h2 className="font-display font-black text-2xl sm:text-[2rem] mt-4 leading-[1.12] tracking-tight">
-              Open box. The same appliance — <span className="text-gradient-gold">at an honest price.</span>
-            </h2>
-            <p className="text-white/55 mt-4 leading-relaxed text-[15px]">
-              Every unit is a genuine brand-name appliance — a return, overstock or ex-display piece — put
-              through our 47-point inspection and backed by a full 12-month warranty. You get flagship
-              quality without the flagship markup.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-10">
-            {[
-              { icon: CheckCircle2, title: "47-Point Inspected", desc: "Tested and certified by our technicians before it ships." },
-              { icon: Award,        title: "12-Month Warranty",  desc: "Full parts & labour cover on every appliance we sell." },
-              { icon: Truck,        title: "Free Island Delivery", desc: "Delivered anywhere in Cyprus within 24–48 hours." },
-              { icon: RotateCcw,    title: "30-Day Returns",      desc: "Changed your mind? Send it back for a full refund." },
-            ].map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 transition-colors hover:bg-white/[0.07]">
-                <div className="w-10 h-10 rounded-xl bg-gold-500/15 border border-gold-500/25 flex items-center justify-center mb-3.5">
-                  <Icon className="w-5 h-5 text-gold-300" />
-                </div>
-                <p className="font-bold text-sm">{title}</p>
-                <p className="text-white/45 text-xs mt-1.5 leading-relaxed">{desc}</p>
-              </div>
-            ))}
           </div>
         </div>
       </section>

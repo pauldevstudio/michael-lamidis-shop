@@ -26,14 +26,14 @@ const en = {
     scrollHint: "Scroll",
     trustItems: [
       "Quality Tested",
-      "12-Month Warranty",
+      "3 Months to 5 Years Warranty",
       "Island-Wide Delivery",
     ],
     stats: [
       { value: "45+", label: "Items In Stock" },
-      { value: "€7-€369", label: "Price Range" },
+      { value: "€5-€3000", label: "Price Range" },
       { value: "Cyprus", label: "Delivery" },
-      { value: "12mo", label: "Warranty" },
+      { value: "3mo-5yr", label: "Warranty" },
     ],
   },
   announcement: {
@@ -114,7 +114,7 @@ const en = {
         icon: "Star",
         title: "Real Range",
         description:
-          "From €7 kitchen essentials to €369 premium mattresses — something for every budget.",
+          "From €5 everyday essentials to €3000 premium appliances — something for every budget.",
       },
       {
         icon: "HeartHandshake",
@@ -370,7 +370,8 @@ const en = {
     newsletterCta: "Subscribe",
     copyright: "© 2024 Michael Lamidis. All rights reserved.",
     legal: [
-      { label: "Privacy Policy", href: "/privacy" },
+      { label: "Privacy Policy", href: "/privacy-policy" },
+      { label: "Cookie Policy", href: "/cookie-policy" },
       { label: "Terms of Service", href: "/terms" },
     ],
   },
@@ -517,14 +518,14 @@ const gr: typeof en = {
     scrollHint: "Κύλιση",
     trustItems: [
       "Ελεγμένη Ποιότητα",
-      "Εγγύηση 12 Μηνών",
+      "Εγγύηση 3 Μηνών έως 5 Ετών",
       "Παράδοση σε Όλη την Κύπρο",
     ],
     stats: [
       { value: "45+", label: "Διαθέσιμα Είδη" },
-      { value: "€7-€369", label: "Εύρος Τιμών" },
+      { value: "€5-€3000", label: "Εύρος Τιμών" },
       { value: "Κύπρος", label: "Παράδοση" },
-      { value: "12μη", label: "Εγγύηση" },
+      { value: "3μη-5έτ", label: "Εγγύηση" },
     ],
   },
   announcement: {
@@ -605,7 +606,7 @@ const gr: typeof en = {
         icon: "Star",
         title: "Πραγματική Γκάμα",
         description:
-          "Από €7 βασικά κουζίνας μέχρι €369 premium στρώματα — κάτι για κάθε προϋπολογισμό.",
+          "Από €5 καθημερινά βασικά μέχρι €3000 premium συσκευές — κάτι για κάθε προϋπολογισμό.",
       },
       {
         icon: "HeartHandshake",
@@ -861,7 +862,8 @@ const gr: typeof en = {
     newsletterCta: "Εγγραφή",
     copyright: "© 2024 Michael Lamidis. Με επιφύλαξη παντός δικαιώματος.",
     legal: [
-      { label: "Πολιτική Απορρήτου", href: "/privacy" },
+      { label: "Πολιτική Απορρήτου", href: "/privacy-policy" },
+      { label: "Πολιτική Cookies", href: "/cookie-policy" },
       { label: "Όροι Χρήσης", href: "/terms" },
     ],
   },

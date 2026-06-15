@@ -31,7 +31,6 @@ PAYMENT:
 - Cash
 - Credit / debit card (Visa, Mastercard)
 - Bank transfer
-- Instalment options available on request
 
 LOCATION & CONTACT:
 - Based in Limassol, Cyprus
@@ -64,7 +63,7 @@ function fallback(msg: string): string {
     return "Yes! We offer professional installation for air conditioners and washing machines 🔧. Our team makes sure everything is set up perfectly. Ask about installation when you make your purchase.";
 
   if (/pay|cash|card|transfer|πληρωμ/.test(t))
-    return "We accept cash, credit/debit card (Visa & Mastercard), and bank transfers 💳. Instalment options are also available on request — just ask!";
+    return "We accept cash, credit/debit card (Visa & Mastercard), and bank transfers 💳. Reach out anytime and we'll help with your purchase!";
 
   if (/contact|phone|call|επικοινωνία|τηλέφωνο/.test(t))
     return "You can reach us through the Contact page on our website, or leave your name and number here and we'll call you back! 📞 We're always happy to help.";

@@ -197,7 +197,7 @@ export default function EditProductModal({
           </button>
         </div>
         <div className="p-6 overflow-y-auto max-h-[70vh] space-y-5">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">
                 Brand <span className="text-red-400">*</span>
@@ -227,7 +227,7 @@ export default function EditProductModal({
               />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Category</label>
               <select value={formData.category} onChange={(e) => updateForm("category", e.target.value)} className="border border-slate-700 bg-slate-800 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400">

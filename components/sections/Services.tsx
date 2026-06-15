@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, Wrench, Settings, Package, ArrowRight, CheckCircle } from "lucide-react";
+import { Search, Wrench, Settings, Package, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/lib/i18n-context";
 import { useContent } from "@/lib/content-context";
@@ -98,16 +98,7 @@ export default function Services() {
         </StaggerChildren>
 
         {/* Bottom CTA */}
-        <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
-            {["30-Day Returns", "Price Match Guarantee", "Expert Advice"].map((item) => (
-              <div key={item} className="flex items-center gap-1.5">
-                <CheckCircle className="w-3.5 h-3.5 text-emerald-500" />
-                <span className="text-navy-900/55 text-xs font-medium">{item}</span>
-              </div>
-            ))}
-          </div>
-          <div className="w-px h-4 bg-navy-200 hidden sm:block" />
+        <div className="mt-12 flex items-center justify-center">
           <Link href="/services" className="btn-primary text-sm">
             See All Services <ArrowRight className="w-4 h-4" />
           </Link>

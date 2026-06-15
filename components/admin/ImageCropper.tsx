@@ -155,7 +155,9 @@ export default function ImageCropper({
   const [angle, setAngle] = useState(0);
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [availW, setAvailW] = useState(460); // measured stage width (responsive)
 
+  const stageWrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const drag = useRef<{ active: boolean; px: number; py: number; ox: number; oy: number }>({
     active: false, px: 0, py: 0, ox: 0, oy: 0,
@@ -195,8 +197,21 @@ export default function ImageCropper({
     };
   }, [file, src]);
 
+  // Track the stage's available width so the canvas never overflows the modal
+  // on small screens (mobile-first). Falls back to 460 before first measure.
+  useEffect(() => {
+    const el = stageWrapRef.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver((entries) => {
+      const w = entries[0]?.contentRect.width;
+      if (w && w > 0) setAvailW(w);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   // Preview frame size (CSS px) derived from the chosen aspect.
-  const MAX_W = 460;
+  const MAX_W = Math.min(460, Math.round(availW));
   const MAX_H = 360;
   let pw: number;
   let ph: number;
@@ -355,9 +370,9 @@ export default function ImageCropper({
           </button>
         </div>
 
-        <div className="p-6 space-y-4">
+        <div className="p-4 sm:p-6 space-y-4">
           {/* Stage */}
-          <div className="flex justify-center">
+          <div ref={stageWrapRef} className="flex justify-center">
             <div
               className="relative rounded-xl overflow-hidden bg-slate-950 border border-slate-700"
               style={{ width: pw || 280, height: ph || 280 }}

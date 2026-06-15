@@ -3,8 +3,6 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ScrollProgress from "@/components/shared/ScrollProgress";
 import Hero from "@/components/sections/Hero";
-import TrustBadges from "@/components/sections/TrustBadges";
-import Features from "@/components/sections/Features";
 import Services from "@/components/sections/Services";
 import ProductGallery from "@/components/sections/ProductGallery";
 import Testimonials from "@/components/sections/Testimonials";
@@ -15,6 +13,7 @@ import ContactSection from "@/components/sections/ContactSection";
 import CategoryStrip from "@/components/sections/CategoryStrip";
 import { ContentProvider } from "@/lib/content-context";
 import { getSiteContent, getPublicProducts } from "@/lib/site-content";
+import { SITE_URL } from "@/lib/constants";
 
 // Always render fresh so admin product edits show on /  without
 // waiting for revalidate or relying on build-time Payload init
@@ -25,6 +24,7 @@ export const metadata: Metadata = {
   title: "Michael Lamidis | Premium Open Box Appliances Cyprus",
   description:
     "Certified open box appliances at 30–70% off retail. Samsung, LG, Bosch, Miele & more. Free delivery, 12-month warranty. Limassol, Cyprus.",
+  alternates: { canonical: SITE_URL },
 };
 
 export default async function HomePage() {
@@ -38,9 +38,7 @@ export default async function HomePage() {
       <Navbar />
       <main>
         <Hero />
-        <TrustBadges />
         <CategoryStrip />
-        <Features />
         <Services />
         <ProductGallery products={products} />
         <Testimonials />
