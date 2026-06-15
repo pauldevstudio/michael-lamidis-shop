@@ -50,36 +50,6 @@ const en = {
       { id: "furniture", label: "Bedding & Furniture" },
     ],
   },
-  trust: {
-    eyebrow: "Trusted by Thousands",
-    title: "Why Families Choose Lamidis",
-    items: [
-      {
-        icon: "ShieldCheck",
-        title: "Quality Tested",
-        description:
-          "Every item is checked before it reaches you. No surprises, no defects, no fuss.",
-      },
-      {
-        icon: "Award",
-        title: "12-Month Warranty",
-        description:
-          "Full coverage on every appliance and mattress. Peace of mind, included.",
-      },
-      {
-        icon: "Truck",
-        title: "Island-Wide Delivery",
-        description:
-          "Delivery anywhere in Cyprus. Free on orders over €200, fair flat fee otherwise.",
-      },
-      {
-        icon: "RefreshCw",
-        title: "14-Day Returns",
-        description:
-          "Not what you expected? Return within 14 days for a refund or exchange.",
-      },
-    ],
-  },
   features: {
     eyebrow: "Why Shop With Us?",
     title: "Quality You Can Trust at Prices That Make Sense",
@@ -540,36 +510,6 @@ const gr: typeof en = {
       { id: "kitchenware", label: "Σκεύη Κουζίνας" },
       { id: "mattresses", label: "Στρώματα" },
       { id: "furniture", label: "Κλινοσκεπάσματα & Έπιπλα" },
-    ],
-  },
-  trust: {
-    eyebrow: "Εμπιστευμένοι στην Κύπρο",
-    title: "Γιατί Οι Οικογένειες Επιλέγουν Lamidis",
-    items: [
-      {
-        icon: "ShieldCheck",
-        title: "Ελεγμένη Ποιότητα",
-        description:
-          "Κάθε προϊόν ελέγχεται πριν φτάσει σε εσάς. Καμία έκπληξη, κανένα ελάττωμα.",
-      },
-      {
-        icon: "Award",
-        title: "Εγγύηση 12 Μηνών",
-        description:
-          "Πλήρης κάλυψη σε κάθε συσκευή και στρώμα. Σιγουριά, συμπεριλαμβανόμενη.",
-      },
-      {
-        icon: "Truck",
-        title: "Παράδοση σε Όλη την Κύπρο",
-        description:
-          "Παράδοση οπουδήποτε στην Κύπρο. Δωρεάν σε παραγγελίες άνω €200.",
-      },
-      {
-        icon: "RefreshCw",
-        title: "Επιστροφή 14 Ημερών",
-        description:
-          "Δεν ήταν αυτό που περιμένατε; Επιστρέψτε εντός 14 ημερών για επιστροφή ή αλλαγή.",
-      },
     ],
   },
   features: {

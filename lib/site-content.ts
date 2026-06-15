@@ -39,8 +39,6 @@ export interface StatsSectionContent { eyebrow: string; title: string; items: St
 export interface TestimonialItemFull { content: string; name: string; role?: string; location?: string; rating: number }
 export interface TestimonialsSectionContent { eyebrow: string; title: string; subtitle: string; items: TestimonialItemFull[] }
 export interface AnnouncementContent { enabled: boolean; message: string; ctaLabel: string; ctaHref: string }
-export interface TrustItem { icon: string; title: string; description: string }
-export interface TrustBadgesContent { eyebrow: string; title: string; items: TrustItem[] }
 export interface FeatureItem { icon: string; title: string; description: string }
 export interface FeaturesContent { eyebrow: string; title: string; subtitle: string; items: FeatureItem[] }
 export interface CategoryItem { id: string; label: string }
@@ -65,7 +63,6 @@ export interface SiteContent {
   statsSection: StatsSectionContent;
   testimonialsSection: TestimonialsSectionContent;
   announcement: AnnouncementContent;
-  trustBadges: TrustBadgesContent;
   features: FeaturesContent;
   categoryStrip: CategoryStripContent;
   navigation: NavigationContent;
@@ -154,16 +151,6 @@ export const DEFAULT_CONTENT: SiteContent = {
     message: "Summer Sale - Up to 70% off premium open box appliances. Limited stock!",
     ctaLabel: "Shop Now",
     ctaHref: "/products",
-  },
-  trustBadges: {
-    eyebrow: "Trusted by Thousands",
-    title: "Why Families Choose Lamidis",
-    items: [
-      { icon: "ShieldCheck", title: "47-Point Inspection",      description: "Every appliance passes our rigorous certification process before reaching you." },
-      { icon: "Award",       title: "12-Month Lamidis Warranty", description: "Full coverage on parts and labour, island-wide." },
-      { icon: "Truck",       title: "Free Cyprus Delivery",     description: "Island-wide delivery within 48 hours, free for orders over EUR 299." },
-      { icon: "RefreshCw",   title: "14-Day Returns",           description: "Not happy? Return it within 14 days for a full refund." },
-    ],
   },
   features: {
     eyebrow: "Why Open Box?",
@@ -283,7 +270,6 @@ function mergeDefaults(parsed: Partial<SiteContent>): SiteContent {
     statsSection:        parsed.statsSection        ? { ...DEFAULT_CONTENT.statsSection,        ...parsed.statsSection }        : DEFAULT_CONTENT.statsSection,
     testimonialsSection: parsed.testimonialsSection ? { ...DEFAULT_CONTENT.testimonialsSection, ...parsed.testimonialsSection } : DEFAULT_CONTENT.testimonialsSection,
     announcement:        parsed.announcement        ? { ...DEFAULT_CONTENT.announcement,        ...parsed.announcement }        : DEFAULT_CONTENT.announcement,
-    trustBadges:   parsed.trustBadges   ? { ...DEFAULT_CONTENT.trustBadges,   ...parsed.trustBadges }   : DEFAULT_CONTENT.trustBadges,
     features:      parsed.features      ? { ...DEFAULT_CONTENT.features,      ...parsed.features }      : DEFAULT_CONTENT.features,
     categoryStrip: parsed.categoryStrip ? { ...DEFAULT_CONTENT.categoryStrip, ...parsed.categoryStrip } : DEFAULT_CONTENT.categoryStrip,
     navigation:     parsed.navigation     ? { ...DEFAULT_CONTENT.navigation,     ...parsed.navigation }     : DEFAULT_CONTENT.navigation,

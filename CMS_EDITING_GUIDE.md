@@ -105,7 +105,7 @@ Verify: http://localhost:3000/products - product appears in the grid.
 These still read from `lib/constants.ts` and are NOT editable in the CMS yet:
 
 - /contact - all copy and form labels
-- Home page: Stats (5000+ customers), Services list, Testimonials, FAQ, ProductGallery section, CategoryStrip, TrustBadges, Features
+- Home page: Stats (5000+ customers), Services list, Testimonials, FAQ, ProductGallery section, CategoryStrip, Features
 - /services, /testimonials, /faq, /blog pages
 - Theme colours, font choices
 - SEO per-route titles and meta descriptions
