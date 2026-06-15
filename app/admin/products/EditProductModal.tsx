@@ -2,9 +2,15 @@
 
 import { useState, useRef } from "react";
 import {
-  Plus, X, Save, RefreshCw, Upload, Loader2,
+  X, Save, RefreshCw, Upload, Loader2, Crop as CropIcon,
 } from "lucide-react";
 import type { Product } from "@/lib/constants";
+import ImageCropper from "@/components/admin/ImageCropper";
+
+/** A pending crop: either newly-picked uploads, or a re-crop of an existing photo. */
+type CropTask =
+  | { mode: "new"; files: File[]; pos: number }
+  | { mode: "replace"; url: string; index: number };
 
 const GRADE_OPTIONS = ["A", "B", "C", "D", "E", "F"];
 const CATEGORY_OPTIONS = [
@@ -49,6 +55,7 @@ export default function EditProductModal({
   const [saving, setSaving] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [crop, setCrop] = useState<CropTask | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const updateForm = (key: keyof Omit<Product, "id">, value: string | number) => {
@@ -65,34 +72,57 @@ export default function EditProductModal({
     });
   };
 
-  const updateSpec = (idx: number, field: "label" | "value", val: string) => {
-    setFormData((p) => {
-      const specs = [...p.specs];
-      specs[idx] = { ...specs[idx], [field]: val };
-      return { ...p, specs };
-    });
-  };
-  const addSpec = () => setFormData((p) => ({ ...p, specs: [...p.specs, { label: "", value: "" }] }));
-  const removeSpec = (idx: number) =>
-    setFormData((p) => ({ ...p, specs: p.specs.filter((_, i) => i !== idx) }));
-
-  // Append one or more uploaded images to the gallery. images[0] stays the
-  // primary/cover and is mirrored to imageUrl for the grid + public pages.
-  const handleUpload = async (files: FileList | File[]) => {
-    const arr = Array.from(files);
-    if (arr.length === 0) return;
+  // Upload one already-processed file and append it to the gallery. images[0]
+  // stays the primary/cover and is mirrored to imageUrl for the grid + pages.
+  const uploadOne = async (file: File) => {
     setUploading(true);
     try {
-      for (const file of arr) {
-        const url = await uploadFile(file);
-        if (!url) continue;
-        setFormData((prev) => {
-          const images = [...(prev.images ?? []), url];
-          return { ...prev, images, imageUrl: images[0] };
-        });
-      }
+      const url = await uploadFile(file);
+      if (!url) return;
+      setFormData((prev) => {
+        const images = [...(prev.images ?? []), url];
+        return { ...prev, images, imageUrl: images[0] };
+      });
     } finally {
       setUploading(false);
+    }
+  };
+
+  // Route freshly-picked files: rasters open the crop & resize step first;
+  // SVG/GIF can't be rasterised without loss, so they upload straight through.
+  const onFilesSelected = (files: FileList | File[]) => {
+    const arr = Array.from(files).filter((f) => f.type.startsWith("image/"));
+    if (arr.length === 0) return;
+    const isPassthrough = (f: File) => f.type === "image/svg+xml" || f.type === "image/gif";
+    const passthrough = arr.filter(isPassthrough);
+    const croppable = arr.filter((f) => !isPassthrough(f));
+    (async () => { for (const f of passthrough) await uploadOne(f); })();
+    if (croppable.length) setCrop({ mode: "new", files: croppable, pos: 0 });
+  };
+
+  // The cropper finished one image (or the user chose "Use original").
+  const handleCropComplete = async (outFile: File) => {
+    if (!crop) return;
+    if (crop.mode === "new") {
+      await uploadOne(outFile);
+      const nextPos = crop.pos + 1;
+      if (nextPos < crop.files.length) setCrop({ mode: "new", files: crop.files, pos: nextPos });
+      else setCrop(null);
+    } else {
+      const idx = crop.index;
+      setCrop(null);
+      setUploading(true);
+      try {
+        const url = await uploadFile(outFile);
+        if (!url) return;
+        setFormData((prev) => {
+          const images = [...(prev.images ?? [])];
+          images[idx] = url;
+          return { ...prev, images, imageUrl: images[0] ?? "" };
+        });
+      } finally {
+        setUploading(false);
+      }
     }
   };
 
@@ -155,6 +185,7 @@ export default function EditProductModal({
   };
 
   return (
+    <>
     <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-auto">
       <div className="bg-slate-900 rounded-3xl shadow-2xl w-full max-w-2xl my-8">
         <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
@@ -301,6 +332,15 @@ export default function EditProductModal({
                     >
                       <X className="w-3 h-3" />
                     </button>
+                    <button
+                      type="button"
+                      onClick={() => setCrop({ mode: "replace", url, index: i })}
+                      aria-label="Crop image"
+                      title="Crop &amp; resize"
+                      className="absolute bottom-1 right-1 w-5 h-5 rounded-md bg-slate-900/85 flex items-center justify-center text-slate-300 hover:text-gold-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <CropIcon className="w-3 h-3" />
+                    </button>
                   </div>
                 ))}
               </div>
@@ -313,7 +353,7 @@ export default function EditProductModal({
               onDrop={(e) => {
                 e.preventDefault();
                 setDragOver(false);
-                if (e.dataTransfer.files?.length) handleUpload(e.dataTransfer.files);
+                if (e.dataTransfer.files?.length) onFilesSelected(e.dataTransfer.files);
               }}
               onClick={() => fileInputRef.current?.click()}
               className={`relative border-2 border-dashed rounded-2xl p-4 cursor-pointer transition-colors ${
@@ -327,7 +367,7 @@ export default function EditProductModal({
                 multiple
                 className="sr-only"
                 onChange={(e) => {
-                  if (e.target.files?.length) handleUpload(e.target.files);
+                  if (e.target.files?.length) onFilesSelected(e.target.files);
                   e.currentTarget.value = "";
                 }}
               />
@@ -363,37 +403,6 @@ export default function EditProductModal({
               className="border border-slate-700 bg-slate-800 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 resize-none"
             />
           </div>
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center justify-between">
-              <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Specifications</label>
-              <button onClick={addSpec} className="text-xs text-blue-600 font-medium hover:text-blue-700 flex items-center gap-1">
-                <Plus className="w-3 h-3" /> Add Row
-              </button>
-            </div>
-            {formData.specs.map((spec, i) => (
-              <div key={i} className="flex items-center gap-2">
-                <input
-                  value={spec.label}
-                  onChange={(e) => updateSpec(i, "label", e.target.value)}
-                  placeholder="Label"
-                  autoComplete="off"
-                  spellCheck={false}
-                  className="flex-1 border border-slate-700 bg-slate-800 rounded-xl px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-1 focus:ring-gold-400"
-                />
-                <input
-                  value={spec.value}
-                  onChange={(e) => updateSpec(i, "value", e.target.value)}
-                  placeholder="Value"
-                  autoComplete="off"
-                  spellCheck={false}
-                  className="flex-1 border border-slate-700 bg-slate-800 rounded-xl px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-1 focus:ring-gold-400"
-                />
-                <button onClick={() => removeSpec(i)} className="p-1.5 text-slate-300 hover:text-red-400 transition-colors">
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-            ))}
-          </div>
         </div>
         {(() => {
           const missing: string[] = [];
@@ -428,5 +437,18 @@ export default function EditProductModal({
         })()}
       </div>
     </div>
+
+    {crop && (
+      <ImageCropper
+        file={crop.mode === "new" ? crop.files[crop.pos] : undefined}
+        src={crop.mode === "replace" ? crop.url : undefined}
+        fileName={crop.mode === "new" ? crop.files[crop.pos]?.name : undefined}
+        queueInfo={crop.mode === "new" ? { index: crop.pos, total: crop.files.length } : undefined}
+        allowSkip={crop.mode === "new"}
+        onCancel={() => setCrop(null)}
+        onComplete={handleCropComplete}
+      />
+    )}
+    </>
   );
 }
