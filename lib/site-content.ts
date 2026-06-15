@@ -257,8 +257,13 @@ export const DEFAULT_CONTENT: SiteContent = {
 const DATA_PATH = path.join(process.cwd(), "data", "site-content.json");
 
 function mergeDefaults(parsed: Partial<SiteContent>): SiteContent {
+  // Stored CMS content (file or DB) may still carry keys removed from the
+  // schema — e.g. the legacy trustBadges block. Strip them before spreading
+  // so stale data isn't merged into or served from the response.
+  const src = { ...parsed } as Partial<SiteContent>;
+  delete (src as Record<string, unknown>).trustBadges;
   return {
-    ...DEFAULT_CONTENT, ...parsed,
+    ...DEFAULT_CONTENT, ...src,
     business: { ...DEFAULT_CONTENT.business, ...parsed.business },
     hero:     { ...DEFAULT_CONTENT.hero,     ...parsed.hero },
     about:    { ...DEFAULT_CONTENT.about,    ...parsed.about },
