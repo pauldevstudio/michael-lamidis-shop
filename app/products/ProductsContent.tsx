@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useMemo, useRef, useEffect } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  ArrowRight, Shield, Zap, SlidersHorizontal, ChevronDown,
-  LayoutGrid, Package, ShoppingCart, Check, Search, Award, Percent, Truck, X,
+  ArrowRight, Shield, Zap, ChevronDown,
+  LayoutGrid, Package, ShoppingCart, Check, Award, Percent, Truck,
 } from "lucide-react";
 import AnimatedSection from "@/components/shared/AnimatedSection";
 import StarRating from "@/components/shared/StarRating";
@@ -17,7 +17,7 @@ import { useLanguage } from "@/lib/i18n-context";
 import { productSocialProof } from "@/lib/social-proof";
 import { cn } from "@/lib/utils";
 
-/* ── Filter ids (labels come from translations) ───────── */
+/* ── Category ids (labels come from translations) ───────── */
 const FILTER_IDS = [
   "all",
   "refrigerators",
@@ -30,95 +30,6 @@ const FILTER_IDS = [
   "furniture",
   "office-equipment",
 ] as const;
-
-type SortKey = "savings" | "popular" | "price-asc" | "price-desc";
-
-function inPriceRange(price: number, range: string): boolean {
-  switch (range) {
-    case "0-100":    return price < 100;
-    case "100-500":  return price >= 100 && price < 500;
-    case "500-1000": return price >= 500 && price < 1000;
-    case "1000+":    return price >= 1000;
-    default:         return true;
-  }
-}
-
-/* ── Reusable Sort / Filter dropdown ───────────────────── */
-function FilterDropdown({
-  icon: Icon, label, value, options, onChange, isOpen, onToggle, accent = false, align = "left",
-}: {
-  icon?: React.ElementType;
-  label: string;
-  value: string;
-  options: { value: string; label: string }[];
-  onChange: (v: string) => void;
-  isOpen: boolean;
-  onToggle: () => void;
-  accent?: boolean;
-  align?: "left" | "right";
-}) {
-  const btnRef = useRef<HTMLButtonElement>(null);
-  const wasOpen = useRef(false);
-  const selected = options.find((o) => o.value === value);
-  const isSet = accent && value !== "all";
-  const display = value !== "all" && selected ? selected.label : label;
-
-  // Return focus to the trigger whenever the menu closes after being open.
-  useEffect(() => {
-    if (wasOpen.current && !isOpen) btnRef.current?.focus();
-    wasOpen.current = isOpen;
-  }, [isOpen]);
-
-  return (
-    <div className="relative">
-      <button
-        ref={btnRef}
-        type="button"
-        onClick={onToggle}
-        aria-haspopup="true"
-        aria-expanded={isOpen}
-        className={cn(
-          "flex items-center gap-1.5 px-3.5 py-2.5 sm:py-2 min-h-[44px] sm:min-h-0 rounded-xl border text-[13px] font-semibold transition-all focus-ring",
-          isSet
-            ? "border-gold-300 bg-gold-50 text-navy-800"
-            : "border-navy-100 bg-white text-navy-600 hover:border-navy-200 hover:bg-navy-50"
-        )}
-      >
-        {Icon && <Icon className="w-3.5 h-3.5" />}
-        {display}
-        <ChevronDown className={cn("w-3.5 h-3.5 transition-transform", isOpen && "rotate-180")} />
-      </button>
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.15 }}
-            className={cn(
-              "absolute top-full mt-2 bg-white border border-navy-100 rounded-xl shadow-card-lift py-1.5 min-w-[170px] max-w-[calc(100vw-2rem)] z-50",
-              align === "right" ? "right-0" : "left-0"
-            )}
-          >
-            {options.map((o) => (
-              <button
-                key={o.value}
-                type="button"
-                onClick={() => onChange(o.value)}
-                className={cn(
-                  "w-full text-left px-4 py-2.5 text-[13px] font-medium transition-colors",
-                  value === o.value ? "text-gold-500 bg-gold-50" : "text-navy-600 hover:bg-navy-50"
-                )}
-              >
-                {o.label}
-              </button>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
 
 /* ── Category button (pill on desktop, full-width row in the mobile dropdown) ── */
 function CategoryButton({
@@ -378,23 +289,17 @@ function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
 export default function ProductsContent({ products }: { products?: Product[] }) {
   const { t } = useLanguage();
   const [activeCategory, setActiveCategory] = useState("all");
-  const [sortBy, setSortBy] = useState<SortKey>("savings");
   const [openMenu, setOpenMenu] = useState<string | null>(null);
-  const [query, setQuery] = useState("");
-  const [gradeFilter, setGradeFilter] = useState("all");
-  const [priceFilter, setPriceFilter] = useState("all");
-  const [availFilter, setAvailFilter] = useState("all");
 
   // Server-fetched live products (Payload/Mongo). No static-seed fallback:
   // an empty list renders the empty state below rather than stale ghost
   // products whose IDs 404 when clicked.
   const __products = products ?? [];
 
-  // Per-category product counts for the pill badges.
+  // Per-category product counts for the badges.
   const countFor = (id: string) =>
     id === "all" ? __products.length : __products.filter((p) => p.category === id).length;
 
-  // Every category gets a pill + count badge — pills wrap, no horizontal scroll.
   const FILTERS = FILTER_IDS.map((id) => ({
     id,
     label: t.pages.products.filters[id as keyof typeof t.pages.products.filters],
@@ -403,7 +308,7 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
 
   const activeCat = FILTERS.find((f) => f.id === activeCategory) ?? FILTERS[0];
 
-  // Close any open menu (category dropdown or a filter) on Escape.
+  // Close the category dropdown on Escape.
   useEffect(() => {
     if (!openMenu) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpenMenu(null); };
@@ -411,60 +316,14 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
     return () => document.removeEventListener("keydown", onKey);
   }, [openMenu]);
 
-  const SORT_OPTIONS = [
-    { value: "savings",    label: t.pages.products.sortBestDeals },
-    { value: "popular",    label: "Most Popular" },
-    { value: "price-asc",  label: t.pages.products.sortPriceAsc },
-    { value: "price-desc", label: t.pages.products.sortPriceDesc },
-  ];
-
-  const GRADE_OPTIONS = [
-    { value: "all", label: "All Grades" },
-    ...Array.from(new Set(__products.map((p) => p.grade)))
-      .sort()
-      .map((g) => ({ value: g, label: `Grade ${g}` })),
-  ];
-
-  const PRICE_OPTIONS = [
-    { value: "all",      label: "All Prices" },
-    { value: "0-100",    label: "Under €100" },
-    { value: "100-500",  label: "€100 – €500" },
-    { value: "500-1000", label: "€500 – €1,000" },
-    { value: "1000+",    label: "Over €1,000" },
-  ];
-
-  const AVAIL_OPTIONS = [
-    { value: "all",      label: "Availability" },
-    { value: "in-stock", label: "In Stock" },
-    { value: "sold",     label: "Sold" },
-  ];
-
+  // Category only; best-deals ordering by default.
   const filtered = useMemo(() => {
-    let list =
+    const list =
       activeCategory === "all"
         ? [...__products]
         : __products.filter((p) => p.category === activeCategory);
-
-    const q = query.trim().toLowerCase();
-    if (q) {
-      list = list.filter((p) =>
-        `${p.brand} ${p.model} ${p.description}`.toLowerCase().includes(q),
-      );
-    }
-    if (gradeFilter !== "all") list = list.filter((p) => p.grade === gradeFilter);
-    if (priceFilter !== "all") list = list.filter((p) => inPriceRange(p.salePrice, priceFilter));
-    if (availFilter === "in-stock") list = list.filter((p) => !p.sold);
-    else if (availFilter === "sold") list = list.filter((p) => p.sold);
-
-    switch (sortBy) {
-      case "price-asc":  return list.sort((a, b) => a.salePrice - b.salePrice);
-      case "price-desc": return list.sort((a, b) => b.salePrice - a.salePrice);
-      case "popular":    return list.sort((a, b) => productSocialProof(b.id).sold - productSocialProof(a.id).sold);
-      default:           return list.sort((a, b) => b.savings - a.savings);
-    }
-  }, [activeCategory, sortBy, query, gradeFilter, priceFilter, availFilter, __products]);
-
-  const activeFilterCount = [gradeFilter, priceFilter, availFilter].filter((v) => v !== "all").length;
+    return list.sort((a, b) => b.savings - a.savings);
+  }, [activeCategory, __products]);
 
   return (
     <>
@@ -542,11 +401,11 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
         </div>
       </section>
 
-      {/* ── Category + Search + Sort bar (sticky) ─────────── */}
+      {/* ── Category bar (only the product category — sticky on desktop) ── */}
       <div className="lg:sticky lg:top-12 z-30 bg-white/95 backdrop-blur-xl border-b border-navy-100/60 shadow-sm">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-3 flex flex-col gap-3">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-3">
 
-          {/* Categories — tap-to-open dropdown on mobile, wrapping pills on desktop */}
+          {/* Mobile: tap-to-open category dropdown */}
           <div className="lg:hidden relative">
             <button
               type="button"
@@ -590,7 +449,7 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
             </AnimatePresence>
           </div>
 
-          {/* Desktop: wrapping pills */}
+          {/* Desktop: wrapping category pills */}
           <div className="hidden lg:flex flex-wrap gap-2">
             {FILTERS.map(({ id, label, count }) => (
               <CategoryButton
@@ -606,63 +465,9 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
             ))}
           </div>
 
-          {/* Search + Sort + Filters row (wraps, no horizontal scroll) */}
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="relative flex-1 min-w-[200px]">
-              <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-navy-300" />
-              <input
-                type="search"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search products…"
-                aria-label="Search products"
-                className="w-full pl-9 pr-9 py-2.5 sm:py-2 rounded-xl border border-navy-100 bg-white text-navy-700 text-sm placeholder:text-navy-300 focus:outline-none focus:border-navy-300 focus:ring-2 focus:ring-navy-200/50 transition"
-              />
-              {query && (
-                <button
-                  type="button"
-                  onClick={() => setQuery("")}
-                  aria-label="Clear search"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center rounded-full text-navy-400 hover:text-navy-700 hover:bg-navy-100 transition-colors focus-ring"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              )}
-            </div>
-
-            <FilterDropdown
-              icon={SlidersHorizontal} label="Sort" value={sortBy} options={SORT_OPTIONS}
-              onChange={(v) => { setSortBy(v as SortKey); setOpenMenu(null); }}
-              isOpen={openMenu === "sort"} onToggle={() => setOpenMenu(openMenu === "sort" ? null : "sort")}
-            />
-            <FilterDropdown
-              label="Grade" value={gradeFilter} options={GRADE_OPTIONS} accent
-              onChange={(v) => { setGradeFilter(v); setOpenMenu(null); }}
-              isOpen={openMenu === "grade"} onToggle={() => setOpenMenu(openMenu === "grade" ? null : "grade")}
-            />
-            <FilterDropdown
-              label="Price" value={priceFilter} options={PRICE_OPTIONS} accent align="right"
-              onChange={(v) => { setPriceFilter(v); setOpenMenu(null); }}
-              isOpen={openMenu === "price"} onToggle={() => setOpenMenu(openMenu === "price" ? null : "price")}
-            />
-            <FilterDropdown
-              label="Availability" value={availFilter} options={AVAIL_OPTIONS} accent align="right"
-              onChange={(v) => { setAvailFilter(v); setOpenMenu(null); }}
-              isOpen={openMenu === "avail"} onToggle={() => setOpenMenu(openMenu === "avail" ? null : "avail")}
-            />
-            {activeFilterCount > 0 && (
-              <button
-                type="button"
-                onClick={() => { setGradeFilter("all"); setPriceFilter("all"); setAvailFilter("all"); }}
-                className="inline-flex items-center min-h-[40px] px-2 text-[12px] font-semibold text-navy-400 hover:text-navy-700 underline underline-offset-2"
-              >
-                Clear ({activeFilterCount})
-              </button>
-            )}
-            {openMenu && (
-              <div className="fixed inset-0 z-40" onClick={() => setOpenMenu(null)} aria-hidden="true" />
-            )}
-          </div>
+          {openMenu && (
+            <div className="fixed inset-0 z-40" onClick={() => setOpenMenu(null)} aria-hidden="true" />
+          )}
         </div>
       </div>
 
@@ -727,19 +532,9 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
           {filtered.length === 0 && (
             <div className="text-center py-24 text-navy-300">
               <Package className="w-12 h-12 mx-auto mb-4 opacity-30" />
-              <p className="text-navy-400 font-medium">
-                {query.trim()
-                  ? `No results for “${query.trim()}”.`
-                  : t.pages.products.emptyMessage}
-              </p>
+              <p className="text-navy-400 font-medium">{t.pages.products.emptyMessage}</p>
               <button
-                onClick={() => {
-                  setActiveCategory("all");
-                  setQuery("");
-                  setGradeFilter("all");
-                  setPriceFilter("all");
-                  setAvailFilter("all");
-                }}
+                onClick={() => setActiveCategory("all")}
                 className="btn-gold text-sm mt-6"
               >
                 {t.pages.products.viewAll}
