@@ -34,14 +34,11 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const { t, pick } = useLanguage();
+  const { t } = useLanguage();
   const content = useContent();
-  const __nav = content?.navigation;
   // Always use translations for nav labels (translations are source of truth after the
   // catalog pivot). CMS navigation global is no longer authoritative for link text.
   const __navItems = navLinks.map((l) => ({ href: l.href, label: t.nav[l.key], key: l.href }));
-  const __ctaLabel = pick(__nav?.getQuoteLabel, t.nav.getQuote);
-  const __ctaHref  = __nav?.getQuoteHref  ?? "/contact";
   const phone = content?.business?.phone ?? SITE_PHONE;
   const pathname = usePathname();
 
@@ -74,7 +71,7 @@ export default function Navbar() {
       >
         {!scrolled && <AnnouncementBar />}
 
-        <nav className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-5">
+        <nav className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-1.5">
           <div className="flex items-center gap-6">
             <Link
               href="/"
@@ -87,10 +84,11 @@ export default function Navbar() {
                 width={40}
                 height={40}
                 priority
-                className="w-9 h-9 sm:w-10 sm:h-10 shrink-0"
+                className="w-9 h-9 shrink-0"
               />
-              <span className="font-display text-xl sm:text-2xl font-bold text-white tracking-tight hidden sm:inline">
-                Michael <span className="text-gold-500">Lamidis</span>
+              <span className="hidden sm:flex flex-col font-display text-[15px] font-bold text-white tracking-tight leading-[1.1]">
+                <span>Michael</span>
+                <span className="text-gold-500">Lamidis</span>
               </span>
             </Link>
 
@@ -138,13 +136,6 @@ export default function Navbar() {
                 <Phone className="w-4 h-4" />
                 <span className="hidden xl:inline">{phone}</span>
               </a>
-
-              <Link
-                href={__ctaHref}
-                className="hidden sm:inline-flex items-center px-4 py-2 bg-gold-500 hover:bg-gold-400 text-navy-950 rounded-lg text-sm font-semibold transition-colors"
-              >
-                {__ctaLabel}
-              </Link>
 
               <button
                 type="button"
@@ -199,13 +190,6 @@ export default function Navbar() {
                   {phone}
                 </a>
               </div>
-
-              <Link
-                href="/contact"
-                className="mt-6 inline-flex items-center justify-center px-5 py-3 bg-gold-500 hover:bg-gold-400 text-navy-950 rounded-lg font-semibold transition-colors"
-              >
-                {__ctaLabel}
-              </Link>
             </div>
           </motion.div>
         )}
