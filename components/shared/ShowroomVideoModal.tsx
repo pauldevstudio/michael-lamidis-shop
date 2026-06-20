@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Volume2, VolumeX } from "lucide-react";
+import { X, Volume2, VolumeX, Play } from "lucide-react";
 
 /**
  * Fullscreen showroom video modal.
@@ -22,6 +22,7 @@ export default function ShowroomVideoModal({
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [muted, setMuted] = useState(true);
+  const [playing, setPlaying] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
@@ -60,6 +61,13 @@ export default function ShowroomVideoModal({
     if (videoRef.current) videoRef.current.muted = muted;
   }, [muted]);
 
+  const togglePlay = () => {
+    const v = videoRef.current;
+    if (!v) return;
+    if (v.paused) v.play().catch(() => {});
+    else v.pause();
+  };
+
   if (!mounted) return null;
 
   return createPortal(
@@ -77,7 +85,7 @@ export default function ShowroomVideoModal({
           aria-label="Showroom video"
         >
           <motion.div
-            className="relative w-full max-w-5xl aspect-video rounded-2xl overflow-hidden bg-black shadow-2xl ring-1 ring-white/15"
+            className="relative max-h-[88vh] max-w-[92vw] overflow-hidden rounded-2xl bg-black shadow-2xl ring-1 ring-white/15"
             initial={{ scale: 0.94, opacity: 0, y: 12 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.96, opacity: 0, y: 8 }}
@@ -87,16 +95,33 @@ export default function ShowroomVideoModal({
             <video
               ref={videoRef}
               src={src}
-              className="h-full w-full object-cover"
+              className="block h-auto max-h-[88vh] w-auto max-w-[92vw] cursor-pointer"
               autoPlay
               loop
               playsInline
               muted
               preload="auto"
+              onClick={togglePlay}
+              onPlay={() => setPlaying(true)}
+              onPause={() => setPlaying(false)}
             />
 
+            {/* Center play button — shown whenever paused (e.g. if autoplay is blocked) */}
+            {!playing && (
+              <button
+                type="button"
+                onClick={togglePlay}
+                className="absolute inset-0 z-10 flex items-center justify-center bg-black/25 transition-colors hover:bg-black/35 focus-ring"
+                aria-label="Play video"
+              >
+                <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/90 shadow-lg">
+                  <Play className="ml-0.5 h-7 w-7 text-navy-950" fill="currentColor" />
+                </span>
+              </button>
+            )}
+
             {/* Controls */}
-            <div className="absolute right-3 top-3 flex items-center gap-2">
+            <div className="absolute right-3 top-3 z-20 flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => setMuted((m) => !m)}
