@@ -23,8 +23,24 @@ export const metadata: Metadata = {
 
 export default async function ProductsPage() {
   const products = await getPublicProducts();
+  const itemListLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Open Box Appliances & Furniture — Michael Lamidis",
+    numberOfItems: products.length,
+    itemListElement: products.map((p, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `${SITE_URL}/products/${p.id}`,
+      name: `${p.brand} ${p.model}`,
+    })),
+  };
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListLd) }}
+      />
       <ScrollProgress />
       <Navbar />
       <main>

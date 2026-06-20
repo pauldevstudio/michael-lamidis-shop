@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight, Shield, Zap, SlidersHorizontal, ChevronDown,
-  LayoutGrid, Package, ShoppingCart, Check, Search, Award, Percent, Truck,
+  LayoutGrid, Package, ShoppingCart, Check, Search, Award, Percent, Truck, X,
 } from "lucide-react";
 import AnimatedSection from "@/components/shared/AnimatedSection";
 import StarRating from "@/components/shared/StarRating";
@@ -45,7 +45,7 @@ function inPriceRange(price: number, range: string): boolean {
 
 /* ── Reusable Sort / Filter dropdown ───────────────────── */
 function FilterDropdown({
-  icon: Icon, label, value, options, onChange, isOpen, onToggle, accent = false,
+  icon: Icon, label, value, options, onChange, isOpen, onToggle, accent = false, align = "left",
 }: {
   icon?: React.ElementType;
   label: string;
@@ -55,19 +55,38 @@ function FilterDropdown({
   isOpen: boolean;
   onToggle: () => void;
   accent?: boolean;
+  align?: "left" | "right";
 }) {
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const wasOpen = useRef(false);
   const selected = options.find((o) => o.value === value);
   const isSet = accent && value !== "all";
   const display = value !== "all" && selected ? selected.label : label;
+
+  // Escape closes the open menu.
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onToggle(); };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [isOpen, onToggle]);
+
+  // Return focus to the trigger whenever the menu closes after being open.
+  useEffect(() => {
+    if (wasOpen.current && !isOpen) btnRef.current?.focus();
+    wasOpen.current = isOpen;
+  }, [isOpen]);
+
   return (
     <div className="relative">
       <button
+        ref={btnRef}
         type="button"
         onClick={onToggle}
-        aria-haspopup="listbox"
+        aria-haspopup="true"
         aria-expanded={isOpen}
         className={cn(
-          "flex items-center gap-1.5 px-3.5 py-2 rounded-xl border text-[13px] font-semibold transition-all focus-ring",
+          "flex items-center gap-1.5 px-3.5 py-2.5 sm:py-2 min-h-[44px] sm:min-h-0 rounded-xl border text-[13px] font-semibold transition-all focus-ring",
           isSet
             ? "border-gold-300 bg-gold-50 text-navy-800"
             : "border-navy-100 bg-white text-navy-600 hover:border-navy-200 hover:bg-navy-50"
@@ -84,15 +103,15 @@ function FilterDropdown({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.15 }}
-            role="listbox"
-            className="absolute left-0 top-full mt-2 bg-white border border-navy-100 rounded-xl shadow-card-lift py-1.5 min-w-[170px] z-50"
+            className={cn(
+              "absolute top-full mt-2 bg-white border border-navy-100 rounded-xl shadow-card-lift py-1.5 min-w-[170px] max-w-[calc(100vw-2rem)] z-50",
+              align === "right" ? "right-0" : "left-0"
+            )}
           >
             {options.map((o) => (
               <button
                 key={o.value}
                 type="button"
-                role="option"
-                aria-selected={value === o.value}
                 onClick={() => onChange(o.value)}
                 className={cn(
                   "w-full text-left px-4 py-2.5 text-[13px] font-medium transition-colors",
@@ -477,30 +496,31 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
       </section>
 
       {/* ── Category + Search + Sort bar (sticky) ─────────── */}
-      <div className="sticky top-[52px] z-30 bg-white/95 backdrop-blur-xl border-b border-navy-100/60 shadow-sm">
+      <div className="sticky top-14 lg:top-12 z-30 bg-white/95 backdrop-blur-xl border-b border-navy-100/60 shadow-sm">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-3 flex flex-col gap-3">
 
           {/* Category pills — wrap into rows, NO horizontal scroll */}
           <div className="flex flex-wrap gap-2">
             {FILTERS.map(({ id, label, count }) => {
-              const cat = PRODUCT_CATEGORIES.find((c) => c.id === id);
               const isActive = activeCategory === id;
+              const empty = id !== "all" && count === 0;
               return (
                 <button
                   key={id}
                   onClick={() => setActiveCategory(id)}
                   aria-pressed={isActive}
+                  disabled={empty}
                   className={cn(
-                    "inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-[13px] font-semibold transition-all duration-250 focus-ring",
-                    isActive
+                    "inline-flex items-center gap-1.5 px-3.5 py-2 min-h-[40px] rounded-full text-[13px] font-semibold transition-all duration-250 focus-ring",
+                    empty
+                      ? "bg-navy-50/60 text-navy-300 border border-navy-100 opacity-60 cursor-not-allowed"
+                      : isActive
                       ? "text-white shadow-md"
                       : "bg-navy-50 text-navy-500 hover:bg-navy-100 hover:text-navy-800 border border-navy-100"
                   )}
                   style={
-                    isActive && cat
-                      ? { background: `linear-gradient(135deg, ${cat.colorFrom}, ${cat.colorTo})` }
-                      : isActive
-                      ? { background: "linear-gradient(135deg, #3A5F8A, #5B82A8)" }
+                    isActive && !empty
+                      ? { background: "linear-gradient(135deg, #1E48B8, #163A96)" }
                       : undefined
                   }
                 >
@@ -508,7 +528,7 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
                   <span
                     className={cn(
                       "text-[10px] font-bold leading-none px-1.5 py-0.5 rounded-full tnum",
-                      isActive ? "bg-white/25 text-white" : "bg-white text-navy-400 border border-navy-100"
+                      isActive && !empty ? "bg-white/25 text-white" : "bg-white text-navy-400 border border-navy-100"
                     )}
                   >
                     {count}
@@ -528,8 +548,18 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search products…"
                 aria-label="Search products"
-                className="w-full pl-9 pr-3 py-2 rounded-xl border border-navy-100 bg-white text-navy-700 text-sm placeholder:text-navy-300 focus:outline-none focus:border-navy-300 focus:ring-2 focus:ring-navy-200/50 transition"
+                className="w-full pl-9 pr-9 py-2.5 sm:py-2 rounded-xl border border-navy-100 bg-white text-navy-700 text-sm placeholder:text-navy-300 focus:outline-none focus:border-navy-300 focus:ring-2 focus:ring-navy-200/50 transition"
               />
+              {query && (
+                <button
+                  type="button"
+                  onClick={() => setQuery("")}
+                  aria-label="Clear search"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center rounded-full text-navy-400 hover:text-navy-700 hover:bg-navy-100 transition-colors focus-ring"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
             </div>
 
             <FilterDropdown
@@ -543,12 +573,12 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
               isOpen={openMenu === "grade"} onToggle={() => setOpenMenu(openMenu === "grade" ? null : "grade")}
             />
             <FilterDropdown
-              label="Price" value={priceFilter} options={PRICE_OPTIONS} accent
+              label="Price" value={priceFilter} options={PRICE_OPTIONS} accent align="right"
               onChange={(v) => { setPriceFilter(v); setOpenMenu(null); }}
               isOpen={openMenu === "price"} onToggle={() => setOpenMenu(openMenu === "price" ? null : "price")}
             />
             <FilterDropdown
-              label="Availability" value={availFilter} options={AVAIL_OPTIONS} accent
+              label="Availability" value={availFilter} options={AVAIL_OPTIONS} accent align="right"
               onChange={(v) => { setAvailFilter(v); setOpenMenu(null); }}
               isOpen={openMenu === "avail"} onToggle={() => setOpenMenu(openMenu === "avail" ? null : "avail")}
             />
@@ -556,7 +586,7 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
               <button
                 type="button"
                 onClick={() => { setGradeFilter("all"); setPriceFilter("all"); setAvailFilter("all"); }}
-                className="text-[12px] font-semibold text-navy-400 hover:text-navy-700 underline underline-offset-2 px-1"
+                className="inline-flex items-center min-h-[40px] px-2 text-[12px] font-semibold text-navy-400 hover:text-navy-700 underline underline-offset-2"
               >
                 Clear ({activeFilterCount})
               </button>
@@ -592,9 +622,14 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
       <section className="bg-white section-py">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
 
-          {/* Count */}
+          {/* Heading + count */}
+          <h2 className="sr-only">
+            {activeCategory === "all"
+              ? "All products"
+              : FILTERS.find((f) => f.id === activeCategory)?.label ?? "Products"}
+          </h2>
           <div className="flex items-center justify-between mb-8">
-            <p className="text-navy-400 text-sm font-medium">
+            <p className="text-navy-400 text-sm font-medium" role="status" aria-live="polite">
               {t.pages.products.showing}{" "}
               <span className="text-navy-950 font-semibold">{filtered.length}</span>{" "}
               {filtered.length === 1 ? t.pages.products.productSingular : t.pages.products.productPlural}
@@ -624,9 +659,19 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
           {filtered.length === 0 && (
             <div className="text-center py-24 text-navy-300">
               <Package className="w-12 h-12 mx-auto mb-4 opacity-30" />
-              <p className="text-navy-400 font-medium">{t.pages.products.emptyMessage}</p>
+              <p className="text-navy-400 font-medium">
+                {query.trim()
+                  ? `No results for “${query.trim()}”.`
+                  : t.pages.products.emptyMessage}
+              </p>
               <button
-                onClick={() => setActiveCategory("all")}
+                onClick={() => {
+                  setActiveCategory("all");
+                  setQuery("");
+                  setGradeFilter("all");
+                  setPriceFilter("all");
+                  setAvailFilter("all");
+                }}
                 className="btn-gold text-sm mt-6"
               >
                 {t.pages.products.viewAll}
