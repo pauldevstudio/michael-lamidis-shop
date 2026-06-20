@@ -27,6 +27,8 @@ const FILTER_IDS = [
   "air-conditioners",
   "cookware",
   "small-appliances",
+  "furniture",
+  "office-equipment",
 ] as const;
 
 type SortKey = "savings" | "price-asc" | "price-desc";
@@ -252,10 +254,12 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
   // products whose IDs 404 when clicked.
   const __products = products ?? [];
 
-  const FILTERS = FILTER_IDS.map((id) => ({
-    id,
-    label: t.pages.products.filters[id as keyof typeof t.pages.products.filters],
-  }));
+  const FILTERS = FILTER_IDS
+    .filter((id) => id === "all" || __products.some((p) => p.category === id))
+    .map((id) => ({
+      id,
+      label: t.pages.products.filters[id as keyof typeof t.pages.products.filters],
+    }));
 
   const SORT_OPTIONS: { value: SortKey; label: string }[] = [
     { value: "savings",    label: t.pages.products.sortBestDeals },

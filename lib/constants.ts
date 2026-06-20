@@ -38,6 +38,8 @@ export const PRODUCT_CATEGORIES = [
   { id: "dishwashers",     icon: "Droplets",   colorFrom: "#1D4ED8", colorTo: "#60A5FA" },
   { id: "freezers",        icon: "Snowflake",  colorFrom: "#0E7490", colorTo: "#22D3EE" },
   { id: "air-conditioners",icon: "Wind",       colorFrom: "#0369A1", colorTo: "#38BDF8" },
+  { id: "furniture",       icon: "Sofa",       colorFrom: "#854D0E", colorTo: "#A16207" },
+  { id: "office-equipment",icon: "Printer",    colorFrom: "#4338CA", colorTo: "#6366F1" },
 ];
 
 // Color lookup keyed by slug, with a default for any CMS slug not in the map.
@@ -53,6 +55,7 @@ export const CATEGORY_COLOR_MAP: Record<string, { colorFrom: string; colorTo: st
   "small-appliances": { colorFrom: "#9D174D", colorTo: "#F472B6" },
   mattresses:         { colorFrom: "#475569", colorTo: "#94A3B8" },
   furniture:          { colorFrom: "#854D0E", colorTo: "#A16207" },
+  "office-equipment": { colorFrom: "#4338CA", colorTo: "#6366F1" },
   tools:              { colorFrom: "#991B1B", colorTo: "#DC2626" },
   kitchenware:        { colorFrom: "#65A30D", colorTo: "#84CC16" },
   bicycles:           { colorFrom: "#1E40AF", colorTo: "#3B82F6" },

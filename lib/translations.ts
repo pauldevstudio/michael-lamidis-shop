@@ -153,6 +153,8 @@ const en = {
       "air-conditioners": "Air Conditioners",
       cookware: "Cookware",
       "small-appliances": "Small Appliances",
+      furniture: "Furniture",
+      "office-equipment": "Office Equipment",
     },
   },
   testimonials: {
@@ -383,6 +385,8 @@ const en = {
         "air-conditioners": "Air Conditioners",
         cookware: "Cookware",
         "small-appliances": "Small Appliances",
+        furniture: "Furniture",
+        "office-equipment": "Office Equipment",
       },
     },
     about: {
@@ -615,6 +619,8 @@ const gr: typeof en = {
       "air-conditioners": "Κλιματιστικά",
       cookware: "Μαγειρικά Σκεύη",
       "small-appliances": "Μικρές Συσκευές",
+      furniture: "Έπιπλα",
+      "office-equipment": "Εξοπλισμός Γραφείου",
     },
   },
   testimonials: {
@@ -845,6 +851,8 @@ const gr: typeof en = {
         "air-conditioners": "Κλιματιστικά",
         cookware: "Μαγειρικά Σκεύη",
         "small-appliances": "Μικρές Συσκευές",
+        furniture: "Έπιπλα",
+        "office-equipment": "Εξοπλισμός Γραφείου",
       },
     },
     about: {

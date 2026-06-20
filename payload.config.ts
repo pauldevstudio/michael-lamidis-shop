@@ -94,6 +94,7 @@ export default buildConfig({
             { label: "Small Appliances", value: "small-appliances" },
             { label: "Mattresses",       value: "mattresses" },
             { label: "Furniture",        value: "furniture" },
+            { label: "Office Equipment", value: "office-equipment" },
             { label: "Tools",            value: "tools" },
             { label: "Kitchenware",      value: "kitchenware" },
             { label: "Bicycles",         value: "bicycles" },
