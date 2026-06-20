@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight, Shield, Zap, SlidersHorizontal, ChevronDown,
-  LayoutGrid, Package, ShoppingCart, Check,
+  LayoutGrid, Package, ShoppingCart, Check, Search,
 } from "lucide-react";
 import AnimatedSection from "@/components/shared/AnimatedSection";
 import StarRating from "@/components/shared/StarRating";
@@ -248,18 +248,23 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
   const [activeCategory, setActiveCategory] = useState("all");
   const [sortBy, setSortBy] = useState<SortKey>("savings");
   const [sortOpen, setSortOpen] = useState(false);
+  const [query, setQuery] = useState("");
 
   // Server-fetched live products (Payload/Mongo). No static-seed fallback:
   // an empty list renders the empty state below rather than stale ghost
   // products whose IDs 404 when clicked.
   const __products = products ?? [];
 
-  const FILTERS = FILTER_IDS
-    .filter((id) => id === "all" || __products.some((p) => p.category === id))
-    .map((id) => ({
-      id,
-      label: t.pages.products.filters[id as keyof typeof t.pages.products.filters],
-    }));
+  // Per-category product counts for the pill badges.
+  const countFor = (id: string) =>
+    id === "all" ? __products.length : __products.filter((p) => p.category === id).length;
+
+  // Every category gets a pill + count badge — pills wrap, no horizontal scroll.
+  const FILTERS = FILTER_IDS.map((id) => ({
+    id,
+    label: t.pages.products.filters[id as keyof typeof t.pages.products.filters],
+    count: countFor(id),
+  }));
 
   const SORT_OPTIONS: { value: SortKey; label: string }[] = [
     { value: "savings",    label: t.pages.products.sortBestDeals },
@@ -268,17 +273,24 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
   ];
 
   const filtered = useMemo(() => {
-    const list =
+    let list =
       activeCategory === "all"
         ? [...__products]
         : __products.filter((p) => p.category === activeCategory);
+
+    const q = query.trim().toLowerCase();
+    if (q) {
+      list = list.filter((p) =>
+        `${p.brand} ${p.model} ${p.description}`.toLowerCase().includes(q),
+      );
+    }
 
     switch (sortBy) {
       case "price-asc":  return list.sort((a, b) => a.salePrice - b.salePrice);
       case "price-desc": return list.sort((a, b) => b.salePrice - a.salePrice);
       default:           return list.sort((a, b) => b.savings - a.savings);
     }
-  }, [activeCategory, sortBy, __products]);
+  }, [activeCategory, sortBy, query, __products]);
 
   const activeSortLabel = SORT_OPTIONS.find((o) => o.value === sortBy)?.label ?? t.pages.products.sortBestDeals;
 
@@ -358,38 +370,60 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
         </div>
       </section>
 
-      {/* ── Filter & Sort bar ────────────────────────────── */}
-      <div className="sticky top-[60px] z-30 bg-white/95 backdrop-blur-xl border-b border-navy-100/60 shadow-sm">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-3">
-          <div className="flex items-center gap-3 justify-between">
+      {/* ── Category + Search + Sort bar (sticky) ─────────── */}
+      <div className="sticky top-[52px] z-30 bg-white/95 backdrop-blur-xl border-b border-navy-100/60 shadow-sm">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-3 flex flex-col gap-3">
 
-            {/* Category tabs — scrollable */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none flex-1 min-w-0">
-              {FILTERS.map(({ id, label }) => {
-                const cat = PRODUCT_CATEGORIES.find((c) => c.id === id);
-                const isActive = activeCategory === id;
-                return (
-                  <button
-                    key={id}
-                    onClick={() => setActiveCategory(id)}
+          {/* Category pills — wrap into rows, NO horizontal scroll */}
+          <div className="flex flex-wrap gap-2">
+            {FILTERS.map(({ id, label, count }) => {
+              const cat = PRODUCT_CATEGORIES.find((c) => c.id === id);
+              const isActive = activeCategory === id;
+              return (
+                <button
+                  key={id}
+                  onClick={() => setActiveCategory(id)}
+                  aria-pressed={isActive}
+                  className={cn(
+                    "inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-[13px] font-semibold transition-all duration-250 focus-ring",
+                    isActive
+                      ? "text-white shadow-md"
+                      : "bg-navy-50 text-navy-500 hover:bg-navy-100 hover:text-navy-800 border border-navy-100"
+                  )}
+                  style={
+                    isActive && cat
+                      ? { background: `linear-gradient(135deg, ${cat.colorFrom}, ${cat.colorTo})` }
+                      : isActive
+                      ? { background: "linear-gradient(135deg, #3A5F8A, #5B82A8)" }
+                      : undefined
+                  }
+                >
+                  {label}
+                  <span
                     className={cn(
-                      "flex-shrink-0 px-3.5 py-2 rounded-xl text-[13px] font-semibold transition-all duration-250 focus-ring",
-                      isActive
-                        ? "text-white shadow-md"
-                        : "bg-navy-50 text-navy-400 hover:bg-navy-100 hover:text-navy-700 border border-navy-100"
+                      "text-[10px] font-bold leading-none px-1.5 py-0.5 rounded-full tnum",
+                      isActive ? "bg-white/25 text-white" : "bg-white text-navy-400 border border-navy-100"
                     )}
-                    style={
-                      isActive && cat
-                        ? { background: `linear-gradient(135deg, ${cat.colorFrom}, ${cat.colorTo})` }
-                        : isActive
-                        ? { background: "linear-gradient(135deg, #3A5F8A, #5B82A8)" }
-                        : {}
-                    }
                   >
-                    {label}
-                  </button>
-                );
-              })}
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Search + Sort row */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="relative flex-1 min-w-0">
+              <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-navy-300" />
+              <input
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search products…"
+                aria-label="Search products"
+                className="w-full pl-9 pr-3 py-2 rounded-xl border border-navy-100 bg-white text-navy-700 text-sm placeholder:text-navy-300 focus:outline-none focus:border-navy-300 focus:ring-2 focus:ring-navy-200/50 transition"
+              />
             </div>
 
             {/* Sort dropdown */}
@@ -460,7 +494,7 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
           </div>
 
           {/* Grid */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filtered.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
