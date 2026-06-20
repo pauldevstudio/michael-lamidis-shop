@@ -48,7 +48,7 @@ function CategoryButton({
         "inline-flex items-center gap-1.5 font-semibold transition-all duration-200 focus-ring",
         variant === "pill"
           ? "px-3.5 py-2 min-h-[40px] rounded-full text-[13px]"
-          : "w-full justify-between px-4 py-3 rounded-lg text-sm",
+          : "w-full justify-between gap-2 px-3 py-2.5 rounded-lg text-[13px]",
         empty
           ? "bg-navy-50/60 text-navy-300 border border-navy-100 opacity-60 cursor-not-allowed"
           : isActive
@@ -59,10 +59,10 @@ function CategoryButton({
       )}
       style={isActive && !empty ? { background: "linear-gradient(135deg, #1E48B8, #163A96)" } : undefined}
     >
-      <span>{label}</span>
+      <span className="truncate">{label}</span>
       <span
         className={cn(
-          "text-[10px] font-bold leading-none px-1.5 py-0.5 rounded-full tnum",
+          "shrink-0 text-[10px] font-bold leading-none px-1.5 py-0.5 rounded-full tnum",
           isActive && !empty
             ? "bg-white/25 text-white"
             : variant === "pill"
@@ -430,7 +430,7 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -6 }}
                   transition={{ duration: 0.15 }}
-                  className="absolute left-0 right-0 top-full mt-2 z-50 bg-white border border-navy-100 rounded-xl shadow-card-lift p-2 max-h-[60vh] overflow-y-auto flex flex-col gap-1"
+                  className="absolute left-0 right-0 top-full mt-2 z-50 bg-white border border-navy-100 rounded-xl shadow-card-lift p-2 max-h-[70vh] overflow-y-auto grid grid-cols-2 gap-1.5"
                 >
                   {FILTERS.map(({ id, label, count }) => (
                     <CategoryButton
