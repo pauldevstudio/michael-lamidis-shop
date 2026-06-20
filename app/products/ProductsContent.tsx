@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight, Shield, Zap, SlidersHorizontal, ChevronDown,
-  LayoutGrid, Package, ShoppingCart, Check, Search,
+  LayoutGrid, Package, ShoppingCart, Check, Search, Award, Percent, Truck,
 } from "lucide-react";
 import AnimatedSection from "@/components/shared/AnimatedSection";
 import StarRating from "@/components/shared/StarRating";
@@ -31,7 +31,83 @@ const FILTER_IDS = [
   "office-equipment",
 ] as const;
 
-type SortKey = "savings" | "price-asc" | "price-desc";
+type SortKey = "savings" | "popular" | "price-asc" | "price-desc";
+
+function inPriceRange(price: number, range: string): boolean {
+  switch (range) {
+    case "0-100":    return price < 100;
+    case "100-500":  return price >= 100 && price < 500;
+    case "500-1000": return price >= 500 && price < 1000;
+    case "1000+":    return price >= 1000;
+    default:         return true;
+  }
+}
+
+/* ── Reusable Sort / Filter dropdown ───────────────────── */
+function FilterDropdown({
+  icon: Icon, label, value, options, onChange, isOpen, onToggle, accent = false,
+}: {
+  icon?: React.ElementType;
+  label: string;
+  value: string;
+  options: { value: string; label: string }[];
+  onChange: (v: string) => void;
+  isOpen: boolean;
+  onToggle: () => void;
+  accent?: boolean;
+}) {
+  const selected = options.find((o) => o.value === value);
+  const isSet = accent && value !== "all";
+  const display = value !== "all" && selected ? selected.label : label;
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        className={cn(
+          "flex items-center gap-1.5 px-3.5 py-2 rounded-xl border text-[13px] font-semibold transition-all focus-ring",
+          isSet
+            ? "border-gold-300 bg-gold-50 text-navy-800"
+            : "border-navy-100 bg-white text-navy-600 hover:border-navy-200 hover:bg-navy-50"
+        )}
+      >
+        {Icon && <Icon className="w-3.5 h-3.5" />}
+        {display}
+        <ChevronDown className={cn("w-3.5 h-3.5 transition-transform", isOpen && "rotate-180")} />
+      </button>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.15 }}
+            role="listbox"
+            className="absolute left-0 top-full mt-2 bg-white border border-navy-100 rounded-xl shadow-card-lift py-1.5 min-w-[170px] z-50"
+          >
+            {options.map((o) => (
+              <button
+                key={o.value}
+                type="button"
+                role="option"
+                aria-selected={value === o.value}
+                onClick={() => onChange(o.value)}
+                className={cn(
+                  "w-full text-left px-4 py-2.5 text-[13px] font-medium transition-colors",
+                  value === o.value ? "text-gold-500 bg-gold-50" : "text-navy-600 hover:bg-navy-50"
+                )}
+              >
+                {o.label}
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
 
 /* ── Product Card ──────────────────────────────────────── */
 function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
@@ -247,8 +323,11 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
   const { t } = useLanguage();
   const [activeCategory, setActiveCategory] = useState("all");
   const [sortBy, setSortBy] = useState<SortKey>("savings");
-  const [sortOpen, setSortOpen] = useState(false);
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [query, setQuery] = useState("");
+  const [gradeFilter, setGradeFilter] = useState("all");
+  const [priceFilter, setPriceFilter] = useState("all");
+  const [availFilter, setAvailFilter] = useState("all");
 
   // Server-fetched live products (Payload/Mongo). No static-seed fallback:
   // an empty list renders the empty state below rather than stale ghost
@@ -266,10 +345,32 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
     count: countFor(id),
   }));
 
-  const SORT_OPTIONS: { value: SortKey; label: string }[] = [
+  const SORT_OPTIONS = [
     { value: "savings",    label: t.pages.products.sortBestDeals },
+    { value: "popular",    label: "Most Popular" },
     { value: "price-asc",  label: t.pages.products.sortPriceAsc },
     { value: "price-desc", label: t.pages.products.sortPriceDesc },
+  ];
+
+  const GRADE_OPTIONS = [
+    { value: "all", label: "All Grades" },
+    ...Array.from(new Set(__products.map((p) => p.grade)))
+      .sort()
+      .map((g) => ({ value: g, label: `Grade ${g}` })),
+  ];
+
+  const PRICE_OPTIONS = [
+    { value: "all",      label: "All Prices" },
+    { value: "0-100",    label: "Under €100" },
+    { value: "100-500",  label: "€100 – €500" },
+    { value: "500-1000", label: "€500 – €1,000" },
+    { value: "1000+",    label: "Over €1,000" },
+  ];
+
+  const AVAIL_OPTIONS = [
+    { value: "all",      label: "Availability" },
+    { value: "in-stock", label: "In Stock" },
+    { value: "sold",     label: "Sold" },
   ];
 
   const filtered = useMemo(() => {
@@ -284,15 +385,20 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
         `${p.brand} ${p.model} ${p.description}`.toLowerCase().includes(q),
       );
     }
+    if (gradeFilter !== "all") list = list.filter((p) => p.grade === gradeFilter);
+    if (priceFilter !== "all") list = list.filter((p) => inPriceRange(p.salePrice, priceFilter));
+    if (availFilter === "in-stock") list = list.filter((p) => !p.sold);
+    else if (availFilter === "sold") list = list.filter((p) => p.sold);
 
     switch (sortBy) {
       case "price-asc":  return list.sort((a, b) => a.salePrice - b.salePrice);
       case "price-desc": return list.sort((a, b) => b.salePrice - a.salePrice);
+      case "popular":    return list.sort((a, b) => productSocialProof(b.id).sold - productSocialProof(a.id).sold);
       default:           return list.sort((a, b) => b.savings - a.savings);
     }
-  }, [activeCategory, sortBy, query, __products]);
+  }, [activeCategory, sortBy, query, gradeFilter, priceFilter, availFilter, __products]);
 
-  const activeSortLabel = SORT_OPTIONS.find((o) => o.value === sortBy)?.label ?? t.pages.products.sortBestDeals;
+  const activeFilterCount = [gradeFilter, priceFilter, availFilter].filter((v) => v !== "all").length;
 
   return (
     <>
@@ -412,9 +518,9 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
             })}
           </div>
 
-          {/* Search + Sort row */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="relative flex-1 min-w-0">
+          {/* Search + Sort + Filters row (wraps, no horizontal scroll) */}
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="relative flex-1 min-w-[200px]">
               <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-navy-300" />
               <input
                 type="search"
@@ -426,44 +532,58 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
               />
             </div>
 
-            {/* Sort dropdown */}
-            <div className="relative flex-shrink-0">
+            <FilterDropdown
+              icon={SlidersHorizontal} label="Sort" value={sortBy} options={SORT_OPTIONS}
+              onChange={(v) => { setSortBy(v as SortKey); setOpenMenu(null); }}
+              isOpen={openMenu === "sort"} onToggle={() => setOpenMenu(openMenu === "sort" ? null : "sort")}
+            />
+            <FilterDropdown
+              label="Grade" value={gradeFilter} options={GRADE_OPTIONS} accent
+              onChange={(v) => { setGradeFilter(v); setOpenMenu(null); }}
+              isOpen={openMenu === "grade"} onToggle={() => setOpenMenu(openMenu === "grade" ? null : "grade")}
+            />
+            <FilterDropdown
+              label="Price" value={priceFilter} options={PRICE_OPTIONS} accent
+              onChange={(v) => { setPriceFilter(v); setOpenMenu(null); }}
+              isOpen={openMenu === "price"} onToggle={() => setOpenMenu(openMenu === "price" ? null : "price")}
+            />
+            <FilterDropdown
+              label="Availability" value={availFilter} options={AVAIL_OPTIONS} accent
+              onChange={(v) => { setAvailFilter(v); setOpenMenu(null); }}
+              isOpen={openMenu === "avail"} onToggle={() => setOpenMenu(openMenu === "avail" ? null : "avail")}
+            />
+            {activeFilterCount > 0 && (
               <button
-                onClick={() => setSortOpen(!sortOpen)}
-                className="flex items-center gap-2 px-3.5 py-2 rounded-xl border border-navy-100 bg-white text-navy-600 text-[13px] font-semibold hover:border-navy-200 hover:bg-navy-50 transition-all focus-ring"
+                type="button"
+                onClick={() => { setGradeFilter("all"); setPriceFilter("all"); setAvailFilter("all"); }}
+                className="text-[12px] font-semibold text-navy-400 hover:text-navy-700 underline underline-offset-2 px-1"
               >
-                <SlidersHorizontal className="w-3.5 h-3.5" />
-                {activeSortLabel}
-                <ChevronDown className={cn("w-3.5 h-3.5 transition-transform", sortOpen && "rotate-180")} />
+                Clear ({activeFilterCount})
               </button>
+            )}
+            {openMenu && (
+              <div className="fixed inset-0 z-40" onClick={() => setOpenMenu(null)} aria-hidden="true" />
+            )}
+          </div>
+        </div>
+      </div>
 
-              <AnimatePresence>
-                {sortOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -6 }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute right-0 top-full mt-2 bg-white border border-navy-100 rounded-xl shadow-card-lift py-1.5 min-w-[180px] z-50"
-                  >
-                    {SORT_OPTIONS.map(({ value, label }) => (
-                      <button
-                        key={value}
-                        onClick={() => { setSortBy(value as SortKey); setSortOpen(false); }}
-                        className={cn(
-                          "w-full text-left px-4 py-2.5 text-[13px] font-medium transition-colors",
-                          sortBy === value
-                            ? "text-gold-500 bg-gold-50"
-                            : "text-navy-600 hover:bg-navy-50"
-                        )}
-                      >
-                        {label}
-                      </button>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+      {/* ── Trust strip ──────────────────────────────────── */}
+      <div className="bg-navy-50/50 border-b border-navy-100/60">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-3">
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+            {[
+              { icon: Package, text: "500+ Products In Stock" },
+              { icon: Award,   text: "50+ Premium Brands" },
+              { icon: Percent, text: "Up to 70% Off Retail" },
+              { icon: Shield,  text: "6-Month Warranty" },
+              { icon: Truck,   text: "Fast Cyprus Delivery" },
+            ].map(({ icon: Icon, text }) => (
+              <div key={text} className="flex items-center gap-2 text-navy-600 text-[12.5px] font-semibold">
+                <Icon className="w-4 h-4 text-gold-500 shrink-0" />
+                {text}
+              </div>
+            ))}
           </div>
         </div>
       </div>
