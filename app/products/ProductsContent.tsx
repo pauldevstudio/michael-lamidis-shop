@@ -63,14 +63,6 @@ function FilterDropdown({
   const isSet = accent && value !== "all";
   const display = value !== "all" && selected ? selected.label : label;
 
-  // Escape closes the open menu.
-  useEffect(() => {
-    if (!isOpen) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onToggle(); };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [isOpen, onToggle]);
-
   // Return focus to the trigger whenever the menu closes after being open.
   useEffect(() => {
     if (wasOpen.current && !isOpen) btnRef.current?.focus();
@@ -125,6 +117,51 @@ function FilterDropdown({
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+/* ── Category button (pill on desktop, full-width row in the mobile dropdown) ── */
+function CategoryButton({
+  id, label, count, isActive, empty, onSelect, variant,
+}: {
+  id: string; label: string; count: number; isActive: boolean; empty: boolean;
+  onSelect: (id: string) => void; variant: "pill" | "row";
+}) {
+  return (
+    <button
+      type="button"
+      disabled={empty}
+      aria-pressed={isActive}
+      onClick={() => onSelect(id)}
+      className={cn(
+        "inline-flex items-center gap-1.5 font-semibold transition-all duration-200 focus-ring",
+        variant === "pill"
+          ? "px-3.5 py-2 min-h-[40px] rounded-full text-[13px]"
+          : "w-full justify-between px-4 py-3 rounded-lg text-sm",
+        empty
+          ? "bg-navy-50/60 text-navy-300 border border-navy-100 opacity-60 cursor-not-allowed"
+          : isActive
+          ? "text-white shadow-md"
+          : variant === "pill"
+          ? "bg-navy-50 text-navy-500 hover:bg-navy-100 hover:text-navy-800 border border-navy-100"
+          : "text-navy-700 hover:bg-navy-50"
+      )}
+      style={isActive && !empty ? { background: "linear-gradient(135deg, #1E48B8, #163A96)" } : undefined}
+    >
+      <span>{label}</span>
+      <span
+        className={cn(
+          "text-[10px] font-bold leading-none px-1.5 py-0.5 rounded-full tnum",
+          isActive && !empty
+            ? "bg-white/25 text-white"
+            : variant === "pill"
+            ? "bg-white text-navy-400 border border-navy-100"
+            : "bg-navy-50 text-navy-400"
+        )}
+      >
+        {count}
+      </span>
+    </button>
   );
 }
 
@@ -364,6 +401,16 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
     count: countFor(id),
   }));
 
+  const activeCat = FILTERS.find((f) => f.id === activeCategory) ?? FILTERS[0];
+
+  // Close any open menu (category dropdown or a filter) on Escape.
+  useEffect(() => {
+    if (!openMenu) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpenMenu(null); };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [openMenu]);
+
   const SORT_OPTIONS = [
     { value: "savings",    label: t.pages.products.sortBestDeals },
     { value: "popular",    label: "Most Popular" },
@@ -499,43 +546,64 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
       <div className="sticky top-14 lg:top-12 z-30 bg-white/95 backdrop-blur-xl border-b border-navy-100/60 shadow-sm">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-3 flex flex-col gap-3">
 
-          {/* Category pills — wrap into rows, NO horizontal scroll */}
-          <div className="flex flex-wrap gap-2">
-            {FILTERS.map(({ id, label, count }) => {
-              const isActive = activeCategory === id;
-              const empty = id !== "all" && count === 0;
-              return (
-                <button
-                  key={id}
-                  onClick={() => setActiveCategory(id)}
-                  aria-pressed={isActive}
-                  disabled={empty}
-                  className={cn(
-                    "inline-flex items-center gap-1.5 px-3.5 py-2 min-h-[40px] rounded-full text-[13px] font-semibold transition-all duration-250 focus-ring",
-                    empty
-                      ? "bg-navy-50/60 text-navy-300 border border-navy-100 opacity-60 cursor-not-allowed"
-                      : isActive
-                      ? "text-white shadow-md"
-                      : "bg-navy-50 text-navy-500 hover:bg-navy-100 hover:text-navy-800 border border-navy-100"
-                  )}
-                  style={
-                    isActive && !empty
-                      ? { background: "linear-gradient(135deg, #1E48B8, #163A96)" }
-                      : undefined
-                  }
+          {/* Categories — tap-to-open dropdown on mobile, wrapping pills on desktop */}
+          <div className="lg:hidden relative">
+            <button
+              type="button"
+              onClick={() => setOpenMenu(openMenu === "cats" ? null : "cats")}
+              aria-haspopup="true"
+              aria-expanded={openMenu === "cats"}
+              className="w-full flex items-center justify-between gap-2 px-4 py-3 rounded-xl border border-navy-200 bg-white text-navy-800 text-sm font-semibold focus-ring"
+            >
+              <span className="flex items-center gap-2 min-w-0">
+                <LayoutGrid className="w-4 h-4 text-navy-400 shrink-0" />
+                <span className="truncate">{activeCat?.label}</span>
+                <span className="shrink-0 text-[10px] font-bold leading-none px-1.5 py-0.5 rounded-full bg-navy-100 text-navy-500 tnum">
+                  {activeCat?.count}
+                </span>
+              </span>
+              <ChevronDown className={cn("w-4 h-4 text-navy-400 transition-transform shrink-0", openMenu === "cats" && "rotate-180")} />
+            </button>
+            <AnimatePresence>
+              {openMenu === "cats" && (
+                <motion.div
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute left-0 right-0 top-full mt-2 z-50 bg-white border border-navy-100 rounded-xl shadow-card-lift p-2 max-h-[60vh] overflow-y-auto flex flex-col gap-1"
                 >
-                  {label}
-                  <span
-                    className={cn(
-                      "text-[10px] font-bold leading-none px-1.5 py-0.5 rounded-full tnum",
-                      isActive && !empty ? "bg-white/25 text-white" : "bg-white text-navy-400 border border-navy-100"
-                    )}
-                  >
-                    {count}
-                  </span>
-                </button>
-              );
-            })}
+                  {FILTERS.map(({ id, label, count }) => (
+                    <CategoryButton
+                      key={id}
+                      id={id}
+                      label={label}
+                      count={count}
+                      isActive={activeCategory === id}
+                      empty={id !== "all" && count === 0}
+                      onSelect={(cid) => { setActiveCategory(cid); setOpenMenu(null); }}
+                      variant="row"
+                    />
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Desktop: wrapping pills */}
+          <div className="hidden lg:flex flex-wrap gap-2">
+            {FILTERS.map(({ id, label, count }) => (
+              <CategoryButton
+                key={id}
+                id={id}
+                label={label}
+                count={count}
+                isActive={activeCategory === id}
+                empty={id !== "all" && count === 0}
+                onSelect={setActiveCategory}
+                variant="pill"
+              />
+            ))}
           </div>
 
           {/* Search + Sort + Filters row (wraps, no horizontal scroll) */}
