@@ -9,7 +9,7 @@ const en = {
     testimonials: "Testimonials",
     blog: "Blog",
     contact: "Contact",
-    getQuote: "Visit Showroom",
+    getQuote: "View Our Showroom",
     switchLang: "ΕΛ",
   },
   hero: {
@@ -475,7 +475,7 @@ const gr: typeof en = {
     testimonials: "Αξιολογήσεις",
     blog: "Blog",
     contact: "Επικοινωνία",
-    getQuote: "Επισκεφθείτε το Showroom",
+    getQuote: "Δείτε το Showroom μας",
     switchLang: "EN",
   },
   hero: {
