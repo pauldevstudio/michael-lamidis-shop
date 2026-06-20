@@ -2,8 +2,9 @@
 
 import { useState, useRef } from "react";
 import {
-  X, Save, RefreshCw, Upload, Loader2, Crop as CropIcon,
+  X, Save, RefreshCw, Upload, Loader2, Crop as CropIcon, Film,
 } from "lucide-react";
+import { upload } from "@vercel/blob/client";
 import type { Product } from "@/lib/constants";
 import ImageCropper from "@/components/admin/ImageCropper";
 
@@ -15,13 +16,13 @@ type CropTask =
 const GRADE_OPTIONS = ["A", "B", "C", "D", "E", "F"];
 const CATEGORY_OPTIONS = [
   "refrigerators", "washing-machines", "ovens", "dishwashers",
-  "air-conditioners", "tvs", "small-appliances",
+  "air-conditioners", "cookware", "small-appliances",
 ];
 
 const EMPTY_PRODUCT: Omit<Product, "id"> = {
   brand: "", model: "", category: "refrigerators", originalPrice: 0, salePrice: 0, savings: 0,
   grade: "A", warranty: 12, icon: "Package", colorFrom: "#3A5F8A", colorTo: "#5B82A8",
-  imageUrl: "", images: [], sold: false, description: "", specs: [{ label: "", value: "" }],
+  imageUrl: "", images: [], videoUrl: "", sold: false, description: "", specs: [{ label: "", value: "" }],
 };
 
 /** Normalise a product into a gallery array (images[0] is the primary/cover). */
@@ -57,6 +58,34 @@ export default function EditProductModal({
   const [uploading, setUploading] = useState(false);
   const [crop, setCrop] = useState<CropTask | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [vidUploading, setVidUploading] = useState(false);
+  const [vidPct, setVidPct] = useState(0);
+  const videoInputRef = useRef<HTMLInputElement>(null);
+
+  // Product video → uploaded straight to Vercel Blob from the browser. This
+  // bypasses the ~4.5 MB serverless body limit; /api/admin/blob-upload only
+  // mints a short-lived token, the file never passes through the function.
+  const uploadVideo = async (file: File) => {
+    if (!file.type.startsWith("video/")) { onError("Please choose a video file"); return; }
+    setVidUploading(true);
+    setVidPct(0);
+    try {
+      const ext = (file.name.split(".").pop() || "mp4").toLowerCase().replace(/[^a-z0-9]/g, "") || "mp4";
+      const safe = (formData.model || "video").replace(/[^a-zA-Z0-9-_]/g, "-").slice(0, 40);
+      const result = await upload(`product-videos/${Date.now()}-${safe}.${ext}`, file, {
+        access: "public",
+        handleUploadUrl: "/api/admin/blob-upload",
+        contentType: file.type,
+        multipart: true,
+        onUploadProgress: (p) => setVidPct(Math.round(p.percentage)),
+      });
+      setFormData((prev) => ({ ...prev, videoUrl: result.url }));
+    } catch (e) {
+      onError("Video upload failed: " + String((e as Error)?.message ?? "").slice(0, 120));
+    } finally {
+      setVidUploading(false);
+    }
+  };
 
   const updateForm = (key: keyof Omit<Product, "id">, value: string | number) => {
     setFormData((prev) => {
@@ -391,6 +420,58 @@ export default function EditProductModal({
               </div>
             </div>
 
+          </div>
+
+          {/* Product Video (optional) — uploaded directly to Vercel Blob so big
+              files bypass the serverless body limit. Shows a play button on the
+              storefront cards. */}
+          <div className="flex flex-col gap-2">
+            <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Product Video (optional)</label>
+            {formData.videoUrl ? (
+              <div className="relative rounded-2xl overflow-hidden border border-slate-700 bg-black">
+                {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+                <video src={formData.videoUrl} controls playsInline className="w-full max-h-56 bg-black" />
+                <button
+                  type="button"
+                  onClick={() => setFormData((p) => ({ ...p, videoUrl: "" }))}
+                  aria-label="Remove video"
+                  className="absolute top-2 right-2 w-7 h-7 rounded-lg bg-slate-900/85 flex items-center justify-center text-slate-300 hover:text-red-400"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <div
+                onClick={() => { if (!vidUploading) videoInputRef.current?.click(); }}
+                className={`border-2 border-dashed rounded-2xl p-4 cursor-pointer transition-colors ${
+                  vidUploading ? "border-blue-400 bg-slate-800" : "border-slate-700 hover:border-slate-300 bg-slate-800"
+                }`}
+              >
+                <input
+                  ref={videoInputRef}
+                  type="file"
+                  accept="video/*"
+                  className="sr-only"
+                  onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadVideo(f); e.currentTarget.value = ""; }}
+                />
+                <div className="flex flex-col items-center justify-center gap-2 py-4 text-center">
+                  {vidUploading ? (
+                    <>
+                      <Loader2 className="w-6 h-6 text-blue-500 animate-spin" />
+                      <p className="text-slate-400 text-sm font-medium">Uploading video…{vidPct > 0 ? ` ${vidPct}%` : ""}</p>
+                    </>
+                  ) : (
+                    <>
+                      <div className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center">
+                        <Film className="w-4 h-4 text-slate-500" />
+                      </div>
+                      <p className="text-slate-200 text-sm font-semibold">Upload a product video</p>
+                      <p className="text-slate-400 text-xs">MP4 / WebM / MOV · up to 200 MB</p>
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
           <div className="flex flex-col gap-1.5">
             <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Description</label>

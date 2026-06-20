@@ -3,11 +3,13 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ScrollProgress from "@/components/shared/ScrollProgress";
 import AboutContent from "./AboutContent";
+import { SITE_URL } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "About Us — Our Story & Mission",
   description:
     "Learn about Michael Lamidis — Cyprus's premier open box appliance destination, founded in 2012 with a mission to make premium appliances accessible to every family.",
+  alternates: { canonical: `${SITE_URL}/about` },
 };
 
 export default function AboutPage() {

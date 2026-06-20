@@ -1,6 +1,7 @@
 "use client";
 
 import Script from "next/script";
+import { useCookieConsent } from "@/lib/cookie-consent";
 
 /**
  * Loads Google Tag Manager, GA4, and Microsoft Clarity — each independently
@@ -16,9 +17,15 @@ import Script from "next/script";
  * first paint or Core Web Vitals.
  */
 export default function Analytics() {
+  const { ready, consent } = useCookieConsent();
   const gtmId = process.env.NEXT_PUBLIC_GTM_ID;
   const ga4Id = process.env.NEXT_PUBLIC_GA4_ID;
   const clarityId = process.env.NEXT_PUBLIC_CLARITY_ID;
+
+  // GDPR / ePrivacy: do NOT load any measurement scripts until the visitor has
+  // consented to the Analytics category. Marketing-category tags (e.g. a Meta
+  // Pixel) must be gated on consent.marketing instead.
+  if (!ready || !consent.analytics) return null;
 
   return (
     <>

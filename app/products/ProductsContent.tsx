@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import AnimatedSection from "@/components/shared/AnimatedSection";
 import StarRating from "@/components/shared/StarRating";
+import VideoCardButton from "@/components/shared/VideoCardButton";
 import { FEATURED_PRODUCTS, PRODUCT_CATEGORIES, type Product } from "@/lib/constants";
 import { useCart } from "@/lib/cart-context";
 import { useLanguage } from "@/lib/i18n-context";
@@ -24,7 +25,7 @@ const FILTER_IDS = [
   "ovens",
   "dishwashers",
   "air-conditioners",
-  "tvs",
+  "cookware",
   "small-appliances",
 ] as const;
 
@@ -52,21 +53,28 @@ function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.94 }}
       transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-      className="group bg-white rounded-2xl border border-navy-100/70 overflow-hidden hover:border-navy-200 hover:shadow-card-lift transition-all duration-400 flex flex-col"
+      className="group relative bg-white rounded-2xl border border-navy-100/70 overflow-hidden hover:border-navy-200 hover:shadow-card-lift transition-all duration-400 flex flex-col"
     >
-      {/* Image */}
-      <div className="relative h-52 overflow-hidden">
+      {/* Whole-card click target → product detail. Sits beneath the add-to-cart
+          buttons (higher z-index) so those stay independently clickable. */}
+      <Link
+        href={`/products/${product.id}`}
+        aria-label={`View ${product.brand} ${product.model}`}
+        className="absolute inset-0 z-[1]"
+      />
+
+      {/* Image — object-contain shows the FULL product (no cropping) on a soft
+          neutral backdrop, with padding for breathing room. */}
+      <div className="relative h-52 overflow-hidden bg-navy-50/40">
+        <VideoCardButton videoUrl={product.videoUrl} title={`${product.brand} ${product.model}`} />
         {product.imageUrl ? (
-          <>
-            <Image
-              src={product.imageUrl}
-              alt={`${product.brand} ${product.model}`}
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-500"
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/10" />
-          </>
+          <Image
+            src={product.imageUrl}
+            alt={`${product.brand} ${product.model}`}
+            fill
+            className="object-contain p-4 group-hover:scale-105 transition-transform duration-500"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          />
         ) : (
           <div
             className="h-full flex items-center justify-center"
@@ -91,7 +99,7 @@ function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
 
         {/* SOLD ribbon */}
         {product.sold && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/30 z-10">
+          <div className="absolute inset-0 flex items-center justify-center bg-black/30 z-10 pointer-events-none">
             <span className="px-4 py-1.5 rounded-md bg-red-600 text-white text-sm font-black tracking-[0.2em] uppercase shadow-lg -rotate-12">
               Sold
             </span>
@@ -193,8 +201,8 @@ function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
           </div>
         </div>
 
-        {/* CTA row: View Details + Add to Cart */}
-        <div className="flex gap-2 mt-1">
+        {/* CTA row: View Details + Add to Cart (above the card-overlay link) */}
+        <div className="flex gap-2 mt-1 relative z-10">
           <Link
             href={`/products/${product.id}`}
             className="btn-gold text-xs !px-4 !py-2.5 flex-1 justify-center"

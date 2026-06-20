@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { track, analytics, ANALYTICS_EVENTS } from "@/lib/analytics";
+import { useCookieConsent } from "@/lib/cookie-consent";
 
 /** Non-blocking first-party beacon to our own analytics endpoint. */
 function beacon(payload: Record<string, unknown>) {
@@ -31,20 +32,23 @@ function beacon(payload: Record<string, unknown>) {
  */
 export default function AutoTrack() {
   const pathname = usePathname();
+  const { consent } = useCookieConsent();
+  const allowed = consent.analytics; // only track once Analytics consent is given
 
   // SPA page_view on route change.
   useEffect(() => {
-    if (!pathname) return;
+    if (!allowed || !pathname) return;
     track(ANALYTICS_EVENTS.PAGE_VIEW, {
       page_path: pathname,
       page_location: typeof window !== "undefined" ? window.location.href : pathname,
       page_title: typeof document !== "undefined" ? document.title : undefined,
     });
     beacon({ kind: "pageview", path: pathname });
-  }, [pathname]);
+  }, [pathname, allowed]);
 
   // Delegated click tracking.
   useEffect(() => {
+    if (!allowed) return;
     const onClick = (e: MouseEvent) => {
       const el = e.target as HTMLElement | null;
       if (!el) return;
@@ -102,7 +106,7 @@ export default function AutoTrack() {
 
     document.addEventListener("click", onClick, { capture: true });
     return () => document.removeEventListener("click", onClick, { capture: true });
-  }, [pathname]);
+  }, [pathname, allowed]);
 
   return null;
 }

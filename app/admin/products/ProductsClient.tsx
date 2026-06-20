@@ -15,7 +15,7 @@ type Toast = { type: "success" | "error"; msg: string } | null;
 
 const GRADE_OPTIONS = ["A", "B", "C", "D", "E", "F"];
 const CATEGORY_OPTIONS = [
-  "refrigerators","washing-machines","ovens","dishwashers","air-conditioners","tvs","small-appliances",
+  "refrigerators","washing-machines","ovens","dishwashers","air-conditioners","cookware","small-appliances",
 ];
 
 interface CategoryDef { id: string; label: string }
@@ -26,7 +26,7 @@ const DEFAULT_CATEGORIES: CategoryDef[] = [
   { id: "ovens",            label: "Ovens" },
   { id: "dishwashers",      label: "Dishwashers" },
   { id: "air-conditioners", label: "Air Conditioners" },
-  { id: "tvs",              label: "Smart TVs" },
+  { id: "cookware",         label: "Cookware" },
   { id: "small-appliances", label: "Small Appliances" },
 ];
 const CATEGORY_LABELS_KEY = "ml-admin-category-labels";

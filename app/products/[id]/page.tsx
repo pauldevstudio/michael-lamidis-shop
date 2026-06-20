@@ -12,6 +12,19 @@ import { productSocialProof } from "@/lib/social-proof";
 // so edits still flush immediately.
 export const revalidate = 30;
 
+// Pre-render every product page at build time so the first click lands on an
+// edge-cached page (~0.2s TTFB) instead of an on-demand server render (~1.3s),
+// which is what made "View Details" feel slow. Products added later still
+// render on first hit (dynamicParams defaults true), then cache like the rest.
+export async function generateStaticParams() {
+  try {
+    const products = await getPublicProducts();
+    return products.map((p) => ({ id: String(p.id) }));
+  } catch {
+    return [];
+  }
+}
+
 interface Props {
   params: Promise<{ id: string }>;
 }
@@ -23,6 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${product.brand} ${product.model} - Michael Lamidis`,
     description: product.description,
+    alternates: { canonical: `${SITE_URL}/products/${id}` },
   };
 }
 

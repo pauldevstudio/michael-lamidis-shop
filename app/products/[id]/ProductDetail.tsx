@@ -7,13 +7,14 @@ import Link from "next/link";
 import {
   ArrowLeft, ArrowRight, Truck, Award,
   CheckCircle2, Phone, Mail, ShoppingCart, Minus, Plus, Star,
-  Package, Zap, ZoomIn, ZoomOut, X, ChevronLeft, ChevronRight, MessageCircle,
+  Package, ZoomIn, ZoomOut, X, ChevronLeft, ChevronRight, MessageCircle, MapPin,
 } from "lucide-react";
 import type { Product } from "@/lib/constants";
 import { SITE_PHONE, SITE_WHATSAPP } from "@/lib/constants";
 import { useCart } from "@/lib/cart-context";
 import AnimatedSection, { StaggerChildren, StaggerItem } from "@/components/shared/AnimatedSection";
 import StarRating from "@/components/shared/StarRating";
+import VideoCardButton from "@/components/shared/VideoCardButton";
 import { productSocialProof } from "@/lib/social-proof";
 import { cn } from "@/lib/utils";
 
@@ -77,17 +78,17 @@ function RelatedCard({ product }: { product: Product }) {
       href={`/products/${product.id}`}
       className="group bg-white rounded-2xl border border-navy-100/70 overflow-hidden hover:border-navy-200 hover:shadow-card-lift transition-all duration-400 flex flex-col"
     >
-      <div className="relative h-40 overflow-hidden">
+      <div className="relative h-40 overflow-hidden bg-navy-50/40">
+        <VideoCardButton videoUrl={product.videoUrl} title={`${product.brand} ${product.model}`} />
         {product.imageUrl && (
           <Image
             src={product.imageUrl}
             alt={`${product.brand} ${product.model}`}
             fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            className="object-contain p-3 group-hover:scale-105 transition-transform duration-500"
             sizes="300px"
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
         {hasRealSaving && (
           <div
             className="absolute top-2.5 left-2.5 text-[10px] font-bold px-2 py-0.5 rounded-full text-white"
@@ -385,8 +386,8 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
                   Ships within 24–48h
                 </div>
                 <div className="flex items-center gap-1.5 text-navy-500 font-medium">
-                  <Zap className="w-4 h-4 text-gold-500" />
-                  Free delivery
+                  <MapPin className="w-4 h-4 text-gold-500" />
+                  Delivery may vary
                 </div>
               </div>
 

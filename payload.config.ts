@@ -90,7 +90,7 @@ export default buildConfig({
             { label: "Dishwashers",      value: "dishwashers" },
             { label: "Freezers",         value: "freezers" },
             { label: "Air Conditioners", value: "air-conditioners" },
-            { label: "Smart TVs",        value: "tvs" },
+            { label: "Cookware",         value: "cookware" },
             { label: "Small Appliances", value: "small-appliances" },
             { label: "Mattresses",       value: "mattresses" },
             { label: "Furniture",        value: "furniture" },
@@ -134,6 +134,11 @@ export default buildConfig({
           fields: [
             { name: "url", type: "text", required: true },
           ],
+        },
+        {
+          name: "videoUrl",
+          type: "text",
+          admin: { description: "Optional product video URL (uploaded via the admin editor; shows a play button on the storefront cards)." },
         },
         {
           name: "sold",
@@ -300,7 +305,7 @@ export default buildConfig({
           labels: { singular: "Category", plural: "Categories" },
           fields: [
             { name: "id",    type: "text", required: true,
-              admin: { description: "Slug: all, refrigerators, washing-machines, ovens, dishwashers, air-conditioners, tvs, small-appliances" } },
+              admin: { description: "Slug: all, refrigerators, washing-machines, ovens, dishwashers, air-conditioners, cookware, small-appliances" } },
             { name: "label", type: "text", required: true },
           ],
         },

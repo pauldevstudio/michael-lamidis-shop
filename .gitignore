@@ -56,3 +56,6 @@ Thumbs.db
 
 .vercel
 .env*.local
+
+# local content tooling (not deployed)
+_mls_*

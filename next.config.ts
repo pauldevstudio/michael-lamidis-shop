@@ -51,9 +51,20 @@ const nextConfig: NextConfig = {
 
   async redirects() {
     return [
+      // Canonical host: send the free *.vercel.app URL to the custom domain so the
+      // site is publicly served only from www.michaellamidisshop.com. The Vercel URL
+      // still resolves but 308-forwards, so there is one canonical site for SEO.
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "(?:.+\\.)?vercel\\.app" }],
+        destination: "https://www.michaellamidisshop.com/:path*",
+        permanent: true,
+      },
       { source: "/shop",        destination: "/products", permanent: true },
       { source: "/store",       destination: "/products", permanent: true },
       { source: "/products/all",destination: "/products", permanent: true },
+      { source: "/privacy",     destination: "/privacy-policy", permanent: true },
+      { source: "/cookies",     destination: "/cookie-policy", permanent: true },
     ];
   },
 };

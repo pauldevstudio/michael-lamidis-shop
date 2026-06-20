@@ -39,7 +39,7 @@ export default function ConfirmationPage() {
             {[
               { title: "1. Confirmation call", desc: "We verify availability and arrange delivery or pickup with you." },
               { title: "2. Payment", desc: "Use the method you selected: bank transfer, COD, or in-store." },
-              { title: "3. Delivery", desc: "Free delivery across Cyprus, white-glove install on request." },
+              { title: "3. Delivery", desc: "Delivery across Cyprus (fee may vary by location), white-glove install on request."},
             ].map(({ title, desc }) => (
               <div key={title} className="bg-navy-50/60 border border-navy-100 rounded-2xl p-4">
                 <p className="text-navy-950 font-semibold text-sm mb-1">{title}</p>

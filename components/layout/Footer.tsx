@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Facebook, Mail, Phone, MapPin, Clock, ArrowRight, CheckCircle, Lock } from "lucide-react";
 import { useLanguage } from "@/lib/i18n-context";
 import { useContent } from "@/lib/content-context";
+import CookieSettingsButton from "@/components/shared/CookieSettingsButton";
 import { SITE_ADDRESS, SITE_EMAIL, SITE_HOURS, SITE_PHONE, SOCIAL_LINKS } from "@/lib/constants";
 
 export default function Footer() {
@@ -223,6 +224,18 @@ export default function Footer() {
                 {label}
               </Link>
             ))}
+            <CookieSettingsButton
+              variant="link"
+              className="text-white/30 text-xs hover:text-white/60 transition-colors"
+            />
+            <Link
+              href="/admin"
+              aria-label="Admin login"
+              className="inline-flex items-center gap-1 text-white/30 text-xs hover:text-white/60 transition-colors"
+            >
+              <Lock className="w-3 h-3" />
+              Admin
+            </Link>
           </div>
         </div>
       </div>

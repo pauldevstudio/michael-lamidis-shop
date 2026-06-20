@@ -8,6 +8,9 @@ import AIChatOnPublic from "@/components/shared/AIChatOnPublic";
 import Analytics from "@/components/shared/Analytics";
 import AutoTrack from "@/components/shared/AutoTrack";
 import WhatsAppButton from "@/components/shared/WhatsAppButton";
+import { CookieConsentProvider } from "@/lib/cookie-consent";
+import CookieBanner from "@/components/shared/CookieBanner";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const inter = Inter({
   subsets: ["latin", "greek"],
@@ -105,13 +108,20 @@ export default function RootLayout({
         />
       </head>
       <body className="font-sans antialiased">
-        <Analytics />
-        <AutoTrack />
-        <LanguageProvider>
-          <CartProvider>{children}</CartProvider>
-        </LanguageProvider>
-        <AIChatOnPublic />
-        <WhatsAppButton />
+        <CookieConsentProvider>
+          <Analytics />
+          <AutoTrack />
+          <LanguageProvider>
+            <CartProvider>{children}</CartProvider>
+            <CookieBanner />
+          </LanguageProvider>
+          <AIChatOnPublic />
+          <WhatsAppButton />
+          {/* Vercel Speed Insights — cookieless real-user Core Web Vitals (LCP,
+              INP, CLS, FCP, TTFB) from actual visitors. Mounted unconditionally
+              because it sets no cookies and collects no PII. */}
+          <SpeedInsights />
+        </CookieConsentProvider>
       </body>
     </html>
   );

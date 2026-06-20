@@ -113,7 +113,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       { icon: "Search",   title: "Sourcing",      description: "We source directly from manufacturer overstock and returns.", price: "FREE",  badge: "Most Popular" },
       { icon: "Wrench",   title: "Inspection",    description: "47-point inspection on every appliance before it reaches you." },
       { icon: "Settings", title: "Installation",  description: "Pro install by our certified technicians.", price: "From \u20ac49" },
-      { icon: "Package",  title: "Free Delivery", description: "Island-wide delivery within 48 hours of purchase." },
+      { icon: "Package",  title: "Delivery Fee May Vary", description: "Delivered across Cyprus, usually within 48 hours. Fee depends on your location." },
     ],
   },
   testimonials: {
@@ -174,7 +174,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       { id: "ovens",             label: "Ovens" },
       { id: "dishwashers",       label: "Dishwashers" },
       { id: "air-conditioners",  label: "Air Conditioning" },
-      { id: "tvs",               label: "TVs" },
+      { id: "cookware",          label: "Cookware" },
       { id: "small-appliances",  label: "Small Appliances" },
     ],
   },
@@ -234,7 +234,7 @@ export const DEFAULT_CONTENT: SiteContent = {
     items: [
       { question: "What is an 'open box' appliance?", answer: "Open box appliances are products that have been opened but never used - typically customer returns, display models, or overstock. Every unit we sell is inspected and certified." },
       { question: "Do you offer a warranty?",         answer: "Yes. Every appliance comes with a minimum 12-month Lamidis warranty covering parts and labour." },
-      { question: "Do you deliver across Cyprus?",    answer: "Yes - free delivery anywhere in Cyprus within 48 hours of purchase." },
+      { question: "Do you deliver across Cyprus?",    answer: "Yes - we deliver anywhere in Cyprus, usually within 48 hours. The delivery fee depends on your location and is confirmed at checkout." },
       { question: "Can I return a product?",          answer: "You have 14 days to return any product for a full refund, no questions asked." },
     ],
   },
@@ -382,6 +382,7 @@ export async function getPublicProductById(id: string): Promise<Product | null> 
           : ((d.imageUrl as string) ?? "");
         return fallback ? [fallback] : [];
       })(),
+      videoUrl:      (d.videoUrl as string) ?? "",
       sold:          Boolean(d.sold),
       description:   (d.description as string)   ?? "",
       specs:         Array.isArray(d.specs)
@@ -402,14 +403,14 @@ export async function getPublicProductById(id: string): Promise<Product | null> 
  * of the 17+ queries getSiteContent runs. Falls back to the JSON seed when
  * Payload is unreachable (e.g. local dev without DATABASE_URI).
  */
-export async function getPublicProducts(): Promise<Product[]> {
+export async function getPublicProducts(limit = 500): Promise<Product[]> {
   try {
     const { getPayload } = await import("payload");
     const { default: payloadConfig } = await import("@payload-config");
     const payload = await getPayload({ config: payloadConfig });
     const res = await payload.find({
       collection: "products",
-      limit: 500,
+      limit,
       depth: 1,
       sort: "displayOrder",
     });
@@ -441,6 +442,7 @@ export async function getPublicProducts(): Promise<Product[]> {
           return (d.imageUrl as string) ?? "";
         })(),
         images:        galleryFromDoc(d),
+        videoUrl:      (d.videoUrl as string) ?? "",
         sold:          Boolean(d.sold),
         description:   (d.description as string)   ?? "",
         specs:         Array.isArray(d.specs)
@@ -455,6 +457,22 @@ export async function getPublicProducts(): Promise<Product[]> {
     console.error("[getPublicProducts] payload read failed, falling back to seed:", err);
   }
   return readFromFile().products;
+}
+
+/**
+ * Homepage "featured" grid — a small, image-light slice of the catalogue.
+ * The homepage previously rendered ALL products (one card each), inflating the
+ * DOM to ~4,300 nodes and serialising every product's full image gallery into
+ * the RSC payload. The card only ever shows `imageUrl`, so we cap the count and
+ * drop the unused `images` arrays. The full, filterable catalogue lives on
+ * /products (which is already cached via ISR).
+ */
+export async function getFeaturedProducts(limit = 8): Promise<Product[]> {
+  // Fetch a small padded set (not the whole 500-row catalogue) so the homepage
+  // render — and every ISR regeneration — does a light Mongo read. The pad
+  // covers rows dropped by the price/model filter inside getPublicProducts.
+  const all = await getPublicProducts(Math.max(limit + 8, 24));
+  return all.slice(0, limit).map((p) => ({ ...p, images: [] }));
 }
 
 export async function writeSiteContent(content: SiteContent): Promise<void> {

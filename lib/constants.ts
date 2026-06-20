@@ -49,7 +49,7 @@ export const CATEGORY_COLOR_MAP: Record<string, { colorFrom: string; colorTo: st
   dishwashers:        { colorFrom: "#1D4ED8", colorTo: "#60A5FA" },
   freezers:           { colorFrom: "#0E7490", colorTo: "#22D3EE" },
   "air-conditioners": { colorFrom: "#0369A1", colorTo: "#38BDF8" },
-  tvs:                { colorFrom: "#B45309", colorTo: "#F59E0B" },
+  cookware:           { colorFrom: "#B45309", colorTo: "#F59E0B" },
   "small-appliances": { colorFrom: "#9D174D", colorTo: "#F472B6" },
   mattresses:         { colorFrom: "#475569", colorTo: "#94A3B8" },
   furniture:          { colorFrom: "#854D0E", colorTo: "#A16207" },
@@ -100,6 +100,8 @@ export interface Product {
   imageUrl: string;
   /** Full product gallery. images[0] mirrors imageUrl (the primary photo). */
   images?: string[];
+  /** Optional product video (uploaded to Vercel Blob). Shows a ▶ play button on cards. */
+  videoUrl?: string;
   /** When true, the item is sold — storefront hides Add to Cart + shows a Sold badge. */
   sold?: boolean;
   description: string;
@@ -161,28 +163,28 @@ export const FEATURED_PRODUCTS: Product[] = [
   },
   {
     id: "3",
-    brand: "LG",
-    model: "OLED55C36LC",
-    category: "tvs",
-    originalPrice: 1899,
-    salePrice: 899,
-    savings: 53,
+    brand: "Tefal",
+    model: "Ingenio Expertise 13-Piece Set",
+    category: "cookware",
+    originalPrice: 299,
+    salePrice: 159,
+    savings: 47,
     grade: "A",
-    warranty: 12,
-    icon: "Monitor",
+    warranty: 24,
+    icon: "CookingPot",
     colorFrom: "#B45309",
     colorTo: "#F59E0B",
     imageUrl:
-      "https://images.pexels.com/photos/7587735/pexels-photo-7587735.jpeg?auto=compress&cs=tinysrgb&w=600&h=360&fit=crop",
+      "https://images.pexels.com/photos/6996085/pexels-photo-6996085.jpeg?auto=compress&cs=tinysrgb&w=600&h=360&fit=crop",
     description:
-      "55\" OLED evo display with self-lit pixels, α9 Gen5 AI processor, Dolby Vision IQ, Dolby Atmos, and webOS Smart TV. Cinema-grade picture in your living room.",
+      "13-piece non-stick cookware set with a detachable Ingenio handle, Thermo-Signal heat indicator and a hard-anodised induction base. Oven-safe to 250°C and fully dishwasher-safe.",
     specs: [
-      { label: "Screen Size",   value: "55 inches" },
-      { label: "Panel",         value: "OLED evo" },
-      { label: "Resolution",    value: "4K UHD (3840 × 2160)" },
-      { label: "Refresh Rate",  value: "120 Hz" },
-      { label: "HDR",           value: "Dolby Vision IQ, HDR10" },
-      { label: "Smart TV",      value: "webOS 23" },
+      { label: "Pieces",        value: "13-piece set" },
+      { label: "Material",      value: "Hard-anodised aluminium" },
+      { label: "Coating",       value: "Titanium non-stick" },
+      { label: "Compatibility", value: "All hobs incl. induction" },
+      { label: "Oven-Safe",     value: "Up to 250°C" },
+      { label: "Dishwasher",    value: "Safe" },
     ],
   },
   {

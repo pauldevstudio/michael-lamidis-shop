@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import {
-  LayoutGrid, Square, Loader, Droplets, Wind, Monitor, Coffee,
+  LayoutGrid, Square, Loader, Droplets, Wind, Monitor, CookingPot, Coffee,
   Star, Shield, ArrowRight, Zap,
 } from "lucide-react";
 import Image from "next/image";
@@ -12,18 +12,19 @@ import { useLanguage } from "@/lib/i18n-context";
 import { useContent } from "@/lib/content-context";
 import SectionHeader from "@/components/shared/SectionHeader";
 import StarRating from "@/components/shared/StarRating";
+import VideoCardButton from "@/components/shared/VideoCardButton";
 import { FEATURED_PRODUCTS, PRODUCT_CATEGORIES, CATEGORY_COLOR_MAP, DEFAULT_CATEGORY_COLOR, type Product } from "@/lib/constants";
 import { productSocialProof } from "@/lib/social-proof";
 import { cn } from "@/lib/utils";
 
 const ICONS: Record<string, React.ElementType> = {
-  LayoutGrid, Square, Loader, Droplets, Wind, Monitor, Coffee,
+  LayoutGrid, Square, Loader, Droplets, Wind, Monitor, CookingPot, Coffee,
   Refrigerator: Square, WashingMachine: Loader, Star, Shield, Zap,
 };
 
 function ProductCard({
   id, brand, model, originalPrice, salePrice, savings, grade,
-  warranty, colorFrom, colorTo, icon, imageUrl, sold,
+  warranty, colorFrom, colorTo, icon, imageUrl, videoUrl, sold,
 }: (typeof FEATURED_PRODUCTS)[0]) {
   const Icon = ICONS[icon] ?? Square;
   const proof = productSocialProof(id);
@@ -33,26 +34,28 @@ function ProductCard({
   const hasRealSaving = originalPrice > salePrice && savings > 0;
 
   return (
+    <Link
+      href={`/products/${id}`}
+      aria-label={`View ${brand} ${model}`}
+      className="block focus-ring rounded-2xl"
+    >
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-      className="group relative bg-white rounded-2xl border border-navy-100/70 overflow-hidden hover:border-navy-200 hover:shadow-card-lift transition-all duration-400 cursor-default"
+      className="group relative bg-white rounded-2xl border border-navy-100/70 overflow-hidden hover:border-navy-200 hover:shadow-card-lift transition-all duration-400 cursor-pointer"
     >
-      {/* Card visual — real photo */}
-      <div className="relative h-44 overflow-hidden">
+      {/* Card visual — full product (object-contain, no crop) on a soft backdrop */}
+      <div className="relative h-44 overflow-hidden bg-navy-50/40">
+        <VideoCardButton videoUrl={videoUrl} title={`${brand} ${model}`} />
         {imageUrl ? (
-          <>
-            <Image
-              src={imageUrl}
-              alt={`${brand} ${model}`}
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-500"
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            />
-            {/* Dark gradient for badge readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10" />
-          </>
+          <Image
+            src={imageUrl}
+            alt={`${brand} ${model}`}
+            fill
+            className="object-contain p-4 group-hover:scale-105 transition-transform duration-500"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          />
         ) : (
           <div
             className="h-full flex items-center justify-center"
@@ -133,15 +136,13 @@ function ProductCard({
         </div>
 
         {/* CTA */}
-        <Link
-          href={`/products/${id}`}
-          className="btn-primary text-xs !px-4 !py-2.5 mt-1 w-full justify-center"
-        >
+        <span className="btn-primary text-xs !px-4 !py-2.5 mt-1 w-full justify-center">
           View Details
           <ArrowRight className="w-3.5 h-3.5" />
-        </Link>
+        </span>
       </div>
     </motion.div>
+    </Link>
   );
 }
 
@@ -183,28 +184,32 @@ export default function ProductGallery({ products }: { products?: Product[] } = 
           className="mb-10"
         />
 
-        {/* Category filters */}
-        <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
-          {categories.map(({ id, label, colorFrom }) => (
-            <button
-              key={id}
-              onClick={() => setActiveCategory(id)}
-              className={cn(
-                "px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-250 focus-ring",
-                activeCategory === id
-                  ? "text-white shadow-md"
-                  : "bg-navy-50 text-navy-400 hover:bg-navy-100 hover:text-navy-700 border border-navy-100"
-              )}
-              style={
-                activeCategory === id
-                  ? { background: `linear-gradient(135deg, ${colorFrom}, ${colorFrom}CC)` }
-                  : {}
-              }
-            >
-              {label}
-            </button>
-          ))}
-        </div>
+        {/* Category filters — only meaningful for the full catalogue. On the
+            homepage we show a small featured set, so the tabs are hidden and
+            "View all" (below) links to the filterable /products page. */}
+        {__products.length > 12 && (
+          <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
+            {categories.map(({ id, label, colorFrom }) => (
+              <button
+                key={id}
+                onClick={() => setActiveCategory(id)}
+                className={cn(
+                  "px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-250 focus-ring",
+                  activeCategory === id
+                    ? "text-white shadow-md"
+                    : "bg-navy-50 text-navy-400 hover:bg-navy-100 hover:text-navy-700 border border-navy-100"
+                )}
+                style={
+                  activeCategory === id
+                    ? { background: `linear-gradient(135deg, ${colorFrom}, ${colorFrom}CC)` }
+                    : {}
+                }
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Product grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">

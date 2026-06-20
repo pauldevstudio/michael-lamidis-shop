@@ -151,7 +151,7 @@ const en = {
       "washing-machines": "Washing Machines",
       dishwashers: "Dishwashers",
       "air-conditioners": "Air Conditioners",
-      tvs: "TVs",
+      cookware: "Cookware",
       "small-appliances": "Small Appliances",
     },
   },
@@ -247,7 +247,7 @@ const en = {
       {
         question: "Do you offer delivery and installation?",
         answer:
-          "Yes. We offer professional white-glove delivery and installation. Delivery is complimentary on orders over €200. Installation starts from €40 and includes removal of your old appliance and full setup.",
+          "Yes. We offer professional white-glove delivery and installation. The delivery fee depends on your location and is confirmed at checkout. Installation starts from €40 and includes removal of your old appliance and full setup.",
       },
       {
         question: "How fast can I receive my appliance?",
@@ -381,7 +381,7 @@ const en = {
         ovens: "Ovens",
         dishwashers: "Dishwashers",
         "air-conditioners": "Air Conditioners",
-        tvs: "Smart TVs",
+        cookware: "Cookware",
         "small-appliances": "Small Appliances",
       },
     },
@@ -613,7 +613,7 @@ const gr: typeof en = {
       "washing-machines": "Πλυντήρια",
       dishwashers: "Πλυντήρια Πιάτων",
       "air-conditioners": "Κλιματιστικά",
-      tvs: "Τηλεοράσεις",
+      cookware: "Μαγειρικά Σκεύη",
       "small-appliances": "Μικρές Συσκευές",
     },
   },
@@ -709,7 +709,7 @@ const gr: typeof en = {
       {
         question: "Προσφέρετε παράδοση και εγκατάσταση;",
         answer:
-          "Ναι. Δωρεάν παράδοση σε παραγγελίες άνω €200. Εγκατάσταση από €40, με αφαίρεση παλιάς συσκευής και πλήρη ρύθμιση.",
+          "Ναι. Το κόστος παράδοσης εξαρτάται από την περιοχή σας και επιβεβαιώνεται κατά την ολοκλήρωση της παραγγελίας. Εγκατάσταση από €40, με αφαίρεση παλιάς συσκευής και πλήρη ρύθμιση.",
       },
       {
         question: "Πόσο γρήγορα παραλαμβάνω τη συσκευή μου;",
@@ -843,7 +843,7 @@ const gr: typeof en = {
         ovens: "Φούρνοι",
         dishwashers: "Πλυντήρια Πιάτων",
         "air-conditioners": "Κλιματιστικά",
-        tvs: "Smart Τηλεοράσεις",
+        cookware: "Μαγειρικά Σκεύη",
         "small-appliances": "Μικρές Συσκευές",
       },
     },

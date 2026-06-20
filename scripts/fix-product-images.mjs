@@ -25,7 +25,7 @@ const BY_CATEGORY = {
   "dishwashers":        "https://images.pexels.com/photos/8082218/pexels-photo-8082218.jpeg?auto=compress&cs=tinysrgb&w=600&h=360&fit=crop",
   "freezers":           "https://images.pexels.com/photos/9462256/pexels-photo-9462256.jpeg?auto=compress&cs=tinysrgb&w=600&h=360&fit=crop",
   "air-conditioners":   "https://images.pexels.com/photos/8082222/pexels-photo-8082222.jpeg?auto=compress&cs=tinysrgb&w=600&h=360&fit=crop",
-  "tvs":                "https://images.pexels.com/photos/7587735/pexels-photo-7587735.jpeg?auto=compress&cs=tinysrgb&w=600&h=360&fit=crop",
+  "cookware":           "https://images.pexels.com/photos/6996085/pexels-photo-6996085.jpeg?auto=compress&cs=tinysrgb&w=600&h=360&fit=crop",
   "small-appliances":   "https://images.pexels.com/photos/4112723/pexels-photo-4112723.jpeg?auto=compress&cs=tinysrgb&w=600&h=360&fit=crop",
   "mattresses":         "https://images.pexels.com/photos/1454806/pexels-photo-1454806.jpeg?auto=compress&cs=tinysrgb&w=600&h=360&fit=crop",
   "furniture":          "https://images.pexels.com/photos/447592/pexels-photo-447592.jpeg?auto=compress&cs=tinysrgb&w=600&h=360&fit=crop",

@@ -41,6 +41,7 @@ function toPayloadData(p: Partial<Product>) {
     colorTo:       p.colorTo ?? "#7FAEDB",
     imageUrl:      primary,
     gallery:       images.map((url) => ({ url })),
+    videoUrl:      p.videoUrl ?? "",
     sold:          Boolean(p.sold),
     description:   p.description ?? "",
     specs:         Array.isArray(p.specs) ? p.specs : [],
@@ -79,6 +80,7 @@ function fromPayloadDoc(d: Record<string, unknown>): Product {
     colorTo:       (d.colorTo as string)       ?? "#7FAEDB",
     imageUrl,
     images,
+    videoUrl:      (d.videoUrl as string) ?? "",
     sold:          Boolean(d.sold),
     description:   (d.description as string)   ?? "",
     specs:         Array.isArray(d.specs)

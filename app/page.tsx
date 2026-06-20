@@ -12,25 +12,26 @@ import LeadCapture from "@/components/sections/LeadCapture";
 import ContactSection from "@/components/sections/ContactSection";
 import CategoryStrip from "@/components/sections/CategoryStrip";
 import { ContentProvider } from "@/lib/content-context";
-import { getSiteContent, getPublicProducts } from "@/lib/site-content";
+import { getSiteContent, getFeaturedProducts } from "@/lib/site-content";
 import { SITE_URL } from "@/lib/constants";
 
-// Always render fresh so admin product edits show on /  without
-// waiting for revalidate or relying on build-time Payload init
-// (PAYLOAD_SECRET isn't always available during prerender on Vercel).
-export const dynamic = "force-dynamic";
+// ISR: serve cached HTML from the edge (TTFB ~0.2s) and refresh every 5 min.
+// Admin content/product saves already call revalidatePath("/", "layout"), so
+// edits appear immediately instead of waiting for the interval — no need for
+// force-dynamic, which previously re-rendered against MongoDB on every visit.
+export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "Michael Lamidis | Premium Open Box Appliances Cyprus",
   description:
-    "Certified open box appliances at 30–70% off retail. Samsung, LG, Bosch, Miele & more. Free delivery, 12-month warranty. Limassol, Cyprus.",
+    "Certified open box appliances at 30–70% off retail. Samsung, LG, Bosch, Miele & more. Island-wide delivery, 12-month warranty. Limassol, Cyprus.",
   alternates: { canonical: SITE_URL },
 };
 
 export default async function HomePage() {
   const [content, products] = await Promise.all([
     getSiteContent(),
-    getPublicProducts(),
+    getFeaturedProducts(8),
   ]);
   return (
     <ContentProvider content={content}>

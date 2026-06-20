@@ -4,6 +4,7 @@ import Footer from "@/components/layout/Footer";
 import ScrollProgress from "@/components/shared/ScrollProgress";
 import ProductsContent from "./ProductsContent";
 import { getPublicProducts } from "@/lib/site-content";
+import { SITE_URL } from "@/lib/constants";
 
 // Cache the rendered HTML at the edge. force-static + revalidate makes
 // Vercel actually send s-maxage=N instead of no-cache (Mongoose isn't a
@@ -17,6 +18,7 @@ export const metadata: Metadata = {
   title: "Products — Michael Lamidis | Certified Open Box Appliances",
   description:
     "Browse our full inventory of certified open box appliances. Refrigerators, washing machines, ovens, dishwashers, TVs and more — 30–70% off retail with 12-month warranty.",
+  alternates: { canonical: `${SITE_URL}/products` },
 };
 
 export default async function ProductsPage() {
