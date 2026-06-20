@@ -543,7 +543,7 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
       </section>
 
       {/* ── Category + Search + Sort bar (sticky) ─────────── */}
-      <div className="sticky top-14 lg:top-12 z-30 bg-white/95 backdrop-blur-xl border-b border-navy-100/60 shadow-sm">
+      <div className="lg:sticky lg:top-12 z-30 bg-white/95 backdrop-blur-xl border-b border-navy-100/60 shadow-sm">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-3 flex flex-col gap-3">
 
           {/* Categories — tap-to-open dropdown on mobile, wrapping pills on desktop */}
