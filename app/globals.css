@@ -30,6 +30,7 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 5rem;
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -38,7 +39,7 @@ html {
 body {
   background-color: var(--off-white);
   color: var(--navy-950);
-  overflow-x: hidden;
+  overflow-x: clip;
   /* Premium type rendering: enable kerning, common + contextual ligatures */
   font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
   font-kerning: normal;

@@ -21,7 +21,7 @@ const en = {
     subtitle:
       "Cookware, mattresses, kitchen appliances and bedding — sourced direct, priced fair, delivered across Cyprus. Visit our Limassol showroom or browse online.",
     cta1: "Shop Now",
-    cta2: "Visit Showroom",
+    cta2: "View Our Showroom",
     cta3: "Visit Our Showroom",
     scrollHint: "Scroll",
     trustItems: [
@@ -487,7 +487,7 @@ const gr: typeof en = {
     subtitle:
       "Μαγειρικά σκεύη, στρώματα, μικρές συσκευές και κλινοσκεπάσματα — απευθείας από τον προμηθευτή, σε δίκαιες τιμές, με παράδοση σε όλη την Κύπρο. Επισκεφθείτε το showroom μας στη Λεμεσό ή περιηγηθείτε online.",
     cta1: "Αγοράστε Τώρα",
-    cta2: "Επισκεφθείτε το Showroom",
+    cta2: "Δείτε το Showroom μας",
     cta3: "Επισκεφθείτε το Showroom",
     scrollHint: "Κύλιση",
     trustItems: [
