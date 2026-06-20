@@ -1,10 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  ChevronDown, ShieldCheck, Award, Truck, ArrowRight, MapPin,
+  ChevronDown, ShieldCheck, Award, Truck, ArrowRight, MapPin, Play,
 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n-context";
 import { useContent } from "@/lib/content-context";
@@ -14,6 +15,7 @@ import {
   HERO_WASHER_IMAGE,
   HERO_OVEN_IMAGE,
 } from "@/lib/constants";
+import ShowroomVideoModal from "@/components/shared/ShowroomVideoModal";
 
 /* ── Stat pill ─────────────────────────────────────────── */
 function StatPill({ value, label }: { value: string; label: string }) {
@@ -98,6 +100,7 @@ function FloatCard({
 /* ═══════════════════════════════════════════════════════ */
 export default function Hero() {
   const { t, pick, lang } = useLanguage();
+  const [showroomOpen, setShowroomOpen] = useState(false);
   // CMS-driven hero content (Payload home-hero global), but Greek prefers the i18n strings.
   const __content = useContent();
   const __h = __content?.hero;
@@ -227,10 +230,18 @@ export default function Hero() {
                   {__cms.primaryCtaLabel ?? t.hero.cta1}
                   <ArrowRight className="w-4 h-4" />
                 </Link>
-                <Link href={__cms.secondaryCtaHref} className="btn-ghost-white text-sm sm:text-base !px-7 !py-3.5 w-full sm:w-auto justify-center">
-                  {__cms.secondaryCtaLabel ?? t.hero.cta2}
-                </Link>
+                <button
+                  type="button"
+                  onClick={() => setShowroomOpen(true)}
+                  className="btn-ghost-white text-sm sm:text-base !px-7 !py-3.5 w-full sm:w-auto justify-center"
+                >
+                  <Play className="w-4 h-4" />
+                  View Our Showroom
+                </button>
               </motion.div>
+
+              {/* Showroom video modal */}
+              <ShowroomVideoModal open={showroomOpen} onClose={() => setShowroomOpen(false)} src="/showroom.mp4" />
 
               {/* Trust micro-row */}
               <motion.div

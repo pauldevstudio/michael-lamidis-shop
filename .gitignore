@@ -1,3 +1,6 @@
+# Large raw video sources (root-level). Web-optimized copies live in public/.
+/*.mp4
+
 # Dependencies
 /node_modules
 /.pnp
