@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight, Shield, Zap, ChevronDown,
-  LayoutGrid, Package, ShoppingCart, Check, Award, Percent, Truck,
+  LayoutGrid, Package, ShoppingCart, Check, Award, Percent, Truck, X,
 } from "lucide-react";
 import AnimatedSection from "@/components/shared/AnimatedSection";
 import StarRating from "@/components/shared/StarRating";
@@ -308,12 +308,17 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
 
   const activeCat = FILTERS.find((f) => f.id === activeCategory) ?? FILTERS[0];
 
-  // Close the category dropdown on Escape.
+  // Close the category sheet on Escape + lock body scroll while it's open.
   useEffect(() => {
     if (!openMenu) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpenMenu(null); };
     document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+    };
   }, [openMenu]);
 
   // Category only; best-deals ordering by default.
@@ -405,49 +410,23 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
       <div className="lg:sticky lg:top-12 z-30 bg-white/95 backdrop-blur-xl border-b border-navy-100/60 shadow-sm">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-3">
 
-          {/* Mobile: tap-to-open category dropdown */}
-          <div className="lg:hidden relative">
-            <button
-              type="button"
-              onClick={() => setOpenMenu(openMenu === "cats" ? null : "cats")}
-              aria-haspopup="true"
-              aria-expanded={openMenu === "cats"}
-              className="w-full flex items-center justify-between gap-2 px-4 py-3 rounded-xl border border-navy-200 bg-white text-navy-800 text-sm font-semibold focus-ring"
-            >
-              <span className="flex items-center gap-2 min-w-0">
-                <LayoutGrid className="w-4 h-4 text-navy-400 shrink-0" />
-                <span className="truncate">{activeCat?.label}</span>
-                <span className="shrink-0 text-[10px] font-bold leading-none px-1.5 py-0.5 rounded-full bg-navy-100 text-navy-500 tnum">
-                  {activeCat?.count}
-                </span>
+          {/* Mobile: category trigger → bottom sheet */}
+          <button
+            type="button"
+            onClick={() => setOpenMenu("cats")}
+            aria-haspopup="dialog"
+            aria-expanded={openMenu === "cats"}
+            className="lg:hidden w-full flex items-center justify-between gap-2 px-4 py-3 rounded-xl border border-navy-200 bg-white text-navy-800 text-sm font-semibold focus-ring"
+          >
+            <span className="flex items-center gap-2 min-w-0">
+              <LayoutGrid className="w-4 h-4 text-navy-400 shrink-0" />
+              <span className="truncate">{activeCat?.label}</span>
+              <span className="shrink-0 text-[10px] font-bold leading-none px-1.5 py-0.5 rounded-full bg-navy-100 text-navy-500 tnum">
+                {activeCat?.count}
               </span>
-              <ChevronDown className={cn("w-4 h-4 text-navy-400 transition-transform shrink-0", openMenu === "cats" && "rotate-180")} />
-            </button>
-            <AnimatePresence>
-              {openMenu === "cats" && (
-                <motion.div
-                  initial={{ opacity: 0, y: -6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -6 }}
-                  transition={{ duration: 0.15 }}
-                  className="absolute left-0 right-0 top-full mt-2 z-50 bg-white border border-navy-100 rounded-xl shadow-card-lift p-2 max-h-[70vh] overflow-y-auto grid grid-cols-2 gap-1.5"
-                >
-                  {FILTERS.map(({ id, label, count }) => (
-                    <CategoryButton
-                      key={id}
-                      id={id}
-                      label={label}
-                      count={count}
-                      isActive={activeCategory === id}
-                      empty={id !== "all" && count === 0}
-                      onSelect={(cid) => { setActiveCategory(cid); setOpenMenu(null); }}
-                      variant="row"
-                    />
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+            </span>
+            <ChevronDown className={cn("w-4 h-4 text-navy-400 transition-transform shrink-0", openMenu === "cats" && "rotate-180")} />
+          </button>
 
           {/* Desktop: wrapping category pills */}
           <div className="hidden lg:flex flex-wrap gap-2">
@@ -465,11 +444,61 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
             ))}
           </div>
 
-          {openMenu && (
-            <div className="fixed inset-0 z-40" onClick={() => setOpenMenu(null)} aria-hidden="true" />
-          )}
         </div>
       </div>
+
+      {/* ── Mobile category bottom sheet (always fully visible) ── */}
+      <AnimatePresence>
+        {openMenu === "cats" && (
+          <div className="lg:hidden">
+            <motion.div
+              className="fixed inset-0 z-[10000] bg-black/50"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => setOpenMenu(null)}
+              aria-hidden="true"
+            />
+            <motion.div
+              className="fixed bottom-0 left-0 right-0 z-[10001] bg-white rounded-t-2xl shadow-2xl flex flex-col max-h-[80vh]"
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "tween", duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Choose a category"
+            >
+              <div className="flex items-center justify-between px-4 py-3 border-b border-navy-100">
+                <span className="font-bold text-navy-900">Categories</span>
+                <button
+                  type="button"
+                  onClick={() => setOpenMenu(null)}
+                  aria-label="Close"
+                  className="w-8 h-8 flex items-center justify-center rounded-full text-navy-400 hover:bg-navy-50 focus-ring"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="overflow-y-auto p-3 grid grid-cols-2 gap-2">
+                {FILTERS.map(({ id, label, count }) => (
+                  <CategoryButton
+                    key={id}
+                    id={id}
+                    label={label}
+                    count={count}
+                    isActive={activeCategory === id}
+                    empty={id !== "all" && count === 0}
+                    onSelect={(cid) => { setActiveCategory(cid); setOpenMenu(null); }}
+                    variant="row"
+                  />
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* ── Trust strip ──────────────────────────────────── */}
       <div className="bg-navy-50/50 border-b border-navy-100/60">

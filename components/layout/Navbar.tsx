@@ -158,7 +158,7 @@ export default function Navbar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-40 lg:hidden bg-navy-950/98 backdrop-blur-xl pt-24 px-6 overflow-y-auto"
+            className="fixed inset-0 z-40 lg:hidden bg-navy-950 pt-24 px-6 overflow-y-auto"
           >
             <div className="flex flex-col gap-1">
               {__navItems.map((link) => {
