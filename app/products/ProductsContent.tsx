@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight, Shield, Zap, ChevronDown,
-  LayoutGrid, Package, ShoppingCart, Check, Award, Percent, Truck, X,
+  LayoutGrid, Package, ShoppingCart, Check, X,
 } from "lucide-react";
 import AnimatedSection from "@/components/shared/AnimatedSection";
 import StarRating from "@/components/shared/StarRating";
@@ -499,26 +499,6 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
           </div>
         )}
       </AnimatePresence>
-
-      {/* ── Trust strip ──────────────────────────────────── */}
-      <div className="bg-navy-50/50 border-b border-navy-100/60">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-3">
-          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-            {[
-              { icon: Package, text: "500+ Products In Stock" },
-              { icon: Award,   text: "50+ Premium Brands" },
-              { icon: Percent, text: "Up to 70% Off Retail" },
-              { icon: Shield,  text: "6-Month Warranty" },
-              { icon: Truck,   text: "Fast Cyprus Delivery" },
-            ].map(({ icon: Icon, text }) => (
-              <div key={text} className="flex items-center gap-2 text-navy-600 text-[12.5px] font-semibold">
-                <Icon className="w-4 h-4 text-gold-500 shrink-0" />
-                {text}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
 
       {/* ── Product grid ─────────────────────────────────── */}
       <section className="bg-white section-py">
