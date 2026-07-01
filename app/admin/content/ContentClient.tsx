@@ -5,7 +5,7 @@ import { Save, RefreshCw, CheckCircle, AlertCircle, Plus, X, Upload, Loader2 } f
 import AdminHeader from "@/components/admin/AdminHeader";
 import type { SiteContent } from "@/lib/site-content";
 
-type Tab = "hero" | "about" | "stats";
+type Tab = "hero" | "about" | "stats" | "announcement";
 type Toast = { type: "success" | "error"; msg: string } | null;
 
 export default function ContentClient() {
@@ -70,6 +70,10 @@ export default function ContentClient() {
     if (!content) return;
     setContent({ ...content, stats: { ...content.stats, [key]: val } });
   };
+  const setAnnouncement = (key: keyof SiteContent["announcement"], val: string | boolean) => {
+    if (!content) return;
+    setContent({ ...content, announcement: { ...content.announcement, [key]: val } });
+  };
   const setStoryParagraph = (idx: number, val: string) => {
     if (!content) return;
     const story = [...content.about.story]; story[idx] = val; setAbout("story", story);
@@ -78,7 +82,7 @@ export default function ContentClient() {
   const removeStoryParagraph = (idx: number) => { if (!content) return; setAbout("story", content.about.story.filter((_, i) => i !== idx)); };
 
   const TABS: { key: Tab; label: string }[] = [
-    { key: "hero", label: "Hero Section" }, { key: "about", label: "About Section" }, { key: "stats", label: "Statistics" },
+    { key: "hero", label: "Hero Section" }, { key: "about", label: "About Section" }, { key: "stats", label: "Statistics" }, { key: "announcement", label: "Announcement Bar" },
   ];
 
   if (loading) return (
@@ -100,7 +104,7 @@ export default function ContentClient() {
           {toast.msg}
         </div>
       )}
-      <AdminHeader title="Content" subtitle="Edit hero, about and statistics sections"
+      <AdminHeader title="Content" subtitle="Edit hero, about, statistics & the announcement bar"
         actions={
           <button onClick={save} disabled={saving} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-bold transition-all disabled:opacity-60"
             style={{ background: "linear-gradient(135deg, #3A5F8A, #5B82A8)", boxShadow: "0 4px 16px rgba(58,95,138,0.3)" }}>
@@ -272,6 +276,74 @@ export default function ContentClient() {
                     </div>
                   );
                 })}
+              </div>
+            </section>
+          )}
+
+          {tab === "announcement" && (
+            <section className="bg-slate-900 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+              <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-slate-100 font-bold text-base">Announcement Bar</h2>
+                  <p className="text-slate-500 text-sm">The thin promo strip above the navigation, shown on every page</p>
+                </div>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={content.announcement.enabled}
+                  aria-label="Show or hide the announcement bar"
+                  onClick={() => setAnnouncement("enabled", !content.announcement.enabled)}
+                  className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${content.announcement.enabled ? "bg-emerald-500" : "bg-slate-600"}`}
+                >
+                  <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${content.announcement.enabled ? "translate-x-6" : "translate-x-1"}`} />
+                </button>
+              </div>
+              <div className="p-6 space-y-5">
+                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${content.announcement.enabled ? "bg-emerald-500/10 text-emerald-400" : "bg-slate-700/60 text-slate-400"}`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${content.announcement.enabled ? "bg-emerald-400" : "bg-slate-400"}`} />
+                  {content.announcement.enabled ? "Visible on the site" : "Hidden from visitors"}
+                </span>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Message</label>
+                  <textarea value={content.announcement.message} onChange={(e) => setAnnouncement("message", e.target.value)} rows={2}
+                    placeholder="Spring Sale — Up to 70% off premium open box appliances. Limited stock!"
+                    className="border border-slate-700 bg-slate-800 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 resize-none" />
+                </div>
+
+                <div className="grid grid-cols-2 gap-5">
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Button Label</label>
+                    <input value={content.announcement.ctaLabel} onChange={(e) => setAnnouncement("ctaLabel", e.target.value)}
+                      placeholder="Shop Now"
+                      className="border border-slate-700 bg-slate-800 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Button Link</label>
+                    <input value={content.announcement.ctaHref} onChange={(e) => setAnnouncement("ctaHref", e.target.value)}
+                      placeholder="/products"
+                      className="border border-slate-700 bg-slate-800 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
+                  </div>
+                </div>
+                <p className="text-slate-500 text-xs -mt-2">Leave the button label empty to show the message with no button. The link can be a path like <code className="text-slate-400">/products</code> or a full URL.</p>
+
+                <div className="flex flex-col gap-2">
+                  <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Live Preview</label>
+                  {content.announcement.enabled ? (
+                    <div className="rounded-xl overflow-hidden border border-slate-700">
+                      <div className="flex items-center justify-center gap-3 px-4 py-2.5" style={{ background: "linear-gradient(90deg, #1E48B8 0%, #3D62CC 50%, #1E48B8 100%)" }}>
+                        <span className="text-white text-xs sm:text-sm font-medium text-center leading-snug">{content.announcement.message || "Your announcement message…"}</span>
+                        {content.announcement.ctaLabel && (
+                          <span className="shrink-0 ml-1 px-3 py-1 rounded-full bg-white/20 text-white text-[11px] sm:text-xs font-bold border border-white/30 whitespace-nowrap">{content.announcement.ctaLabel} &rarr;</span>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="rounded-xl border border-dashed border-slate-700 bg-slate-800/50 px-4 py-4 text-center text-slate-500 text-xs">
+                      The bar is turned off — visitors won&rsquo;t see it.
+                    </div>
+                  )}
+                </div>
               </div>
             </section>
           )}
