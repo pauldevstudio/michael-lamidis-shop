@@ -1,29 +1,15 @@
 import type { Metadata } from "next";
-import { headers } from "next/headers";
-import Sidebar from "@/components/admin/Sidebar";
-
-export const dynamic = "force-dynamic";
+import AdminShell from "@/components/admin/AdminShell";
 
 export const metadata: Metadata = {
   title: "Admin | Michael Lamidis",
   robots: { index: false, follow: false },
 };
 
-export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  // The login page draws its own full-screen layout — don't wrap it in the
-  // gray sidebar shell. middleware.ts forwards the pathname via x-pathname.
-  const h = await headers();
-  const pathname = h.get("x-pathname") ?? "";
-  if (pathname.startsWith("/admin/login")) {
-    return <>{children}</>;
-  }
-
-  return (
-    <div className="flex min-h-screen" style={{ background: "#1E293B" }}>
-      <Sidebar />
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {children}
-      </div>
-    </div>
-  );
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  // The sidebar-shell-vs-login decision lives in AdminShell (a client component
+  // using usePathname) — NOT here. A shared server layout is not re-rendered on
+  // client-side navigation, so deciding it here left the dashboard sidebar-less
+  // after signing in until a full reload. See AdminShell for the full rationale.
+  return <AdminShell>{children}</AdminShell>;
 }

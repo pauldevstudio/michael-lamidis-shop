@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-// Forwards the current pathname to server components via the x-pathname header.
-// Also redirects /cms (Payload's built-in admin UI) to /admin (the custom UI).
+// Redirects /cms (Payload's built-in admin UI) to /admin (the custom UI).
+// Also forwards the request pathname via the x-pathname header for any server
+// code that may want it. NOTE: the admin shell now detects the login route
+// client-side (components/admin/AdminShell.tsx via usePathname), so this header
+// is no longer required for the sidebar — kept as a harmless convenience.
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -21,9 +24,10 @@ export function middleware(request: NextRequest) {
 }
 
 // Only run middleware on admin + cms routes:
-// - /admin/*  needs the x-pathname header for admin/layout.tsx's login-page detection
 // - /cms*     gets redirected to /admin
-// Public pages don't need either, and matching them prevents ISR from caching.
+// - /admin/*  x-pathname is set here (informational only; the admin shell detects
+//             the login route client-side via usePathname)
+// Public pages are intentionally excluded so middleware never disables their ISR caching.
 export const config = {
   matcher: ["/admin/:path*", "/admin", "/cms/:path*", "/cms"],
 };
