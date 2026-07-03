@@ -6,6 +6,7 @@ import { CartProvider } from "@/lib/cart-context";
 import { SITE_NAME, SITE_DESCRIPTION, SITE_URL, SITE_PHONE, SITE_EMAIL } from "@/lib/constants";
 import AIChatOnPublic from "@/components/shared/AIChatOnPublic";
 import Analytics from "@/components/shared/Analytics";
+import MetaPixel from "@/components/shared/MetaPixel";
 import AutoTrack from "@/components/shared/AutoTrack";
 import WhatsAppButton from "@/components/shared/WhatsAppButton";
 import { CookieConsentProvider } from "@/lib/cookie-consent";
@@ -110,6 +111,7 @@ export default function RootLayout({
       <body className="font-sans antialiased">
         <CookieConsentProvider>
           <Analytics />
+          <MetaPixel />
           <AutoTrack />
           <LanguageProvider>
             <CartProvider>{children}</CartProvider>

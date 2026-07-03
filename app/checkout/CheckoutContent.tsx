@@ -99,6 +99,18 @@ export default function CheckoutContent() {
         setSubmitting(false);
         return;
       }
+      // Meta Pixel Purchase conversion — fire BEFORE clearCart() so the cart
+      // values are still populated. Only fires if marketing consent already
+      // loaded fbq (guarded); see components/shared/MetaPixel.tsx.
+      if (typeof window !== "undefined" && window.fbq) {
+        window.fbq("track", "Purchase", {
+          value: Number(totalPrice),
+          currency: "EUR",
+          content_type: "product",
+          content_ids: items.map((i) => i.product.id),
+          num_items: totalItems,
+        });
+      }
       clearCart();
       router.replace(`/checkout/confirmation?order=${data.orderId}`);
     } catch {
