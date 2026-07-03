@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import {
   X, Save, RefreshCw, Upload, Loader2, Crop as CropIcon, Film,
+  ChevronLeft, ChevronRight,
 } from "lucide-react";
 import { upload } from "@vercel/blob/client";
 import type { Product } from "@/lib/constants";
@@ -57,6 +58,8 @@ export default function EditProductModal({
   const [dragOver, setDragOver] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [crop, setCrop] = useState<CropTask | null>(null);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [overIndex, setOverIndex] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [vidUploading, setVidUploading] = useState(false);
   const [vidPct, setVidPct] = useState(0);
@@ -161,13 +164,18 @@ export default function EditProductModal({
       return { ...prev, images, imageUrl: images[0] ?? "" };
     });
 
-  const makePrimary = (idx: number) =>
+  // Reorder the gallery: pull the image at `from` and re-insert it at `to`.
+  // images[0] is always the cover, so this also re-picks imageUrl.
+  const moveImage = (from: number, to: number) =>
     setFormData((prev) => {
       const images = [...(prev.images ?? [])];
-      if (idx <= 0 || idx >= images.length) return prev;
-      const [pick] = images.splice(idx, 1);
-      const next = [pick, ...images];
-      return { ...prev, images: next, imageUrl: next[0] ?? "" };
+      if (
+        from < 0 || from >= images.length ||
+        to < 0 || to >= images.length || from === to
+      ) return prev;
+      const [pick] = images.splice(from, 1);
+      images.splice(to, 0, pick);
+      return { ...prev, images, imageUrl: images[0] ?? "" };
     });
 
   const handleSave = async () => {
@@ -325,53 +333,99 @@ export default function EditProductModal({
               <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Product Images</label>
               {(formData.images?.length ?? 0) > 0 && (
                 <span className="text-slate-500 text-[11px] font-medium">
-                  {formData.images!.length} photo{formData.images!.length > 1 ? "s" : ""} · first is the cover
+                  {formData.images!.length} photo{formData.images!.length > 1 ? "s" : ""} · drag to reorder · first is the cover
                 </span>
               )}
             </div>
 
-            {/* Uploaded gallery — hover a non-cover photo to set it as cover */}
+            {/* Uploaded gallery — drag a photo to reorder, or use ◀ ▶.
+                images[0] is the cover. Arrows are the touch/keyboard fallback
+                since HTML5 drag-and-drop does not fire on touchscreens. */}
             {(formData.images?.length ?? 0) > 0 && (
               <div className="grid grid-cols-4 gap-2">
-                {formData.images!.map((url, i) => (
+                {formData.images!.map((url, i) => {
+                  const isCover = i === 0;
+                  const isDragging = dragIndex === i;
+                  const isOver = overIndex === i && dragIndex !== null && dragIndex !== i;
+                  return (
                   <div
                     key={url + i}
-                    className="group relative aspect-square rounded-xl overflow-hidden border border-slate-700 bg-slate-900"
+                    draggable
+                    onDragStart={(e) => {
+                      setDragIndex(i);
+                      e.dataTransfer.effectAllowed = "move";
+                      // Firefox will not start a drag without payload data.
+                      e.dataTransfer.setData("text/plain", String(i));
+                    }}
+                    onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; }}
+                    onDragEnter={() => setOverIndex(i)}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      if (dragIndex !== null) moveImage(dragIndex, i);
+                      setDragIndex(null);
+                      setOverIndex(null);
+                    }}
+                    onDragEnd={() => { setDragIndex(null); setOverIndex(null); }}
+                    className={`group relative aspect-square rounded-xl overflow-hidden border bg-slate-900 cursor-grab active:cursor-grabbing transition-all ${
+                      isOver ? "border-gold-400 ring-2 ring-gold-400/70" : "border-slate-700"
+                    } ${isDragging ? "opacity-40" : ""}`}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={url} alt={`Product photo ${i + 1}`} className="absolute inset-0 w-full h-full object-contain p-1.5" />
-                    {i === 0 ? (
+                    <img src={url} alt={`Product photo ${i + 1}`} draggable={false} className="absolute inset-0 w-full h-full object-contain p-1.5 pointer-events-none select-none" />
+                    {isCover ? (
                       <span className="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-gold-500 text-[9px] font-black text-white tracking-wider shadow">
                         COVER
                       </span>
                     ) : (
-                      <button
-                        type="button"
-                        onClick={() => makePrimary(i)}
-                        className="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-slate-900/85 text-[9px] font-bold text-slate-200 opacity-0 group-hover:opacity-100 hover:bg-slate-900 transition-opacity"
-                      >
-                        Set cover
-                      </button>
+                      <span className="absolute top-1 left-1 w-5 h-5 rounded bg-slate-900/85 text-[10px] font-bold text-slate-200 flex items-center justify-center shadow">
+                        {i + 1}
+                      </span>
                     )}
                     <button
                       type="button"
+                      draggable={false}
                       onClick={() => removeImage(i)}
                       aria-label="Remove image"
-                      className="absolute top-1 right-1 w-5 h-5 rounded-md bg-slate-900/85 flex items-center justify-center text-slate-300 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute top-1 right-1 w-5 h-5 rounded-md bg-slate-900/85 flex items-center justify-center text-slate-300 hover:text-red-400 opacity-0 group-hover:opacity-100 [@media(hover:none)]:opacity-100 transition-opacity"
                     >
                       <X className="w-3 h-3" />
                     </button>
+                    {/* Reorder arrows — work on touch + keyboard where drag can't */}
+                    <div className="absolute bottom-1 left-1 flex items-center gap-0.5 rounded-md bg-slate-900/85 p-0.5 opacity-0 group-hover:opacity-100 [@media(hover:none)]:opacity-100 transition-opacity">
+                      <button
+                        type="button"
+                        draggable={false}
+                        onClick={() => moveImage(i, i - 1)}
+                        disabled={i === 0}
+                        aria-label="Move photo earlier"
+                        className="w-4 h-4 flex items-center justify-center text-slate-300 hover:text-gold-400 disabled:opacity-30 disabled:hover:text-slate-300"
+                      >
+                        <ChevronLeft className="w-3 h-3" />
+                      </button>
+                      <button
+                        type="button"
+                        draggable={false}
+                        onClick={() => moveImage(i, i + 1)}
+                        disabled={i === formData.images!.length - 1}
+                        aria-label="Move photo later"
+                        className="w-4 h-4 flex items-center justify-center text-slate-300 hover:text-gold-400 disabled:opacity-30 disabled:hover:text-slate-300"
+                      >
+                        <ChevronRight className="w-3 h-3" />
+                      </button>
+                    </div>
                     <button
                       type="button"
+                      draggable={false}
                       onClick={() => setCrop({ mode: "replace", url, index: i })}
                       aria-label="Crop image"
-                      title="Crop &amp; resize"
-                      className="absolute bottom-1 right-1 w-5 h-5 rounded-md bg-slate-900/85 flex items-center justify-center text-slate-300 hover:text-gold-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                      title="Crop & resize"
+                      className="absolute bottom-1 right-1 w-5 h-5 rounded-md bg-slate-900/85 flex items-center justify-center text-slate-300 hover:text-gold-400 opacity-0 group-hover:opacity-100 [@media(hover:none)]:opacity-100 transition-opacity"
                     >
                       <CropIcon className="w-3 h-3" />
                     </button>
                   </div>
-                ))}
+                  );
+                })}
               </div>
             )}
 
