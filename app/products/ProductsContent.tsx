@@ -28,6 +28,7 @@ const FILTER_IDS = [
   "cookware",
   "small-appliances",
   "furniture",
+  "garden-furniture",
   "office-equipment",
 ] as const;
 

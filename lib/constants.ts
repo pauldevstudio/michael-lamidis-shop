@@ -39,6 +39,7 @@ export const PRODUCT_CATEGORIES = [
   { id: "freezers",        icon: "Snowflake",  colorFrom: "#0E7490", colorTo: "#22D3EE" },
   { id: "air-conditioners",icon: "Wind",       colorFrom: "#0369A1", colorTo: "#38BDF8" },
   { id: "furniture",       icon: "Sofa",       colorFrom: "#854D0E", colorTo: "#A16207" },
+  { id: "garden-furniture",icon: "Trees",      colorFrom: "#166534", colorTo: "#22C55E" },
   { id: "office-equipment",icon: "Printer",    colorFrom: "#4338CA", colorTo: "#6366F1" },
 ];
 
@@ -55,6 +56,7 @@ export const CATEGORY_COLOR_MAP: Record<string, { colorFrom: string; colorTo: st
   "small-appliances": { colorFrom: "#9D174D", colorTo: "#F472B6" },
   mattresses:         { colorFrom: "#475569", colorTo: "#94A3B8" },
   furniture:          { colorFrom: "#854D0E", colorTo: "#A16207" },
+  "garden-furniture": { colorFrom: "#166534", colorTo: "#22C55E" },
   "office-equipment": { colorFrom: "#4338CA", colorTo: "#6366F1" },
   tools:              { colorFrom: "#991B1B", colorTo: "#DC2626" },
   kitchenware:        { colorFrom: "#65A30D", colorTo: "#84CC16" },
