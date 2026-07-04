@@ -6,7 +6,7 @@ import AdminHeader from "@/components/admin/AdminHeader";
 import type { SiteContent, PromoItem } from "@/lib/site-content";
 import type { Product } from "@/lib/constants";
 
-type Tab = "hero" | "about" | "stats" | "announcement" | "promoPopup";
+type Tab = "hero" | "about" | "stats" | "announcement" | "promoPopup" | "bestDeals";
 type Toast = { type: "success" | "error"; msg: string } | null;
 
 export default function ContentClient() {
@@ -22,6 +22,7 @@ export default function ContentClient() {
   const [itemUploading, setItemUploading] = useState<number | null>(null);
   const [dragItemIdx, setDragItemIdx] = useState<number | null>(null);
   const [overItemIdx, setOverItemIdx] = useState<number | null>(null);
+  const [dealSearch, setDealSearch] = useState("");
 
   const showToast = (type: "success" | "error", msg: string) => { setToast({ type, msg }); setTimeout(() => setToast(null), 4000); };
 
@@ -128,6 +129,13 @@ export default function ContentClient() {
     } catch { showToast("error", "Network error during upload"); }
     finally { setItemUploading(null); }
   };
+  // ── Best Deals (bulk product picks) ─────────────────────────────────
+  const toggleBestDeal = (productId: string) => {
+    if (!content) return;
+    const ids = content.bestDeals.productIds;
+    const next = ids.includes(productId) ? ids.filter((x) => x !== productId) : [...ids, productId];
+    setContent({ ...content, bestDeals: { ...content.bestDeals, productIds: next } });
+  };
   const setStoryParagraph = (idx: number, val: string) => {
     if (!content) return;
     const story = [...content.about.story]; story[idx] = val; setAbout("story", story);
@@ -136,7 +144,7 @@ export default function ContentClient() {
   const removeStoryParagraph = (idx: number) => { if (!content) return; setAbout("story", content.about.story.filter((_, i) => i !== idx)); };
 
   const TABS: { key: Tab; label: string }[] = [
-    { key: "hero", label: "Hero Section" }, { key: "about", label: "About Section" }, { key: "stats", label: "Statistics" }, { key: "announcement", label: "Announcement Bar" }, { key: "promoPopup", label: "Promo Popup" },
+    { key: "hero", label: "Hero Section" }, { key: "about", label: "About Section" }, { key: "stats", label: "Statistics" }, { key: "announcement", label: "Announcement Bar" }, { key: "promoPopup", label: "Promo Popup" }, { key: "bestDeals", label: "Best Deals" },
   ];
 
   if (loading) return (
@@ -573,6 +581,62 @@ export default function ContentClient() {
                     <div className="rounded-xl border border-dashed border-slate-700 bg-slate-800/50 px-4 py-4 text-center text-slate-500 text-xs">
                       The popup is turned off — visitors won&rsquo;t see it.
                     </div>
+                  )}
+                </div>
+              </div>
+            </section>
+          )}
+
+          {tab === "bestDeals" && (
+            <section className="bg-slate-900 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+              <div className="px-6 py-4 border-b border-slate-100">
+                <h2 className="text-slate-100 font-bold text-base">Best Deals</h2>
+                <p className="text-slate-500 text-sm">Bulk-pick products for the &ldquo;Best Deals&rdquo; filter on the Products page</p>
+              </div>
+              <div className="p-6 space-y-4">
+                <div className="rounded-xl border border-slate-700 bg-slate-800/60 px-4 py-3 text-slate-400 text-xs leading-relaxed">
+                  Tick any products to feature under <span className="text-gold-400 font-medium">Best Deals</span> on the Products page — no limit. Your <span className="text-slate-200 font-semibold">Promo Popup</span> items are automatically included on top of these.
+                </div>
+
+                <div className="flex items-center justify-between gap-3">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gold-500/15 text-gold-400 text-xs font-semibold">
+                    {content.bestDeals.productIds.length} selected
+                  </span>
+                  {content.bestDeals.productIds.length > 0 && (
+                    <button type="button" onClick={() => setContent({ ...content, bestDeals: { ...content.bestDeals, productIds: [] } })} className="text-xs text-slate-500 hover:text-red-400 underline">Clear all</button>
+                  )}
+                </div>
+
+                <input
+                  value={dealSearch}
+                  onChange={(e) => setDealSearch(e.target.value)}
+                  placeholder="Search products…"
+                  className="w-full border border-slate-700 bg-slate-800 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400"
+                />
+
+                <div className="max-h-96 overflow-y-auto rounded-xl border border-slate-700 divide-y divide-slate-800">
+                  {products
+                    .filter((p) => `${p.brand} ${p.model}`.toLowerCase().includes(dealSearch.toLowerCase()))
+                    .map((p) => {
+                      const checked = content.bestDeals.productIds.includes(p.id);
+                      return (
+                        <label key={p.id} className={`flex items-center gap-3 px-3 py-2.5 cursor-pointer transition-colors ${checked ? "bg-gold-500/10" : "hover:bg-slate-800/60"}`}>
+                          <input type="checkbox" checked={checked} onChange={() => toggleBestDeal(p.id)} className="w-4 h-4 accent-gold-500 shrink-0" />
+                          <div className="w-9 h-9 rounded-lg bg-white overflow-hidden shrink-0 border border-slate-700">
+                            {p.imageUrl && (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={p.imageUrl} alt="" className="w-full h-full object-contain p-0.5" />
+                            )}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-slate-100 text-sm font-medium truncate">{p.brand} {p.model}</p>
+                            <p className="text-slate-500 text-xs">&euro;{p.salePrice} · Grade {p.grade}</p>
+                          </div>
+                        </label>
+                      );
+                    })}
+                  {products.length === 0 && (
+                    <div className="px-4 py-6 text-center text-slate-500 text-xs">Loading products…</div>
                   )}
                 </div>
               </div>

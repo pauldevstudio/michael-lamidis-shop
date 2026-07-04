@@ -48,9 +48,12 @@ export interface PromoPopupContent {
   message: string;
   ctaLabel: string;
   ctaHref: string;
-  /** Up to 4 curated items shown in the popup + Best Deals section. */
+  /** Up to 4 curated items shown in the popup (and merged into Best Deals). */
   items: PromoItem[];
 }
+/** Best Deals: a bulk product list for the /products "Best Deals" filter.
+ *  The popup's items are merged in on top of these at render time. */
+export interface BestDealsContent { productIds: string[] }
 export interface FeatureItem { icon: string; title: string; description: string }
 export interface FeaturesContent { eyebrow: string; title: string; subtitle: string; items: FeatureItem[] }
 export interface CategoryItem { id: string; label: string }
@@ -76,6 +79,7 @@ export interface SiteContent {
   testimonialsSection: TestimonialsSectionContent;
   announcement: AnnouncementContent;
   promoPopup: PromoPopupContent;
+  bestDeals: BestDealsContent;
   features: FeaturesContent;
   categoryStrip: CategoryStripContent;
   navigation: NavigationContent;
@@ -174,6 +178,7 @@ export const DEFAULT_CONTENT: SiteContent = {
     ctaHref: "/products",
     items: [],
   },
+  bestDeals: { productIds: [] },
   features: {
     eyebrow: "Why Open Box?",
     title: "The Smart Way to Buy Premium Appliances",
@@ -298,6 +303,7 @@ function mergeDefaults(parsed: Partial<SiteContent>): SiteContent {
     testimonialsSection: parsed.testimonialsSection ? { ...DEFAULT_CONTENT.testimonialsSection, ...parsed.testimonialsSection } : DEFAULT_CONTENT.testimonialsSection,
     announcement:        parsed.announcement        ? { ...DEFAULT_CONTENT.announcement,        ...parsed.announcement }        : DEFAULT_CONTENT.announcement,
     promoPopup:          parsed.promoPopup          ? { ...DEFAULT_CONTENT.promoPopup,          ...parsed.promoPopup }          : DEFAULT_CONTENT.promoPopup,
+    bestDeals:           parsed.bestDeals           ? { ...DEFAULT_CONTENT.bestDeals,           ...parsed.bestDeals }           : DEFAULT_CONTENT.bestDeals,
     features:      parsed.features      ? { ...DEFAULT_CONTENT.features,      ...parsed.features }      : DEFAULT_CONTENT.features,
     categoryStrip: parsed.categoryStrip ? { ...DEFAULT_CONTENT.categoryStrip, ...parsed.categoryStrip } : DEFAULT_CONTENT.categoryStrip,
     navigation:     parsed.navigation     ? { ...DEFAULT_CONTENT.navigation,     ...parsed.navigation }     : DEFAULT_CONTENT.navigation,

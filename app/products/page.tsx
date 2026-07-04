@@ -3,8 +3,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ScrollProgress from "@/components/shared/ScrollProgress";
 import ProductsContent from "./ProductsContent";
-import BestDeals from "@/components/sections/BestDeals";
-import { getPublicProducts, getSiteContent, getPromoProducts } from "@/lib/site-content";
+import { getPublicProducts, getSiteContent } from "@/lib/site-content";
 import { SITE_URL } from "@/lib/constants";
 
 // Cache the rendered HTML at the edge. force-static + revalidate makes
@@ -24,7 +23,15 @@ export const metadata: Metadata = {
 
 export default async function ProductsPage() {
   const [products, content] = await Promise.all([getPublicProducts(), getSiteContent()]);
-  const bestDeals = await getPromoProducts(content.promoPopup.items);
+  // Best Deals filter = the popup's curated items (first) + the bulk Best Deals
+  // picks, deduped and limited to products that still exist.
+  const validIds = new Set(products.map((p) => p.id));
+  const bestDealIds = [
+    ...new Set([
+      ...content.promoPopup.items.map((i) => i.productId),
+      ...content.bestDeals.productIds,
+    ]),
+  ].filter((id) => id && validIds.has(id));
   const itemListLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -46,8 +53,7 @@ export default async function ProductsPage() {
       <ScrollProgress />
       <Navbar />
       <main>
-        <BestDeals items={bestDeals} />
-        <ProductsContent products={products} />
+        <ProductsContent products={products} bestDealIds={bestDealIds} />
       </main>
       <Footer />
     </>

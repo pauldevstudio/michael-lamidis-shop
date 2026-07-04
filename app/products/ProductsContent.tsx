@@ -286,7 +286,7 @@ function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
 }
 
 /* ══════════════════════════════════════════════════════ */
-export default function ProductsContent({ products }: { products?: Product[] }) {
+export default function ProductsContent({ products, bestDealIds }: { products?: Product[]; bestDealIds?: string[] }) {
   const { t } = useLanguage();
   const [activeCategory, setActiveCategory] = useState("all");
   const [openMenu, setOpenMenu] = useState<string | null>(null);
@@ -294,17 +294,26 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
   // Server-fetched live products (Payload/Mongo). No static-seed fallback:
   // an empty list renders the empty state below rather than stale ghost
   // products whose IDs 404 when clicked.
-  const __products = products ?? [];
+  const __products = useMemo(() => products ?? [], [products]);
+  // Curated "Best Deals" product ids (from the admin Promo Popup builder),
+  // in the chosen order. Drives an extra filter pill in the category bar.
+  const __bestDealIds = useMemo(() => bestDealIds ?? [], [bestDealIds]);
 
   // Per-category product counts for the badges.
   const countFor = (id: string) =>
     id === "all" ? __products.length : __products.filter((p) => p.category === id).length;
 
-  const FILTERS = FILTER_IDS.map((id) => ({
-    id,
-    label: t.pages.products.filters[id as keyof typeof t.pages.products.filters],
-    count: countFor(id),
-  }));
+  const FILTERS = [
+    // "Best Deals" leads the row whenever items are curated in the admin.
+    ...(__bestDealIds.length > 0
+      ? [{ id: "best-deals", label: "Best Deals", count: __bestDealIds.length }]
+      : []),
+    ...FILTER_IDS.map((id) => ({
+      id,
+      label: t.pages.products.filters[id as keyof typeof t.pages.products.filters],
+      count: countFor(id),
+    })),
+  ];
 
   const activeCat = FILTERS.find((f) => f.id === activeCategory) ?? FILTERS[0];
 
@@ -321,14 +330,20 @@ export default function ProductsContent({ products }: { products?: Product[] }) 
     };
   }, [openMenu]);
 
-  // Category only; best-deals ordering by default.
   const filtered = useMemo(() => {
+    // Best Deals: only the curated products, kept in the admin's order.
+    if (activeCategory === "best-deals") {
+      const order = new Map(__bestDealIds.map((id, i) => [id, i]));
+      return __products
+        .filter((p) => order.has(p.id))
+        .sort((a, b) => (order.get(a.id) ?? 0) - (order.get(b.id) ?? 0));
+    }
     const list =
       activeCategory === "all"
         ? [...__products]
         : __products.filter((p) => p.category === activeCategory);
     return list.sort((a, b) => b.savings - a.savings);
-  }, [activeCategory, __products]);
+  }, [activeCategory, __products, __bestDealIds]);
 
   return (
     <>
