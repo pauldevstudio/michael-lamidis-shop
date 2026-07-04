@@ -10,19 +10,14 @@ import { useContent } from "@/lib/content-context";
 const SEEN_KEY = "ml_promo_popup_seen";
 const SHOW_DELAY_MS = 2500;
 
-/** Local YYYY-M-D key, used to throttle the popup to once per day per visitor. */
-function todayKey(): string {
-  const d = new Date();
-  return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
-}
-
 /**
- * Homepage "Special Offer" promo popup. Showcases the products flagged with the
- * per-product `promo` toggle (fetched server-side and passed in as `items`) and
- * links each straight to its purchase page. Copy + on/off come from the CMS
- * (`promoPopup`, edited at /admin/content). Shows once per day per visitor; add
- * `?promo=1` to the URL to force it (handy for previewing). Portaled to <body>
- * so the homepage's framer-motion transforms don't break `position: fixed`.
+ * Homepage "Special Offer" promo popup. Shows the curated `promoPopup.items`
+ * (fetched server-side and passed in as `items`) and links each straight to its
+ * purchase page. Copy + on/off come from the CMS (`promoPopup`, edited at
+ * /admin/content). Shows once per browser session (so it reappears on the next
+ * visit, not just once a day); add `?promo=1` to the URL to force it any time.
+ * Portaled to <body> so the homepage's framer-motion transforms don't break
+ * `position: fixed`.
  */
 export default function PromoPopup({ items }: { items: Product[] }) {
   const content = useContent();
@@ -33,7 +28,7 @@ export default function PromoPopup({ items }: { items: Product[] }) {
 
   useEffect(() => setMounted(true), []);
 
-  // Show if enabled + has items + not already seen today (unless ?promo=1 forces it).
+  // Show if enabled + has items + not already seen this session (unless ?promo=1).
   useEffect(() => {
     if (!promo?.enabled || items.length === 0) return;
     const force =
@@ -41,17 +36,17 @@ export default function PromoPopup({ items }: { items: Product[] }) {
       new URLSearchParams(window.location.search).has("promo");
     if (!force) {
       try {
-        if (localStorage.getItem(SEEN_KEY) === todayKey()) return;
+        if (sessionStorage.getItem(SEEN_KEY)) return;
       } catch { /* private mode — fall through and show */ }
     }
     const t = setTimeout(() => setOpen(true), force ? 0 : SHOW_DELAY_MS);
     return () => clearTimeout(t);
   }, [promo?.enabled, items.length]);
 
-  // While open: mark seen for the day, lock body scroll, focus close, Esc closes.
+  // While open: mark seen for this session, lock body scroll, focus close, Esc closes.
   useEffect(() => {
     if (!open) return;
-    try { localStorage.setItem(SEEN_KEY, todayKey()); } catch { /* ignore */ }
+    try { sessionStorage.setItem(SEEN_KEY, "1"); } catch { /* ignore */ }
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     closeRef.current?.focus();

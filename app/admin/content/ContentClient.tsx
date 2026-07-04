@@ -34,9 +34,19 @@ export default function ContentClient() {
 
   useEffect(() => { fetchContent(); }, [fetchContent]);
 
-  // Product list for the promo item picker.
+  // Product list for the promo item picker + Best Deals checklist, sorted
+  // A–Z by "brand model" so both selections are easy to scan/navigate.
   useEffect(() => {
-    fetch("/api/admin/products").then((r) => (r.ok ? r.json() : [])).then(setProducts).catch(() => {});
+    fetch("/api/admin/products")
+      .then((r) => (r.ok ? r.json() : []))
+      .then((list: Product[]) =>
+        setProducts(
+          [...list].sort((a, b) =>
+            `${a.brand} ${a.model}`.trim().localeCompare(`${b.brand} ${b.model}`.trim(), undefined, { sensitivity: "base" })
+          )
+        )
+      )
+      .catch(() => {});
   }, []);
 
   const save = async () => {
