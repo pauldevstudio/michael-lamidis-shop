@@ -25,9 +25,12 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     await writeSiteContent(body);
     // Bust the cached getSiteContent + revalidate every page so live
-    // edits show on the public site within seconds of save.
+    // edits show on the public site within seconds of save. /products is
+    // force-static, so revalidate it explicitly (belt-and-suspenders alongside
+    // the layout sweep) — the Best Deals section reads content there.
     revalidateTag(SITE_CONTENT_TAG);
     revalidatePath("/", "layout");
+    revalidatePath("/products");
     return NextResponse.json({ ok: true });
   } catch (err) {
     return NextResponse.json(

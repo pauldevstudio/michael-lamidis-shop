@@ -23,15 +23,10 @@ export const metadata: Metadata = {
 
 export default async function ProductsPage() {
   const [products, content] = await Promise.all([getPublicProducts(), getSiteContent()]);
-  // Best Deals filter = the popup's curated items (first) + the bulk Best Deals
-  // picks, deduped and limited to products that still exist.
+  // Best Deals filter = exactly the products picked in the admin Best Deals tab
+  // (its own list, separate from the popup), limited to products that still exist.
   const validIds = new Set(products.map((p) => p.id));
-  const bestDealIds = [
-    ...new Set([
-      ...content.promoPopup.items.map((i) => i.productId),
-      ...content.bestDeals.productIds,
-    ]),
-  ].filter((id) => id && validIds.has(id));
+  const bestDealIds = content.bestDeals.productIds.filter((id) => id && validIds.has(id));
   const itemListLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",

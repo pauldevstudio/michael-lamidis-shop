@@ -595,7 +595,7 @@ export default function ContentClient() {
               </div>
               <div className="p-6 space-y-4">
                 <div className="rounded-xl border border-slate-700 bg-slate-800/60 px-4 py-3 text-slate-400 text-xs leading-relaxed">
-                  Tick any products to feature under <span className="text-gold-400 font-medium">Best Deals</span> on the Products page — no limit. Your <span className="text-slate-200 font-semibold">Promo Popup</span> items are automatically included on top of these.
+                  Tick any products to feature under <span className="text-gold-400 font-medium">Best Deals</span> on the Products page — no limit. This is the exact list shown by the Best Deals filter (its own list, separate from the Promo Popup).
                 </div>
 
                 <div className="flex items-center justify-between gap-3">
