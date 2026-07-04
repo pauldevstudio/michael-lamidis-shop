@@ -8,15 +8,14 @@ import type { Product } from "@/lib/constants";
 import { useContent } from "@/lib/content-context";
 import { useLanguage } from "@/lib/i18n-context";
 
-const SEEN_KEY = "ml_promo_popup_seen";
 const SHOW_DELAY_MS = 2500;
 
 /**
  * Homepage "Special Offer" promo popup. Shows the curated `promoPopup.items`
  * (fetched server-side and passed in as `items`) and links each straight to its
  * purchase page. Copy + on/off come from the CMS (`promoPopup`, edited at
- * /admin/content). Shows once per browser session (so it reappears on the next
- * visit, not just once a day); add `?promo=1` to the URL to force it any time.
+ * /admin/content). Shows on every homepage visit after a short delay (it's
+ * dismissible via ✕/Esc/backdrop); add `?promo=1` to show it instantly.
  * Portaled to <body> so the homepage's framer-motion transforms don't break
  * `position: fixed`.
  */
@@ -30,25 +29,21 @@ export default function PromoPopup({ items }: { items: Product[] }) {
 
   useEffect(() => setMounted(true), []);
 
-  // Show if enabled + has items + not already seen this session (unless ?promo=1).
+  // Show whenever enabled + has items, after a short delay (?promo=1 = instant).
+  // No throttle: it appears on every homepage visit (dismissible). To limit
+  // repeat displays later, gate this on sessionStorage/localStorage here.
   useEffect(() => {
     if (!promo?.enabled || items.length === 0) return;
     const force =
       typeof window !== "undefined" &&
       new URLSearchParams(window.location.search).has("promo");
-    if (!force) {
-      try {
-        if (sessionStorage.getItem(SEEN_KEY)) return;
-      } catch { /* private mode — fall through and show */ }
-    }
     const t = setTimeout(() => setOpen(true), force ? 0 : SHOW_DELAY_MS);
     return () => clearTimeout(t);
   }, [promo?.enabled, items.length]);
 
-  // While open: mark seen for this session, lock body scroll, focus close, Esc closes.
+  // While open: lock body scroll, focus close, Esc closes.
   useEffect(() => {
     if (!open) return;
-    try { sessionStorage.setItem(SEEN_KEY, "1"); } catch { /* ignore */ }
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     closeRef.current?.focus();
