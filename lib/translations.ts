@@ -40,6 +40,11 @@ const en = {
     message: "🔥 New stock arrived — Cookware, mattresses and small appliances from €7. Limited quantities!",
     cta: "Shop Now",
   },
+  promoPopup: {
+    eyebrow: "Special Offer",
+    cta: "See all deals",
+    shop: "Shop",
+  },
   categoryStrip: {
     eyebrow: "Shop by Category",
     items: [
@@ -377,6 +382,7 @@ const en = {
       ctaEnquiry: "Send an Enquiry",
       ctaAbout: "About Our Store",
       filters: {
+        "best-deals": "Best Deals",
         all: "All Products",
         refrigerators: "Refrigerators",
         "washing-machines": "Washing Machines",
@@ -505,6 +511,11 @@ const gr: typeof en = {
   announcement: {
     message: "🔥 Νέο απόθεμα — Μαγειρικά σκεύη, στρώματα και μικρές συσκευές από €7. Περιορισμένες ποσότητες!",
     cta: "Αγοράστε Τώρα",
+  },
+  promoPopup: {
+    eyebrow: "Ειδική Προσφορά",
+    cta: "Δείτε όλες τις προσφορές",
+    shop: "Αγορά",
   },
   categoryStrip: {
     eyebrow: "Αγορά ανά Κατηγορία",
@@ -843,6 +854,7 @@ const gr: typeof en = {
       ctaEnquiry: "Στείλτε Αίτημα",
       ctaAbout: "Σχετικά με το Κατάστημα",
       filters: {
+        "best-deals": "Καλύτερες Προσφορές",
         all: "Όλα τα Προϊόντα",
         refrigerators: "Ψυγεία",
         "washing-machines": "Πλυντήρια Ρούχων",

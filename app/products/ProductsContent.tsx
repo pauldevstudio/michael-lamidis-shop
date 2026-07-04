@@ -306,7 +306,7 @@ export default function ProductsContent({ products, bestDealIds }: { products?: 
   const FILTERS = [
     // "Best Deals" leads the row whenever items are curated in the admin.
     ...(__bestDealIds.length > 0
-      ? [{ id: "best-deals", label: "Best Deals", count: __bestDealIds.length }]
+      ? [{ id: "best-deals", label: t.pages.products.filters["best-deals"], count: __bestDealIds.length }]
       : []),
     ...FILTER_IDS.map((id) => ({
       id,

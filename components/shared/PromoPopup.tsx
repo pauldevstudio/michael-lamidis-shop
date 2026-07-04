@@ -6,6 +6,7 @@ import Link from "next/link";
 import { X, Sparkles, ArrowRight } from "lucide-react";
 import type { Product } from "@/lib/constants";
 import { useContent } from "@/lib/content-context";
+import { useLanguage } from "@/lib/i18n-context";
 
 const SEEN_KEY = "ml_promo_popup_seen";
 const SHOW_DELAY_MS = 2500;
@@ -22,6 +23,7 @@ const SHOW_DELAY_MS = 2500;
 export default function PromoPopup({ items }: { items: Product[] }) {
   const content = useContent();
   const promo = content?.promoPopup;
+  const { t, pick } = useLanguage();
   const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -88,7 +90,7 @@ export default function PromoPopup({ items }: { items: Product[] }) {
         <div className="px-6 pt-8 pb-5 text-center">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-500/15 border border-gold-400/30 text-gold-400 text-[11px] font-bold uppercase tracking-widest">
             <Sparkles className="w-3.5 h-3.5" />
-            {promo.eyebrow || "Special Offer"}
+            {pick(promo.eyebrow, t.promoPopup.eyebrow)}
           </span>
           <h2 id="promo-popup-title" className="mt-3 text-white font-display font-bold text-2xl sm:text-3xl leading-tight">
             {promo.title || "This Week's Best Deals"}
@@ -115,7 +117,7 @@ export default function PromoPopup({ items }: { items: Product[] }) {
                   className="absolute inset-0 w-full h-full object-contain p-2"
                 />
                 <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded bg-navy-950/80 text-[9px] font-bold text-white tracking-wide">
-                  Grade {p.grade}
+                  {t.pages.products.gradeLabel} {p.grade}
                 </span>
               </div>
               <div className="p-2.5 flex flex-col gap-0.5">
@@ -126,7 +128,7 @@ export default function PromoPopup({ items }: { items: Product[] }) {
                     &euro;{p.salePrice.toLocaleString("en-US")}
                   </span>
                   <span className="text-white/40 group-hover:text-gold-400 text-[10px] font-semibold inline-flex items-center gap-0.5 transition-colors">
-                    Shop <ArrowRight className="w-3 h-3" />
+                    {t.promoPopup.shop} <ArrowRight className="w-3 h-3" />
                   </span>
                 </div>
               </div>
@@ -142,7 +144,7 @@ export default function PromoPopup({ items }: { items: Product[] }) {
             className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-navy-950 text-sm font-bold transition-transform hover:scale-[1.02]"
             style={{ background: "linear-gradient(135deg, #E6B450 0%, #C8881A 100%)" }}
           >
-            {promo.ctaLabel || "See all deals"}
+            {pick(promo.ctaLabel, t.promoPopup.cta)}
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
