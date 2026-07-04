@@ -39,6 +39,8 @@ export interface StatsSectionContent { eyebrow: string; title: string; items: St
 export interface TestimonialItemFull { content: string; name: string; role?: string; location?: string; rating: number }
 export interface TestimonialsSectionContent { eyebrow: string; title: string; subtitle: string; items: TestimonialItemFull[] }
 export interface AnnouncementContent { enabled: boolean; message: string; ctaLabel: string; ctaHref: string }
+/** One curated promo item: a chosen product + an optional custom image. */
+export interface PromoItem { productId: string; imageUrl?: string }
 export interface PromoPopupContent {
   enabled: boolean;
   eyebrow: string;
@@ -46,6 +48,8 @@ export interface PromoPopupContent {
   message: string;
   ctaLabel: string;
   ctaHref: string;
+  /** Up to 4 curated items shown in the popup + Best Deals section. */
+  items: PromoItem[];
 }
 export interface FeatureItem { icon: string; title: string; description: string }
 export interface FeaturesContent { eyebrow: string; title: string; subtitle: string; items: FeatureItem[] }
@@ -168,6 +172,7 @@ export const DEFAULT_CONTENT: SiteContent = {
     message: "Hand-picked open-box appliances at their lowest prices — while stock lasts.",
     ctaLabel: "See all deals",
     ctaHref: "/products",
+    items: [],
   },
   features: {
     eyebrow: "Why Open Box?",
@@ -501,16 +506,21 @@ export async function getFeaturedProducts(limit = 8): Promise<Product[]> {
  * to an unavailable product. The `images` arrays are dropped — the popup only
  * needs the primary `imageUrl` — to keep the homepage RSC payload light.
  */
-export async function getPromoProducts(limit = 6): Promise<Product[]> {
-  // Scan the whole catalogue — a promo flag can be on any product regardless of
-  // its displayOrder, so a capped fetch would miss items ranked further down.
-  // The homepage is ISR-cached (revalidate 300), so this runs at most once per
-  // 5 min per region, not per request.
+export async function getPromoProducts(items: PromoItem[], limit = 4): Promise<Product[]> {
+  const picked = (items ?? []).slice(0, limit);
+  if (picked.length === 0) return [];
   const all = await getPublicProducts(500);
-  return all
-    .filter((p) => p.promo && !p.sold)
-    .slice(0, limit)
-    .map((p) => ({ ...p, images: [] }));
+  const byId = new Map(all.map((p) => [p.id, p]));
+  // Resolve each curated item to its product, in the admin's chosen order.
+  // A custom uploaded image overrides the product's own photo. Items whose
+  // product was deleted are silently dropped.
+  return picked
+    .map((it) => {
+      const p = byId.get(it.productId);
+      if (!p) return null;
+      return { ...p, imageUrl: it.imageUrl || p.imageUrl, images: [] } as Product;
+    })
+    .filter((p): p is Product => p !== null);
 }
 
 export async function writeSiteContent(content: SiteContent): Promise<void> {

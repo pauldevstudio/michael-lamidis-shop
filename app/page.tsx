@@ -30,10 +30,10 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const [content, products, promoItems] = await Promise.all([
-    getSiteContent(),
+  const content = await getSiteContent();
+  const [products, promoItems] = await Promise.all([
     getFeaturedProducts(8),
-    getPromoProducts(),
+    getPromoProducts(content.promoPopup.items),
   ]);
   return (
     <ContentProvider content={content}>

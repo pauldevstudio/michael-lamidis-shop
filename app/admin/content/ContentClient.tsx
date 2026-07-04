@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Save, RefreshCw, CheckCircle, AlertCircle, Plus, X, Upload, Loader2 } from "lucide-react";
+import { Save, RefreshCw, CheckCircle, AlertCircle, Plus, X, Upload, Loader2, GripVertical, ImageIcon } from "lucide-react";
 import AdminHeader from "@/components/admin/AdminHeader";
-import type { SiteContent } from "@/lib/site-content";
+import type { SiteContent, PromoItem } from "@/lib/site-content";
+import type { Product } from "@/lib/constants";
 
 type Tab = "hero" | "about" | "stats" | "announcement" | "promoPopup";
 type Toast = { type: "success" | "error"; msg: string } | null;
@@ -17,6 +18,10 @@ export default function ContentClient() {
   const [uploading, setUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [itemUploading, setItemUploading] = useState<number | null>(null);
+  const [dragItemIdx, setDragItemIdx] = useState<number | null>(null);
+  const [overItemIdx, setOverItemIdx] = useState<number | null>(null);
 
   const showToast = (type: "success" | "error", msg: string) => { setToast({ type, msg }); setTimeout(() => setToast(null), 4000); };
 
@@ -27,6 +32,11 @@ export default function ContentClient() {
   }, []);
 
   useEffect(() => { fetchContent(); }, [fetchContent]);
+
+  // Product list for the promo item picker.
+  useEffect(() => {
+    fetch("/api/admin/products").then((r) => (r.ok ? r.json() : [])).then(setProducts).catch(() => {});
+  }, []);
 
   const save = async () => {
     if (!content) return;
@@ -77,6 +87,46 @@ export default function ContentClient() {
   const setPromo = (key: keyof SiteContent["promoPopup"], val: string | boolean) => {
     if (!content) return;
     setContent({ ...content, promoPopup: { ...content.promoPopup, [key]: val } });
+  };
+  // ── Promo items (up to 4 curated products) ──────────────────────────
+  const productById = (id: string) => products.find((p) => p.id === id);
+  const setPromoItems = (items: PromoItem[]) => {
+    if (!content) return;
+    setContent({ ...content, promoPopup: { ...content.promoPopup, items } });
+  };
+  const addPromoItem = () => {
+    if (!content || content.promoPopup.items.length >= 4) return;
+    setPromoItems([...content.promoPopup.items, { productId: "" }]);
+  };
+  const removePromoItem = (idx: number) => {
+    if (!content) return;
+    setPromoItems(content.promoPopup.items.filter((_, i) => i !== idx));
+  };
+  const updatePromoItem = (idx: number, patch: Partial<PromoItem>) => {
+    if (!content) return;
+    setPromoItems(content.promoPopup.items.map((it, i) => (i === idx ? { ...it, ...patch } : it)));
+  };
+  const movePromoItem = (from: number, to: number) => {
+    if (!content) return;
+    const items = [...content.promoPopup.items];
+    if (from < 0 || from >= items.length || to < 0 || to >= items.length || from === to) return;
+    const [pick] = items.splice(from, 1);
+    items.splice(to, 0, pick);
+    setPromoItems(items);
+  };
+  const uploadPromoItemImage = async (idx: number, file: File) => {
+    if (!file.type.startsWith("image/")) { showToast("error", "Please choose an image file"); return; }
+    if (file.size > 5 * 1024 * 1024) { showToast("error", "Image is too large (max 5 MB)"); return; }
+    setItemUploading(idx);
+    try {
+      const fd = new FormData(); fd.append("file", file);
+      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      if (!res.ok) { showToast("error", "Upload failed"); return; }
+      const data = (await res.json()) as { url: string };
+      updatePromoItem(idx, { imageUrl: data.url });
+      showToast("success", "Image uploaded — Save & Publish to go live");
+    } catch { showToast("error", "Network error during upload"); }
+    finally { setItemUploading(null); }
   };
   const setStoryParagraph = (idx: number, val: string) => {
     if (!content) return;
@@ -377,9 +427,8 @@ export default function ContentClient() {
                 </span>
 
                 <div className="rounded-xl border border-slate-700 bg-slate-800/60 px-4 py-3 text-slate-400 text-xs leading-relaxed">
-                  <span className="text-slate-200 font-semibold">Which products show? </span>
-                  The popup features items marked with the <span className="text-gold-400 font-medium">Special Offer</span> toggle on the{" "}
-                  <a href="/admin/products" className="text-gold-400 underline hover:text-gold-300">Products</a> page. It only appears when at least one product is flagged, and each visitor sees it once per day. Add <code className="text-slate-300">?promo=1</code> to the homepage URL to preview it any time.
+                  <span className="text-slate-200 font-semibold">How it works: </span>
+                  Add up to <span className="text-gold-400 font-medium">4 products</span> below, drag the handle to reorder, and optionally upload a custom image per item. They show in the homepage popup and the Best Deals section on the Products page. Add <code className="text-slate-300">?promo=1</code> to the homepage URL to preview any time.
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -419,6 +468,74 @@ export default function ContentClient() {
                   </div>
                 </div>
 
+                {/* Items builder — up to 4, drag to reorder */}
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Items ({content.promoPopup.items.length}/4)</label>
+                    {content.promoPopup.items.length > 1 && <span className="text-slate-500 text-[11px]">Drag to reorder</span>}
+                  </div>
+
+                  {content.promoPopup.items.length === 0 && (
+                    <div className="rounded-xl border border-dashed border-slate-700 bg-slate-800/40 px-4 py-6 text-center text-slate-500 text-xs">
+                      No items yet — add up to 4 products to feature.
+                    </div>
+                  )}
+
+                  <div className="flex flex-col gap-2">
+                    {content.promoPopup.items.map((item, i) => {
+                      const p = productById(item.productId);
+                      const img = item.imageUrl || p?.imageUrl || "";
+                      const isOver = overItemIdx === i && dragItemIdx !== null && dragItemIdx !== i;
+                      return (
+                        <div
+                          key={i}
+                          draggable
+                          onDragStart={(e) => { setDragItemIdx(i); e.dataTransfer.effectAllowed = "move"; e.dataTransfer.setData("text/plain", String(i)); }}
+                          onDragOver={(e) => e.preventDefault()}
+                          onDragEnter={() => setOverItemIdx(i)}
+                          onDrop={(e) => { e.preventDefault(); if (dragItemIdx !== null) movePromoItem(dragItemIdx, i); setDragItemIdx(null); setOverItemIdx(null); }}
+                          onDragEnd={() => { setDragItemIdx(null); setOverItemIdx(null); }}
+                          className={`flex items-center gap-2.5 rounded-xl border bg-slate-800 p-2.5 transition-colors ${isOver ? "border-gold-400 ring-1 ring-gold-400/60" : "border-slate-700"} ${dragItemIdx === i ? "opacity-50" : ""}`}
+                        >
+                          <span className="cursor-grab active:cursor-grabbing text-slate-500 hover:text-slate-300 shrink-0" title="Drag to reorder"><GripVertical className="w-4 h-4" /></span>
+                          <div className="w-11 h-11 rounded-lg bg-white overflow-hidden shrink-0 border border-slate-700">
+                            {img ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={img} alt="" className="w-full h-full object-contain p-0.5" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-slate-300"><ImageIcon className="w-4 h-4" /></div>
+                            )}
+                          </div>
+                          <select
+                            value={item.productId}
+                            onChange={(e) => updatePromoItem(i, { productId: e.target.value })}
+                            className="flex-1 min-w-0 border border-slate-700 bg-slate-900 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400"
+                          >
+                            <option value="">Select a product…</option>
+                            {products.map((pr) => (
+                              <option key={pr.id} value={pr.id}>{pr.brand} {pr.model} — €{pr.salePrice}</option>
+                            ))}
+                          </select>
+                          <label className="shrink-0 w-9 h-9 rounded-lg border border-slate-700 bg-slate-900 flex items-center justify-center text-slate-400 hover:text-gold-400 hover:border-gold-400 cursor-pointer transition-colors" title="Upload a custom image (optional)">
+                            <input type="file" accept="image/*" className="sr-only" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadPromoItemImage(i, f); e.currentTarget.value = ""; }} />
+                            {itemUploading === i ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                          </label>
+                          {item.imageUrl && (
+                            <button type="button" onClick={() => updatePromoItem(i, { imageUrl: "" })} title="Remove custom image" className="shrink-0 hidden sm:block text-[10px] text-slate-500 hover:text-slate-300 underline">reset</button>
+                          )}
+                          <button type="button" onClick={() => removePromoItem(i)} aria-label="Remove item" className="shrink-0 w-9 h-9 rounded-lg border border-slate-700 bg-slate-900 flex items-center justify-center text-slate-400 hover:text-red-400 hover:border-red-500/40 transition-colors"><X className="w-4 h-4" /></button>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {content.promoPopup.items.length < 4 && (
+                    <button type="button" onClick={addPromoItem} className="mt-1 inline-flex items-center gap-2 self-start px-4 py-2 rounded-xl border border-dashed border-slate-600 text-slate-300 text-sm font-medium hover:border-gold-400 hover:text-gold-400 transition-colors">
+                      <Plus className="w-4 h-4" /> Add item
+                    </button>
+                  )}
+                </div>
+
                 <div className="flex flex-col gap-2">
                   <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Live Preview</label>
                   {content.promoPopup.enabled ? (
@@ -426,10 +543,29 @@ export default function ContentClient() {
                       <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-500/15 border border-gold-400/30 text-gold-400 text-[11px] font-bold uppercase tracking-widest">{content.promoPopup.eyebrow || "Special Offer"}</span>
                       <p className="mt-3 text-white font-display font-bold text-xl">{content.promoPopup.title || "This Week's Best Deals"}</p>
                       {content.promoPopup.message && <p className="mt-2 text-white/55 text-sm max-w-md mx-auto">{content.promoPopup.message}</p>}
-                      <div className="mt-4 grid grid-cols-4 gap-2">
-                        {[0, 1, 2, 3].map((i) => (
-                          <div key={i} className="aspect-square rounded-lg bg-white/[0.04] border border-white/10 flex items-center justify-center text-white/25 text-[9px] font-medium">Product</div>
-                        ))}
+                      <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        {content.promoPopup.items.length === 0
+                          ? [0, 1, 2, 3].map((i) => (
+                              <div key={i} className="aspect-square rounded-lg bg-white/[0.04] border border-white/10 flex items-center justify-center text-white/25 text-[9px] font-medium">Product</div>
+                            ))
+                          : content.promoPopup.items.map((item, i) => {
+                              const p = productById(item.productId);
+                              const img = item.imageUrl || p?.imageUrl || "";
+                              return (
+                                <div key={i} className="rounded-lg bg-white/[0.04] border border-white/10 overflow-hidden">
+                                  <div className="aspect-square bg-white">
+                                    {img && (
+                                      // eslint-disable-next-line @next/next/no-img-element
+                                      <img src={img} alt="" className="w-full h-full object-contain p-1" />
+                                    )}
+                                  </div>
+                                  <div className="p-1.5 text-left">
+                                    <p className="text-white text-[10px] font-medium truncate">{p ? `${p.brand} ${p.model}` : "—"}</p>
+                                    {p && <p className="text-gold-400 text-[10px] font-bold">€{p.salePrice}</p>}
+                                  </div>
+                                </div>
+                              );
+                            })}
                       </div>
                       <span className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-navy-950 text-sm font-bold" style={{ background: "linear-gradient(135deg, #E6B450 0%, #C8881A 100%)" }}>{content.promoPopup.ctaLabel || "See all deals"} &rarr;</span>
                     </div>

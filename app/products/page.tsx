@@ -3,7 +3,8 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ScrollProgress from "@/components/shared/ScrollProgress";
 import ProductsContent from "./ProductsContent";
-import { getPublicProducts } from "@/lib/site-content";
+import BestDeals from "@/components/sections/BestDeals";
+import { getPublicProducts, getSiteContent, getPromoProducts } from "@/lib/site-content";
 import { SITE_URL } from "@/lib/constants";
 
 // Cache the rendered HTML at the edge. force-static + revalidate makes
@@ -22,7 +23,8 @@ export const metadata: Metadata = {
 };
 
 export default async function ProductsPage() {
-  const products = await getPublicProducts();
+  const [products, content] = await Promise.all([getPublicProducts(), getSiteContent()]);
+  const bestDeals = await getPromoProducts(content.promoPopup.items);
   const itemListLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -44,6 +46,7 @@ export default async function ProductsPage() {
       <ScrollProgress />
       <Navbar />
       <main>
+        <BestDeals items={bestDeals} />
         <ProductsContent products={products} />
       </main>
       <Footer />
