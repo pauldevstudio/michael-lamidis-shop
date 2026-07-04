@@ -23,7 +23,7 @@ const CATEGORY_OPTIONS = [
 const EMPTY_PRODUCT: Omit<Product, "id"> = {
   brand: "", model: "", category: "refrigerators", originalPrice: 0, salePrice: 0, savings: 0,
   grade: "A", warranty: 12, icon: "Package", colorFrom: "#3A5F8A", colorTo: "#5B82A8",
-  imageUrl: "", images: [], videoUrl: "", sold: false, description: "", specs: [{ label: "", value: "" }],
+  imageUrl: "", images: [], videoUrl: "", sold: false, promo: false, description: "", specs: [{ label: "", value: "" }],
 };
 
 /** Normalise a product into a gallery array (images[0] is the primary/cover). */
@@ -324,6 +324,34 @@ export default function EditProductModal({
             >
               <span className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white shadow transition-transform ${
                 formData.sold ? "translate-x-5" : ""
+              }`} />
+            </button>
+          </div>
+
+          {/* Special Offer toggle — features the item in the homepage promo popup */}
+          <div className={`flex items-center justify-between rounded-xl border px-4 py-3 transition-colors ${
+            formData.promo ? "border-gold-500/40 bg-gold-500/10" : "border-slate-700 bg-slate-800"
+          }`}>
+            <div>
+              <p className="text-slate-100 text-sm font-semibold">
+                {formData.promo ? "Featured in the Special Offer popup" : "Add to Special Offer"}
+              </p>
+              <p className="text-slate-400 text-xs mt-0.5">
+                Shows this product in the homepage promo popup.
+              </p>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={!!formData.promo}
+              aria-label="Toggle special offer"
+              onClick={() => setFormData((p) => ({ ...p, promo: !p.promo }))}
+              className={`relative w-12 h-7 rounded-full transition-colors shrink-0 ${
+                formData.promo ? "bg-gold-500" : "bg-slate-600"
+              }`}
+            >
+              <span className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white shadow transition-transform ${
+                formData.promo ? "translate-x-5" : ""
               }`} />
             </button>
           </div>

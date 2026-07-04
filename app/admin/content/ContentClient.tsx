@@ -5,7 +5,7 @@ import { Save, RefreshCw, CheckCircle, AlertCircle, Plus, X, Upload, Loader2 } f
 import AdminHeader from "@/components/admin/AdminHeader";
 import type { SiteContent } from "@/lib/site-content";
 
-type Tab = "hero" | "about" | "stats" | "announcement";
+type Tab = "hero" | "about" | "stats" | "announcement" | "promoPopup";
 type Toast = { type: "success" | "error"; msg: string } | null;
 
 export default function ContentClient() {
@@ -74,6 +74,10 @@ export default function ContentClient() {
     if (!content) return;
     setContent({ ...content, announcement: { ...content.announcement, [key]: val } });
   };
+  const setPromo = (key: keyof SiteContent["promoPopup"], val: string | boolean) => {
+    if (!content) return;
+    setContent({ ...content, promoPopup: { ...content.promoPopup, [key]: val } });
+  };
   const setStoryParagraph = (idx: number, val: string) => {
     if (!content) return;
     const story = [...content.about.story]; story[idx] = val; setAbout("story", story);
@@ -82,7 +86,7 @@ export default function ContentClient() {
   const removeStoryParagraph = (idx: number) => { if (!content) return; setAbout("story", content.about.story.filter((_, i) => i !== idx)); };
 
   const TABS: { key: Tab; label: string }[] = [
-    { key: "hero", label: "Hero Section" }, { key: "about", label: "About Section" }, { key: "stats", label: "Statistics" }, { key: "announcement", label: "Announcement Bar" },
+    { key: "hero", label: "Hero Section" }, { key: "about", label: "About Section" }, { key: "stats", label: "Statistics" }, { key: "announcement", label: "Announcement Bar" }, { key: "promoPopup", label: "Promo Popup" },
   ];
 
   if (loading) return (
@@ -115,10 +119,10 @@ export default function ContentClient() {
       />
       <main className="flex-1 overflow-auto p-6">
         <div className="max-w-2xl mx-auto space-y-6">
-          <div className="flex items-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-100 shadow-sm w-fit">
+          <div className="flex items-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-100 shadow-sm w-fit max-w-full overflow-x-auto">
             {TABS.map(({ key, label }) => (
               <button key={key} onClick={() => setTab(key)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${tab === key ? "bg-navy-950 text-white shadow-sm" : "text-slate-500 hover:text-slate-200"}`}>
+                className={`shrink-0 whitespace-nowrap px-4 py-2 rounded-lg text-sm font-medium transition-all ${tab === key ? "bg-navy-950 text-white shadow-sm" : "text-slate-500 hover:text-slate-200"}`}>
                 {label}
               </button>
             ))}
@@ -341,6 +345,97 @@ export default function ContentClient() {
                   ) : (
                     <div className="rounded-xl border border-dashed border-slate-700 bg-slate-800/50 px-4 py-4 text-center text-slate-500 text-xs">
                       The bar is turned off — visitors won&rsquo;t see it.
+                    </div>
+                  )}
+                </div>
+              </div>
+            </section>
+          )}
+
+          {tab === "promoPopup" && (
+            <section className="bg-slate-900 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+              <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-slate-100 font-bold text-base">Promo Popup</h2>
+                  <p className="text-slate-500 text-sm">A homepage popup that showcases your Special Offer products</p>
+                </div>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={content.promoPopup.enabled}
+                  aria-label="Show or hide the promo popup"
+                  onClick={() => setPromo("enabled", !content.promoPopup.enabled)}
+                  className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${content.promoPopup.enabled ? "bg-emerald-500" : "bg-slate-600"}`}
+                >
+                  <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${content.promoPopup.enabled ? "translate-x-6" : "translate-x-1"}`} />
+                </button>
+              </div>
+              <div className="p-6 space-y-5">
+                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${content.promoPopup.enabled ? "bg-emerald-500/10 text-emerald-400" : "bg-slate-700/60 text-slate-400"}`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${content.promoPopup.enabled ? "bg-emerald-400" : "bg-slate-400"}`} />
+                  {content.promoPopup.enabled ? "Shows on the homepage" : "Hidden from visitors"}
+                </span>
+
+                <div className="rounded-xl border border-slate-700 bg-slate-800/60 px-4 py-3 text-slate-400 text-xs leading-relaxed">
+                  <span className="text-slate-200 font-semibold">Which products show? </span>
+                  The popup features items marked with the <span className="text-gold-400 font-medium">Special Offer</span> toggle on the{" "}
+                  <a href="/admin/products" className="text-gold-400 underline hover:text-gold-300">Products</a> page. It only appears when at least one product is flagged, and each visitor sees it once per day. Add <code className="text-slate-300">?promo=1</code> to the homepage URL to preview it any time.
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Eyebrow</label>
+                    <input value={content.promoPopup.eyebrow} onChange={(e) => setPromo("eyebrow", e.target.value)}
+                      placeholder="Special Offer"
+                      className="border border-slate-700 bg-slate-800 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Headline</label>
+                    <input value={content.promoPopup.title} onChange={(e) => setPromo("title", e.target.value)}
+                      placeholder="This Week's Best Deals"
+                      className="border border-slate-700 bg-slate-800 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Message</label>
+                  <textarea value={content.promoPopup.message} onChange={(e) => setPromo("message", e.target.value)} rows={2}
+                    placeholder="Hand-picked open-box appliances at their lowest prices — while stock lasts."
+                    className="border border-slate-700 bg-slate-800 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400 resize-none" />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Button Label</label>
+                    <input value={content.promoPopup.ctaLabel} onChange={(e) => setPromo("ctaLabel", e.target.value)}
+                      placeholder="See all deals"
+                      className="border border-slate-700 bg-slate-800 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Button Link</label>
+                    <input value={content.promoPopup.ctaHref} onChange={(e) => setPromo("ctaHref", e.target.value)}
+                      placeholder="/products"
+                      className="border border-slate-700 bg-slate-800 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400" />
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Live Preview</label>
+                  {content.promoPopup.enabled ? (
+                    <div className="rounded-2xl overflow-hidden border border-slate-700 p-6 text-center" style={{ background: "linear-gradient(180deg, #030813 0%, #071233 100%)" }}>
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-500/15 border border-gold-400/30 text-gold-400 text-[11px] font-bold uppercase tracking-widest">{content.promoPopup.eyebrow || "Special Offer"}</span>
+                      <p className="mt-3 text-white font-display font-bold text-xl">{content.promoPopup.title || "This Week's Best Deals"}</p>
+                      {content.promoPopup.message && <p className="mt-2 text-white/55 text-sm max-w-md mx-auto">{content.promoPopup.message}</p>}
+                      <div className="mt-4 grid grid-cols-4 gap-2">
+                        {[0, 1, 2, 3].map((i) => (
+                          <div key={i} className="aspect-square rounded-lg bg-white/[0.04] border border-white/10 flex items-center justify-center text-white/25 text-[9px] font-medium">Product</div>
+                        ))}
+                      </div>
+                      <span className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-navy-950 text-sm font-bold" style={{ background: "linear-gradient(135deg, #E6B450 0%, #C8881A 100%)" }}>{content.promoPopup.ctaLabel || "See all deals"} &rarr;</span>
+                    </div>
+                  ) : (
+                    <div className="rounded-xl border border-dashed border-slate-700 bg-slate-800/50 px-4 py-4 text-center text-slate-500 text-xs">
+                      The popup is turned off — visitors won&rsquo;t see it.
                     </div>
                   )}
                 </div>

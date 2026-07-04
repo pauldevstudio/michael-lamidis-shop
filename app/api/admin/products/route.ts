@@ -43,6 +43,7 @@ function toPayloadData(p: Partial<Product>) {
     gallery:       images.map((url) => ({ url })),
     videoUrl:      p.videoUrl ?? "",
     sold:          Boolean(p.sold),
+    promo:         Boolean(p.promo),
     description:   p.description ?? "",
     specs:         Array.isArray(p.specs) ? p.specs : [],
   };
@@ -82,6 +83,7 @@ function fromPayloadDoc(d: Record<string, unknown>): Product {
     images,
     videoUrl:      (d.videoUrl as string) ?? "",
     sold:          Boolean(d.sold),
+    promo:         Boolean(d.promo),
     description:   (d.description as string)   ?? "",
     specs:         Array.isArray(d.specs)
       ? (d.specs as Array<{ label?: string; value?: string }>).map((s) => ({

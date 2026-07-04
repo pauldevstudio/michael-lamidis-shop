@@ -11,8 +11,9 @@ import FAQ from "@/components/sections/FAQ";
 import LeadCapture from "@/components/sections/LeadCapture";
 import ContactSection from "@/components/sections/ContactSection";
 import CategoryStrip from "@/components/sections/CategoryStrip";
+import PromoPopup from "@/components/shared/PromoPopup";
 import { ContentProvider } from "@/lib/content-context";
-import { getSiteContent, getFeaturedProducts } from "@/lib/site-content";
+import { getSiteContent, getFeaturedProducts, getPromoProducts } from "@/lib/site-content";
 import { SITE_URL } from "@/lib/constants";
 
 // ISR: serve cached HTML from the edge (TTFB ~0.2s) and refresh every 5 min.
@@ -29,12 +30,14 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const [content, products] = await Promise.all([
+  const [content, products, promoItems] = await Promise.all([
     getSiteContent(),
     getFeaturedProducts(8),
+    getPromoProducts(),
   ]);
   return (
     <ContentProvider content={content}>
+      <PromoPopup items={promoItems} />
       <ScrollProgress />
       <Navbar />
       <main>

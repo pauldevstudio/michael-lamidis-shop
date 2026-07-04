@@ -39,6 +39,14 @@ export interface StatsSectionContent { eyebrow: string; title: string; items: St
 export interface TestimonialItemFull { content: string; name: string; role?: string; location?: string; rating: number }
 export interface TestimonialsSectionContent { eyebrow: string; title: string; subtitle: string; items: TestimonialItemFull[] }
 export interface AnnouncementContent { enabled: boolean; message: string; ctaLabel: string; ctaHref: string }
+export interface PromoPopupContent {
+  enabled: boolean;
+  eyebrow: string;
+  title: string;
+  message: string;
+  ctaLabel: string;
+  ctaHref: string;
+}
 export interface FeatureItem { icon: string; title: string; description: string }
 export interface FeaturesContent { eyebrow: string; title: string; subtitle: string; items: FeatureItem[] }
 export interface CategoryItem { id: string; label: string }
@@ -63,6 +71,7 @@ export interface SiteContent {
   statsSection: StatsSectionContent;
   testimonialsSection: TestimonialsSectionContent;
   announcement: AnnouncementContent;
+  promoPopup: PromoPopupContent;
   features: FeaturesContent;
   categoryStrip: CategoryStripContent;
   navigation: NavigationContent;
@@ -150,6 +159,14 @@ export const DEFAULT_CONTENT: SiteContent = {
     enabled: true,
     message: "Summer Sale - Up to 70% off premium open box appliances. Limited stock!",
     ctaLabel: "Shop Now",
+    ctaHref: "/products",
+  },
+  promoPopup: {
+    enabled: true,
+    eyebrow: "Special Offer",
+    title: "This Week's Best Deals",
+    message: "Hand-picked open-box appliances at their lowest prices — while stock lasts.",
+    ctaLabel: "See all deals",
     ctaHref: "/products",
   },
   features: {
@@ -275,6 +292,7 @@ function mergeDefaults(parsed: Partial<SiteContent>): SiteContent {
     statsSection:        parsed.statsSection        ? { ...DEFAULT_CONTENT.statsSection,        ...parsed.statsSection }        : DEFAULT_CONTENT.statsSection,
     testimonialsSection: parsed.testimonialsSection ? { ...DEFAULT_CONTENT.testimonialsSection, ...parsed.testimonialsSection } : DEFAULT_CONTENT.testimonialsSection,
     announcement:        parsed.announcement        ? { ...DEFAULT_CONTENT.announcement,        ...parsed.announcement }        : DEFAULT_CONTENT.announcement,
+    promoPopup:          parsed.promoPopup          ? { ...DEFAULT_CONTENT.promoPopup,          ...parsed.promoPopup }          : DEFAULT_CONTENT.promoPopup,
     features:      parsed.features      ? { ...DEFAULT_CONTENT.features,      ...parsed.features }      : DEFAULT_CONTENT.features,
     categoryStrip: parsed.categoryStrip ? { ...DEFAULT_CONTENT.categoryStrip, ...parsed.categoryStrip } : DEFAULT_CONTENT.categoryStrip,
     navigation:     parsed.navigation     ? { ...DEFAULT_CONTENT.navigation,     ...parsed.navigation }     : DEFAULT_CONTENT.navigation,
@@ -384,6 +402,7 @@ export async function getPublicProductById(id: string): Promise<Product | null> 
       })(),
       videoUrl:      (d.videoUrl as string) ?? "",
       sold:          Boolean(d.sold),
+      promo:         Boolean(d.promo),
       description:   (d.description as string)   ?? "",
       specs:         Array.isArray(d.specs)
         ? (d.specs as Array<{ label?: string; value?: string }>).map((s) => ({
@@ -444,6 +463,7 @@ export async function getPublicProducts(limit = 500): Promise<Product[]> {
         images:        galleryFromDoc(d),
         videoUrl:      (d.videoUrl as string) ?? "",
         sold:          Boolean(d.sold),
+        promo:         Boolean(d.promo),
         description:   (d.description as string)   ?? "",
         specs:         Array.isArray(d.specs)
           ? (d.specs as Array<{ label?: string; value?: string }>).map((s) => ({
@@ -473,6 +493,24 @@ export async function getFeaturedProducts(limit = 8): Promise<Product[]> {
   // covers rows dropped by the price/model filter inside getPublicProducts.
   const all = await getPublicProducts(Math.max(limit + 8, 24));
   return all.slice(0, limit).map((p) => ({ ...p, images: [] }));
+}
+
+/**
+ * Products flagged for the homepage "Special Offer" popup via the per-product
+ * `promo` toggle in the admin. Sold items are excluded so the popup never links
+ * to an unavailable product. The `images` arrays are dropped — the popup only
+ * needs the primary `imageUrl` — to keep the homepage RSC payload light.
+ */
+export async function getPromoProducts(limit = 6): Promise<Product[]> {
+  // Scan the whole catalogue — a promo flag can be on any product regardless of
+  // its displayOrder, so a capped fetch would miss items ranked further down.
+  // The homepage is ISR-cached (revalidate 300), so this runs at most once per
+  // 5 min per region, not per request.
+  const all = await getPublicProducts(500);
+  return all
+    .filter((p) => p.promo && !p.sold)
+    .slice(0, limit)
+    .map((p) => ({ ...p, images: [] }));
 }
 
 export async function writeSiteContent(content: SiteContent): Promise<void> {

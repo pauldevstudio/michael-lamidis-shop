@@ -107,6 +107,8 @@ export interface Product {
   videoUrl?: string;
   /** When true, the item is sold — storefront hides Add to Cart + shows a Sold badge. */
   sold?: boolean;
+  /** When true, the item is featured in the homepage "Special Offer" promo popup. */
+  promo?: boolean;
   description: string;
   specs: ProductSpec[];
 }

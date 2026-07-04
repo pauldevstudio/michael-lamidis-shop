@@ -147,6 +147,12 @@ export default buildConfig({
           defaultValue: false,
           admin: { description: "Mark as sold — hides Add to Cart and shows a Sold badge on the storefront." },
         },
+        {
+          name: "promo",
+          type: "checkbox",
+          defaultValue: false,
+          admin: { description: "Feature this item in the homepage Special Offer popup." },
+        },
         { name: "icon",        type: "text", defaultValue: "Package" },
         { name: "colorFrom", type: "text", defaultValue: "#3A5F8A", admin: { hidden: true } },
         { name: "colorTo",   type: "text", defaultValue: "#7FAEDB", admin: { hidden: true } },
