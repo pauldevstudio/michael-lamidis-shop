@@ -1,20 +1,22 @@
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ScrollProgress from "@/components/shared/ScrollProgress";
 import Hero from "@/components/sections/Hero";
-import Services from "@/components/sections/Services";
-import ProductGallery from "@/components/sections/ProductGallery";
-import Testimonials from "@/components/sections/Testimonials";
-import Statistics from "@/components/sections/Statistics";
-import FAQ from "@/components/sections/FAQ";
-import LeadCapture from "@/components/sections/LeadCapture";
-import ContactSection from "@/components/sections/ContactSection";
 import CategoryStrip from "@/components/sections/CategoryStrip";
-import PromoPopup from "@/components/shared/PromoPopup";
+import ProductGallery from "@/components/sections/ProductGallery";
 import { ContentProvider } from "@/lib/content-context";
 import { getSiteContent, getFeaturedProducts, getPromoProducts } from "@/lib/site-content";
 import { SITE_URL } from "@/lib/constants";
+
+const Services = dynamic(() => import("@/components/sections/Services"));
+const Testimonials = dynamic(() => import("@/components/sections/Testimonials"));
+const Statistics = dynamic(() => import("@/components/sections/Statistics"));
+const FAQ = dynamic(() => import("@/components/sections/FAQ"));
+const LeadCapture = dynamic(() => import("@/components/sections/LeadCapture"));
+const ContactSection = dynamic(() => import("@/components/sections/ContactSection"));
+const PromoPopup = dynamic(() => import("@/components/shared/PromoPopup"));
 
 // ISR: serve cached HTML from the edge (TTFB ~0.2s) and refresh every 5 min.
 // Admin content/product saves already call revalidatePath("/", "layout"), so

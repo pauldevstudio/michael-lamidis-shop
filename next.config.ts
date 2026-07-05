@@ -5,6 +5,22 @@ const nextConfig: NextConfig = {
   compress: true,
 
   images: {
+    // Serve images directly (no Vercel Image Optimization).
+    //
+    // WHY: the project runs on the Vercel Hobby plan, which meters /_next/image
+    // transformations. With 100+ products × multiple sizes × avif/webp, the
+    // monthly allotment is exhausted, after which Vercel returns HTTP 402
+    // (OPTIMIZED_IMAGE_REQUEST_PAYMENT_REQUIRED) for EVERY <Image> request — so
+    // every product photo renders broken on the live site even though the
+    // underlying Blob URLs are healthy (200). Bypassing the optimizer makes
+    // <Image> emit the raw source URL, which loads straight from Vercel Blob
+    // (and Unsplash/Pexels). Product photos are already cropped/compressed webp
+    // (~55 KB) at upload, so quality/size stay good without the optimizer.
+    //
+    // To RE-ENABLE optimization later: upgrade the Vercel project to Pro (or
+    // add an external loader) and delete this `unoptimized` line. remotePatterns
+    // below stay as the allowlist for that day.
+    unoptimized: true,
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "images.pexels.com" },

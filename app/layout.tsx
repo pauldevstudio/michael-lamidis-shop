@@ -4,14 +4,12 @@ import "./globals.css";
 import { LanguageProvider } from "@/lib/i18n-context";
 import { CartProvider } from "@/lib/cart-context";
 import { SITE_NAME, SITE_DESCRIPTION, SITE_URL, SITE_PHONE, SITE_EMAIL } from "@/lib/constants";
-import AIChatOnPublic from "@/components/shared/AIChatOnPublic";
 import Analytics from "@/components/shared/Analytics";
 import MetaPixel from "@/components/shared/MetaPixel";
 import AutoTrack from "@/components/shared/AutoTrack";
-import WhatsAppButton from "@/components/shared/WhatsAppButton";
 import { CookieConsentProvider } from "@/lib/cookie-consent";
-import CookieBanner from "@/components/shared/CookieBanner";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import LazyWidgets from "@/components/shared/LazyWidgets";
 
 const inter = Inter({
   subsets: ["latin", "greek"],
@@ -115,10 +113,8 @@ export default function RootLayout({
           <AutoTrack />
           <LanguageProvider>
             <CartProvider>{children}</CartProvider>
-            <CookieBanner />
+            <LazyWidgets />
           </LanguageProvider>
-          <AIChatOnPublic />
-          <WhatsAppButton />
           {/* Vercel Speed Insights — cookieless real-user Core Web Vitals (LCP,
               INP, CLS, FCP, TTFB) from actual visitors. Mounted unconditionally
               because it sets no cookies and collects no PII. */}

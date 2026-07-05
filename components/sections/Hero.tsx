@@ -15,7 +15,8 @@ import {
   HERO_WASHER_IMAGE,
   HERO_OVEN_IMAGE,
 } from "@/lib/constants";
-import ShowroomVideoModal from "@/components/shared/ShowroomVideoModal";
+import dynamic from "next/dynamic";
+const ShowroomVideoModal = dynamic(() => import("@/components/shared/ShowroomVideoModal"), { ssr: false });
 
 /* ── Stat pill ─────────────────────────────────────────── */
 function StatPill({ value, label }: { value: string; label: string }) {
@@ -179,26 +180,19 @@ export default function Hero() {
             {/* ── Left: copy block ── */}
             <div className="flex-1 max-w-xl sm:max-w-2xl lg:max-w-[54%]">
 
-              {/* Location badge */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.65, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
-              >
+              {/* Location badge — CSS animation (server-visible for LCP) */}
+              <div className="hero-animate hero-animate-1">
                 <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gold-500/35 bg-gold-500/12 text-gold-400 text-[11px] font-bold tracking-[0.18em] uppercase">
                   <MapPin className="w-3 h-3" />
                   {__cms.locationLabel}
                   <span className="w-1 h-1 rounded-full bg-gold-400/60" />
                   {__cms.badge}
                 </span>
-              </motion.div>
+              </div>
 
-              {/* Headline */}
-              <motion.h1
-                initial={{ opacity: 0, y: 44 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.9, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className="font-display font-black text-white leading-[1.04] tracking-tight mt-5"
+              {/* Headline — plain <h1>, CSS animation so it's visible in SSR */}
+              <h1
+                className="hero-animate hero-animate-2 font-display font-black text-white leading-[1.04] tracking-tight mt-5"
                 style={{
                   fontFamily: "var(--font-jakarta)",
                   fontSize: "clamp(2rem, 5vw, 4.5rem)",
@@ -207,25 +201,15 @@ export default function Hero() {
                 {__cms.titleLine1}
                 <br />
                 <span className="text-gradient-gold">{__cms.titleLine2}</span>
-              </motion.h1>
+              </h1>
 
               {/* Subheadline */}
-              <motion.p
-                initial={{ opacity: 0, y: 28 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.78, delay: 0.68, ease: [0.16, 1, 0.3, 1] }}
-                className="text-white/60 text-base sm:text-[1.1rem] leading-relaxed mt-5 max-w-lg font-medium"
-              >
+              <p className="hero-animate hero-animate-3 text-white/60 text-base sm:text-[1.1rem] leading-relaxed mt-5 max-w-lg font-medium">
                 {__cms.subtitle}
-              </motion.p>
+              </p>
 
               {/* CTAs */}
-              <motion.div
-                initial={{ opacity: 0, y: 26 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.75, delay: 0.84, ease: [0.16, 1, 0.3, 1] }}
-                className="flex flex-wrap items-center gap-3 mt-8"
-              >
+              <div className="hero-animate hero-animate-4 flex flex-wrap items-center gap-3 mt-8">
                 <Link href={__cms.primaryCtaHref} className="btn-gold text-sm sm:text-base !px-7 !py-3.5 w-full sm:w-auto justify-center">
                   {__cms.primaryCtaLabel ?? t.hero.cta1}
                   <ArrowRight className="w-4 h-4" />
@@ -238,25 +222,20 @@ export default function Hero() {
                   <Play className="w-4 h-4" />
                   View Our Showroom
                 </button>
-              </motion.div>
+              </div>
 
-              {/* Showroom video modal */}
-              <ShowroomVideoModal open={showroomOpen} onClose={() => setShowroomOpen(false)} src="/showroom.mp4" />
+              {/* Showroom video modal — lazy loaded */}
+              {showroomOpen && <ShowroomVideoModal open={showroomOpen} onClose={() => setShowroomOpen(false)} src="/showroom.mp4" />}
 
               {/* Trust micro-row */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.7, delay: 1.05 }}
-                className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-7"
-              >
+              <div className="hero-animate hero-animate-5 flex flex-wrap items-center gap-x-6 gap-y-2 mt-7">
                 {[ShieldCheck, Award, Truck].map((Icon, i) => (
                   <div key={i} className="flex items-center gap-1.5">
                     <Icon className="w-3.5 h-3.5 text-gold-400 shrink-0" />
                     <span className="text-white/50 text-xs font-medium">{t.hero.trustItems[i]}</span>
                   </div>
                 ))}
-              </motion.div>
+              </div>
             </div>
 
             {/* ── Right: floating product cards (desktop only) ── */}

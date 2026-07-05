@@ -7,9 +7,11 @@ import {
   Plus, Pencil, Trash2, Search, X, RefreshCw, CheckCircle, AlertCircle, Package,
   Eye, Star, Check, ImagePlus, Loader2, Tag, RotateCcw,
 } from "lucide-react";
+import dynamic from "next/dynamic";
 import AdminHeader from "@/components/admin/AdminHeader";
-import EditProductModal from "./EditProductModal";
 import type { Product } from "@/lib/constants";
+
+const EditProductModal = dynamic(() => import("./EditProductModal"), { ssr: false });
 
 type Toast = { type: "success" | "error"; msg: string } | null;
 
