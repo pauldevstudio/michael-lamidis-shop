@@ -247,8 +247,8 @@ export default function Hero() {
             >
               <FloatCard
                 imgSrc={HERO_FRIDGE_IMAGE}
-                imgAlt="Samsung RS68 premium stainless steel French door refrigerator"
-                brand="Samsung"
+                imgAlt="Premium stainless steel French door refrigerator"
+                brand="Premium"
                 model="RS68A8820WW Refrigerator"
                 original="€1,499"
                 sale="€699"
@@ -260,7 +260,7 @@ export default function Hero() {
               <FloatCard
                 imgSrc={HERO_OVEN_IMAGE}
                 imgAlt="Built-in electric oven with modern cabinetry in luxury kitchen"
-                brand="Siemens"
+                brand="Premium"
                 model="HB578ABS0 Built-in Oven"
                 original="€1,199"
                 sale="€549"
@@ -271,8 +271,8 @@ export default function Hero() {
               />
               <FloatCard
                 imgSrc={HERO_WASHER_IMAGE}
-                imgAlt="Bosch WAX32 front-load washing machine in modern laundry room"
-                brand="Bosch"
+                imgAlt="Premium front-load washing machine in modern laundry room"
+                brand="Premium"
                 model="WAX32EH0GR Washer"
                 original="€899"
                 sale="€449"

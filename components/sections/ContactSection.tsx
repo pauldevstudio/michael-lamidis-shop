@@ -9,6 +9,7 @@ import { useContent } from "@/lib/content-context";
 import SectionHeader from "@/components/shared/SectionHeader";
 import AnimatedSection from "@/components/shared/AnimatedSection";
 import { SITE_ADDRESS, SITE_EMAIL, SITE_HOURS, SITE_PHONE, SITE_WHATSAPP } from "@/lib/constants";
+import { analytics } from "@/lib/analytics";
 
 export default function ContactSection() {
   const { t, pick } = useLanguage();
@@ -38,6 +39,7 @@ export default function ContactSection() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("sending");
+    analytics.contactSubmit();
     setTimeout(() => setStatus("sent"), 1500);
   };
 

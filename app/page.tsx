@@ -27,7 +27,7 @@ export const revalidate = 300;
 export const metadata: Metadata = {
   title: "Michael Lamidis | Premium Open Box Appliances Cyprus",
   description:
-    "Certified open box appliances at 30–70% off retail. Samsung, LG, Bosch, Miele & more. Island-wide delivery, 12-month warranty. Limassol, Cyprus.",
+    "Certified open box appliances at 30–70% off retail. Premium home-appliance brands, island-wide delivery, 12-month warranty. Limassol, Cyprus.",
   alternates: { canonical: SITE_URL },
 };
 

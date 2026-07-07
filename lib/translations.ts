@@ -174,7 +174,7 @@ const en = {
         role: "Homeowner",
         location: "Limassol",
         content:
-          "I was skeptical about open box, but the Samsung refrigerator I bought from Lamidis is absolutely perfect. Saved €400 and got a 12-month warranty. Could not be happier!",
+          "I was skeptical about open box, but the refrigerator I bought from Lamidis is absolutely perfect. Saved €400 and got a 12-month warranty. Could not be happier!",
         rating: 5,
       },
       {
@@ -190,7 +190,7 @@ const en = {
         role: "Interior Designer",
         location: "Limassol",
         content:
-          "My clients love the savings they find through Lamidis. The Bosch washer and Siemens dishwasher I selected look brand new — indistinguishable from retail.",
+          "My clients love the savings they find through Lamidis. The washer and dishwasher I selected look brand new — indistinguishable from retail.",
         rating: 5,
       },
       {
@@ -206,7 +206,7 @@ const en = {
         role: "Student",
         location: "Larnaca",
         content:
-          "Moving into my first apartment on a student budget, Lamidis made premium appliances possible. The LG washer runs perfectly and the team was so helpful.",
+          "Moving into my first apartment on a student budget, Lamidis made premium appliances possible. The washer runs perfectly and the team was so helpful.",
         rating: 5,
       },
     ],
@@ -245,7 +245,7 @@ const en = {
       {
         question: "What brands do you carry?",
         answer:
-          "We stock all major premium brands: Samsung, LG, Bosch, Miele, Siemens, Electrolux, Philips, Whirlpool, AEG, Gorenje, Beko, and many more. Over 50 brands in total.",
+          "We stock over 50 premium European and international brands. Browse our Products page for the full selection.",
       },
       {
         question: "What is your return policy?",
@@ -648,7 +648,7 @@ const gr: typeof en = {
         role: "Ιδιοκτήτρια Σπιτιού",
         location: "Λεμεσός",
         content:
-          "Ήμουν επιφυλακτική για το open box, αλλά το ψυγείο Samsung από τον Lamidis είναι απολύτως τέλειο. Εξοικονόμησα €400 και έχω εγγύηση 12 μηνών!",
+          "Ήμουν επιφυλακτική για το open box, αλλά το ψυγείο από τον Lamidis είναι απολύτως τέλειο. Εξοικονόμησα €400 και έχω εγγύηση 12 μηνών!",
         rating: 5,
       },
       {
@@ -664,7 +664,7 @@ const gr: typeof en = {
         role: "Εσωτερική Διακοσμήτρια",
         location: "Λεμεσός",
         content:
-          "Οι πελάτες μου λατρεύουν τις εξοικονομήσεις μέσω Lamidis. Το Bosch πλυντήριο και Siemens πλυντήριο πιάτων δείχνουν ολοκαίνουρια.",
+          "Οι πελάτες μου λατρεύουν τις εξοικονομήσεις μέσω Lamidis. Το πλυντήριο και το πλυντήριο πιάτων δείχνουν ολοκαίνουρια.",
         rating: 5,
       },
       {
@@ -680,7 +680,7 @@ const gr: typeof en = {
         role: "Φοιτήτρια",
         location: "Λάρνακα",
         content:
-          "Ως φοιτήτρια στο πρώτο μου διαμέρισμα, ο Lamidis έκανε τις premium συσκευές προσιτές. Το LG πλυντήριο λειτουργεί τέλεια.",
+          "Ως φοιτήτρια στο πρώτο μου διαμέρισμα, ο Lamidis έκανε τις premium συσκευές προσιτές. Το πλυντήριο λειτουργεί τέλεια.",
         rating: 5,
       },
     ],
@@ -719,7 +719,7 @@ const gr: typeof en = {
       {
         question: "Ποιες μάρκες φέρετε;",
         answer:
-          "Φέρουμε όλες τις κύριες premium μάρκες: Samsung, LG, Bosch, Miele, Siemens, Electrolux, Philips, Whirlpool, AEG, Gorenje, Beko και πολλές άλλες. Πάνω από 50 μάρκες συνολικά.",
+          "Φέρουμε πάνω από 50 premium ευρωπαϊκές και διεθνείς μάρκες. Περιηγηθείτε στη σελίδα Προϊόντα για πλήρη επιλογή.",
       },
       {
         question: "Ποια είναι η πολιτική επιστροφών;",

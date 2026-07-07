@@ -7,6 +7,7 @@ import { useLanguage } from "@/lib/i18n-context";
 import { useContent } from "@/lib/content-context";
 import AnimatedSection from "@/components/shared/AnimatedSection";
 import { cn } from "@/lib/utils";
+import { analytics } from "@/lib/analytics";
 
 const BENEFIT_ICONS = [Clock, Shield, Tag, Sparkles];
 
@@ -31,6 +32,7 @@ export default function LeadCapture() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("sending");
+    analytics.generateLead("lead_capture");
     setTimeout(() => setStatus("sent"), 1500);
   };
 

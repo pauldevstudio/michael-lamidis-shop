@@ -12,6 +12,7 @@ import {
 import type { Product } from "@/lib/constants";
 import { SITE_PHONE, SITE_WHATSAPP } from "@/lib/constants";
 import { useCart } from "@/lib/cart-context";
+import { track, ANALYTICS_EVENTS } from "@/lib/analytics";
 import AnimatedSection, { StaggerChildren, StaggerItem } from "@/components/shared/AnimatedSection";
 import StarRating from "@/components/shared/StarRating";
 import VideoCardButton from "@/components/shared/VideoCardButton";
@@ -165,6 +166,15 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
     return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = prevOverflow; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lightbox, thumbs.length]);
+
+  useEffect(() => {
+    track(ANALYTICS_EVENTS.VIEW_ITEM, {
+      product_id: product.id,
+      product_name: `${product.brand} ${product.model}`,
+      price: product.salePrice,
+      currency: "EUR",
+    });
+  }, [product.id, product.brand, product.model, product.salePrice]);
 
   // Related products are computed server-side from the live product list and
   // passed in as a prop — so every card links to a product that actually exists.

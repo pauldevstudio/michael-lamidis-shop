@@ -113,7 +113,7 @@ export const DEFAULT_CONTENT: SiteContent = {
     story: [
       "Michael Lamidis started as a single showroom in Limassol with a simple belief: every Cypriot household deserves access to premium appliances without the premium price tag.",
       "What began as a passion for quality has grown into Cyprus's most trusted open box destination. Every item in our store goes through a rigorous 47-point inspection before it reaches you.",
-      "Today, thousands of satisfied customers across Cyprus enjoy premium brands like Samsung, Bosch, LG, and Miele at a fraction of the retail price — backed by our 12-month Lamidis warranty.",
+      "Today, thousands of satisfied customers across Cyprus enjoy premium appliances at a fraction of the retail price — backed by our 12-month Lamidis warranty.",
     ],
   },
   stats:   { customers: "5,000+", brands: "25+", savings: "30–70%", cities: "All Cyprus" },
@@ -269,7 +269,7 @@ export const DEFAULT_CONTENT: SiteContent = {
   seo: {
     "/":             { title: `${SITE_NAME} | Open Box Appliances Cyprus`, description: SITE_DESCRIPTION },
     "/about":        { title: `About ${SITE_NAME}`, description: `Learn the story behind ${SITE_NAME} — Cyprus's most trusted open box appliance destination.` },
-    "/products":     { title: `All Products | ${SITE_NAME}`, description: "Browse certified open box appliances from Samsung, Bosch, LG, Miele and more." },
+    "/products":     { title: `All Products | ${SITE_NAME}`, description: "Browse certified open box appliances from top European and international brands." },
     "/contact":      { title: `Contact | ${SITE_NAME}`, description: "Visit our Limassol showroom or get in touch." },
     "/blog":         { title: `Blog | ${SITE_NAME}`, description: "Tips, guides and expert advice on buying open box appliances in Cyprus." },
     "/faq":          { title: `FAQ | ${SITE_NAME}`, description: "Answers to your questions about open box appliances, warranties, delivery and returns." },

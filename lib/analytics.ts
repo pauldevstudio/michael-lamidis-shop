@@ -32,7 +32,23 @@ declare global {
   }
 }
 
-/** Push a named event into the dataLayer (GTM) and, if present, GA4 via gtag.
+const META_PIXEL_MAP: Record<string, { event: string; mapParams?: (p: Record<string, unknown>) => Record<string, unknown> }> = {
+  [ANALYTICS_EVENTS.PHONE_CLICK]: { event: "Contact", mapParams: () => ({ content_category: "Phone" }) },
+  [ANALYTICS_EVENTS.WHATSAPP_CLICK]: { event: "Contact", mapParams: () => ({ content_category: "WhatsApp" }) },
+  [ANALYTICS_EVENTS.EMAIL_CLICK]: { event: "Contact", mapParams: () => ({ content_category: "Email" }) },
+  [ANALYTICS_EVENTS.GENERATE_LEAD]: { event: "Lead", mapParams: (p) => ({ content_name: p.lead_source }) },
+  [ANALYTICS_EVENTS.CONTACT_FORM_SUBMIT]: { event: "Lead", mapParams: () => ({ content_name: "Contact Form" }) },
+  [ANALYTICS_EVENTS.VIEW_ITEM]: { event: "ViewContent", mapParams: (p) => ({
+    content_name: p.product_name,
+    content_ids: p.product_id ? [p.product_id] : undefined,
+    content_type: "product",
+    value: p.price,
+    currency: "EUR",
+  }) },
+};
+
+/** Push a named event into the dataLayer (GTM), GA4 via gtag, and Meta Pixel
+ * via fbq when a mapping exists.
  *
  * GTM listens to dataLayer events; direct GA4 (gtag.js without GTM) does NOT —
  * it needs an explicit gtag('event', ...). Firing both makes events work under
@@ -46,6 +62,11 @@ export function track(
   window.dataLayer.push({ event, ...params });
   if (typeof window.gtag === "function") {
     window.gtag("event", event, params);
+  }
+  const mapping = META_PIXEL_MAP[event];
+  if (mapping && typeof window.fbq === "function") {
+    const pixelParams = mapping.mapParams ? mapping.mapParams(params) : {};
+    window.fbq("track", mapping.event, pixelParams);
   }
 }
 

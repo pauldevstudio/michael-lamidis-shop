@@ -8,7 +8,7 @@ const SYSTEM_PROMPT = `You are an AI sales assistant for Michael Lamidis, a prem
 BUSINESS OVERVIEW:
 - We sell open-box (ex-display, certified refurbished) home appliances at 20–50% below retail price
 - Every item is professionally inspected, tested, and cleaned before sale
-- We carry major brands: Samsung, LG, Bosch, Siemens, Miele, Whirlpool, Candy, Indesit and more
+- We carry over 50 premium European and international home-appliance brands
 - Product categories: refrigerators, washing machines, dryers, dishwashers, TVs, air conditioners, ovens, cookers, and small appliances
 
 TYPICAL PRICE RANGES (approximate):
@@ -69,7 +69,7 @@ function fallback(msg: string): string {
     return "You can reach us through the Contact page on our website, or leave your name and number here and we'll call you back! 📞 We're always happy to help.";
 
   if (/product|appliance|stock|available|προϊόν|συσκευ/.test(t))
-    return "We have a wide range of open-box appliances including fridges, washing machines, dishwashers, TVs, ACs and more! 🏠 All from top brands like Samsung, LG, Bosch and Siemens. Head to our Products page to browse the latest stock!";
+    return "We have a wide range of open-box appliances including fridges, washing machines, dishwashers, TVs, ACs and more! 🏠 All from top European and international brands. Head to our Products page to browse the latest stock!";
 
   if (/book|appointment|visit|ραντεβού/.test(t))
     return "We'd love to welcome you to our showroom! 📅 Visit our Contact page to get in touch and arrange a convenient time. You can see and test appliances in person before buying.";
