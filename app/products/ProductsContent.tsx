@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight, Shield, Zap, ChevronDown,
-  LayoutGrid, Package, ShoppingCart, Check, X,
+  LayoutGrid, Package, ShoppingCart, Check, X, Search,
 } from "lucide-react";
 import AnimatedSection from "@/components/shared/AnimatedSection";
 import StarRating from "@/components/shared/StarRating";
@@ -289,7 +290,10 @@ function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
 /* ══════════════════════════════════════════════════════ */
 export default function ProductsContent({ products, bestDealIds }: { products?: Product[]; bestDealIds?: string[] }) {
   const { t } = useLanguage();
-  const [activeCategory, setActiveCategory] = useState("all");
+  const searchParams = useSearchParams();
+  const initialCategory = searchParams.get("category") || "all";
+  const [activeCategory, setActiveCategory] = useState(initialCategory);
+  const [searchQuery, setSearchQuery] = useState("");
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
   // Server-fetched live products (Payload/Mongo). No static-seed fallback:
@@ -332,19 +336,27 @@ export default function ProductsContent({ products, bestDealIds }: { products?: 
   }, [openMenu]);
 
   const filtered = useMemo(() => {
-    // Best Deals: only the curated products, kept in the admin's order.
+    let list: Product[];
     if (activeCategory === "best-deals") {
       const order = new Map(__bestDealIds.map((id, i) => [id, i]));
-      return __products
+      list = __products
         .filter((p) => order.has(p.id))
         .sort((a, b) => (order.get(a.id) ?? 0) - (order.get(b.id) ?? 0));
+    } else {
+      list =
+        activeCategory === "all"
+          ? [...__products]
+          : __products.filter((p) => p.category === activeCategory);
+      list.sort((a, b) => b.savings - a.savings);
     }
-    const list =
-      activeCategory === "all"
-        ? [...__products]
-        : __products.filter((p) => p.category === activeCategory);
-    return list.sort((a, b) => b.savings - a.savings);
-  }, [activeCategory, __products, __bestDealIds]);
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      list = list.filter((p) =>
+        `${p.brand} ${p.model} ${p.description ?? ""}`.toLowerCase().includes(q)
+      );
+    }
+    return list;
+  }, [activeCategory, __products, __bestDealIds, searchQuery]);
 
   return (
     <>
@@ -424,7 +436,29 @@ export default function ProductsContent({ products, bestDealIds }: { products?: 
 
       {/* ── Category bar (only the product category — sticky on desktop) ── */}
       <div className="lg:sticky lg:top-12 z-30 bg-white/95 backdrop-blur-xl border-b border-navy-100/60 shadow-sm">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-3">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-3 space-y-3">
+
+          {/* Search bar */}
+          <div className="relative">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-navy-400 pointer-events-none" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={t.pages.products.searchPlaceholder ?? "Search by brand, model, or keyword…"}
+              className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-navy-200 bg-white text-navy-900 text-sm placeholder:text-navy-400 focus:outline-none focus:ring-2 focus:ring-gold-400/40 focus:border-gold-400 transition-shadow"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center rounded-full text-navy-400 hover:text-navy-600 hover:bg-navy-100 transition-colors"
+                aria-label="Clear search"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
 
           {/* Mobile: category trigger → bottom sheet */}
           <button
