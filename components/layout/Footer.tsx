@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
-import { Facebook, Mail, Phone, MapPin, Clock, ArrowRight, CheckCircle, Lock } from "lucide-react";
+import { Facebook, Instagram, Mail, Phone, MapPin, Clock, ArrowRight, CheckCircle, Lock } from "lucide-react";
 import { useLanguage } from "@/lib/i18n-context";
 import { useContent } from "@/lib/content-context";
 import CookieSettingsButton from "@/components/shared/CookieSettingsButton";
@@ -96,6 +96,7 @@ export default function Footer() {
             <div className="flex items-center gap-2">
               {[
                 { href: social.facebook, Icon: Facebook, label: "Facebook" },
+                { href: social.instagram, Icon: Instagram, label: "Instagram" },
               ]
                 .filter((s) => s.href)
                 .map(({ href, Icon, label }) => (

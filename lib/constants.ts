@@ -26,7 +26,7 @@ export const NAV_LINKS = [
 
 export const SOCIAL_LINKS = {
   facebook: "https://www.facebook.com/michaelsappliances",
-  instagram: "",
+  instagram: "https://www.instagram.com/michaellamidis/",
   youtube: "",
 };
 
