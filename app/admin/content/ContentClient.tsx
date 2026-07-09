@@ -106,7 +106,7 @@ export default function ContentClient() {
     setContent({ ...content, promoPopup: { ...content.promoPopup, items } });
   };
   const addPromoItem = () => {
-    if (!content || content.promoPopup.items.length >= 8) return;
+    if (!content) return;
     setPromoItems([...content.promoPopup.items, { productId: "" }]);
   };
   const removePromoItem = (idx: number) => {
