@@ -74,7 +74,7 @@ export default function Footer() {
             {/* Contact info */}
             <div className="flex flex-col gap-3">
               {[
-                { icon: MapPin, text: address },
+                { icon: MapPin, text: address, href: "https://www.google.com/maps/place/Michael+Lamidis+Appliances+Store/@34.7616632,32.9508341,17z" },
                 { icon: Phone, text: phone,  href: `tel:${phone.replace(/\s/g, "")}` },
                 { icon: Mail,  text: mail,   href: `mailto:${mail}` },
                 { icon: Clock, text: hours },
@@ -82,7 +82,7 @@ export default function Footer() {
                 <div key={text} className="flex items-start gap-2.5">
                   <Icon className="w-3.5 h-3.5 text-gold-500 mt-0.5 shrink-0" />
                   {href ? (
-                    <a href={href} className="text-white/45 text-xs hover:text-white/70 transition-colors leading-relaxed">
+                    <a href={href} {...(href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})} className="text-white/45 text-xs hover:text-white/70 transition-colors leading-relaxed">
                       {text}
                     </a>
                   ) : (
