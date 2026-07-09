@@ -99,14 +99,14 @@ export default function ContentClient() {
     if (!content) return;
     setContent({ ...content, promoPopup: { ...content.promoPopup, [key]: val } });
   };
-  // ── Promo items (up to 4 curated products) ──────────────────────────
+  // ── Promo items (up to 8 curated products) ──────────────────────────
   const productById = (id: string) => products.find((p) => p.id === id);
   const setPromoItems = (items: PromoItem[]) => {
     if (!content) return;
     setContent({ ...content, promoPopup: { ...content.promoPopup, items } });
   };
   const addPromoItem = () => {
-    if (!content || content.promoPopup.items.length >= 4) return;
+    if (!content || content.promoPopup.items.length >= 8) return;
     setPromoItems([...content.promoPopup.items, { productId: "" }]);
   };
   const removePromoItem = (idx: number) => {
@@ -446,7 +446,7 @@ export default function ContentClient() {
 
                 <div className="rounded-xl border border-slate-700 bg-slate-800/60 px-4 py-3 text-slate-400 text-xs leading-relaxed">
                   <span className="text-slate-200 font-semibold">How it works: </span>
-                  Add up to <span className="text-gold-400 font-medium">4 products</span> below, drag the handle to reorder, and optionally upload a custom image per item. They show in the homepage popup and the Best Deals section on the Products page. Add <code className="text-slate-300">?promo=1</code> to the homepage URL to preview any time.
+                  Add products below — each visitor sees <span className="text-gold-400 font-medium">1 random product</span> per popup. More items = more variety. Drag to reorder, optionally upload a custom image per item. They also appear in the Best Deals section on the Products page. Add <code className="text-slate-300">?promo=1</code> to the homepage URL to preview any time.
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -486,16 +486,16 @@ export default function ContentClient() {
                   </div>
                 </div>
 
-                {/* Items builder — up to 4, drag to reorder */}
+                {/* Items builder — up to 8, drag to reorder */}
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center justify-between">
-                    <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Items ({content.promoPopup.items.length}/4)</label>
+                    <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Items ({content.promoPopup.items.length})</label>
                     {content.promoPopup.items.length > 1 && <span className="text-slate-500 text-[11px]">Drag to reorder</span>}
                   </div>
 
                   {content.promoPopup.items.length === 0 && (
                     <div className="rounded-xl border border-dashed border-slate-700 bg-slate-800/40 px-4 py-6 text-center text-slate-500 text-xs">
-                      No items yet — add up to 4 products to feature.
+                      No items yet — add up to 8 products to feature.
                     </div>
                   )}
 
@@ -507,15 +507,13 @@ export default function ContentClient() {
                       return (
                         <div
                           key={i}
-                          draggable
-                          onDragStart={(e) => { setDragItemIdx(i); e.dataTransfer.effectAllowed = "move"; e.dataTransfer.setData("text/plain", String(i)); }}
                           onDragOver={(e) => e.preventDefault()}
                           onDragEnter={() => setOverItemIdx(i)}
                           onDrop={(e) => { e.preventDefault(); if (dragItemIdx !== null) movePromoItem(dragItemIdx, i); setDragItemIdx(null); setOverItemIdx(null); }}
                           onDragEnd={() => { setDragItemIdx(null); setOverItemIdx(null); }}
                           className={`flex items-center gap-2.5 rounded-xl border bg-slate-800 p-2.5 transition-colors ${isOver ? "border-gold-400 ring-1 ring-gold-400/60" : "border-slate-700"} ${dragItemIdx === i ? "opacity-50" : ""}`}
                         >
-                          <span className="cursor-grab active:cursor-grabbing text-slate-500 hover:text-slate-300 shrink-0" title="Drag to reorder"><GripVertical className="w-4 h-4" /></span>
+                          <span draggable onDragStart={(e) => { setDragItemIdx(i); e.dataTransfer.effectAllowed = "move"; e.dataTransfer.setData("text/plain", String(i)); }} className="cursor-grab active:cursor-grabbing text-slate-500 hover:text-slate-300 shrink-0" title="Drag to reorder"><GripVertical className="w-4 h-4" /></span>
                           <div className="w-11 h-11 rounded-lg bg-white overflow-hidden shrink-0 border border-slate-700">
                             {img ? (
                               // eslint-disable-next-line @next/next/no-img-element
@@ -547,11 +545,9 @@ export default function ContentClient() {
                     })}
                   </div>
 
-                  {content.promoPopup.items.length < 4 && (
-                    <button type="button" onClick={addPromoItem} className="mt-1 inline-flex items-center gap-2 self-start px-4 py-2 rounded-xl border border-dashed border-slate-600 text-slate-300 text-sm font-medium hover:border-gold-400 hover:text-gold-400 transition-colors">
-                      <Plus className="w-4 h-4" /> Add item
-                    </button>
-                  )}
+                  <button type="button" onClick={addPromoItem} className="mt-1 inline-flex items-center gap-2 self-start px-4 py-2 rounded-xl border border-dashed border-slate-600 text-slate-300 text-sm font-medium hover:border-gold-400 hover:text-gold-400 transition-colors">
+                    <Plus className="w-4 h-4" /> Add item
+                  </button>
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -561,29 +557,30 @@ export default function ContentClient() {
                       <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-500/15 border border-gold-400/30 text-gold-400 text-[11px] font-bold uppercase tracking-widest">{content.promoPopup.eyebrow || "Special Offer"}</span>
                       <p className="mt-3 text-white font-display font-bold text-xl">{content.promoPopup.title || "This Week's Best Deals"}</p>
                       {content.promoPopup.message && <p className="mt-2 text-white/55 text-sm max-w-md mx-auto">{content.promoPopup.message}</p>}
-                      <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      <div className="mt-4">
                         {content.promoPopup.items.length === 0
-                          ? [0, 1, 2, 3].map((i) => (
-                              <div key={i} className="aspect-square rounded-lg bg-white/[0.04] border border-white/10 flex items-center justify-center text-white/25 text-[9px] font-medium">Product</div>
-                            ))
-                          : content.promoPopup.items.map((item, i) => {
+                          ? <div className="rounded-lg bg-white/[0.04] border border-white/10 flex items-center justify-center text-white/25 text-xs font-medium py-12">1 random product shown per visit</div>
+                          : (() => {
+                              const item = content.promoPopup.items[0];
                               const p = productById(item.productId);
                               const img = item.imageUrl || p?.imageUrl || "";
                               return (
-                                <div key={i} className="rounded-lg bg-white/[0.04] border border-white/10 overflow-hidden">
-                                  <div className="aspect-square bg-white">
+                                <div className="rounded-2xl bg-white/[0.04] border border-white/10 overflow-hidden">
+                                  <div className="aspect-[16/10] bg-white">
                                     {img && (
                                       // eslint-disable-next-line @next/next/no-img-element
-                                      <img src={img} alt="" className="w-full h-full object-contain p-1" />
+                                      <img src={img} alt="" className="w-full h-full object-contain p-4" />
                                     )}
                                   </div>
-                                  <div className="p-1.5 text-left">
-                                    <p className="text-white text-[10px] font-medium truncate">{p ? `${p.brand} ${p.model}` : "—"}</p>
-                                    {p && <p className="text-gold-400 text-[10px] font-bold">€{p.salePrice}</p>}
+                                  <div className="p-4 text-left">
+                                    <p className="text-white/50 text-[10px] font-semibold uppercase tracking-wider">{p?.brand || "—"}</p>
+                                    <p className="text-white text-sm font-bold mt-1">{p ? p.model : "—"}</p>
+                                    {p && <p className="text-gold-400 text-lg font-extrabold mt-1">&euro;{p.salePrice}</p>}
+                                    <p className="text-white/30 text-[10px] mt-2">1 of {content.promoPopup.items.length} deals — random each visit</p>
                                   </div>
                                 </div>
                               );
-                            })}
+                            })()}
                       </div>
                       <span className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-navy-950 text-sm font-bold" style={{ background: "linear-gradient(135deg, #E6B450 0%, #C8881A 100%)" }}>{content.promoPopup.ctaLabel || "See all deals"} &rarr;</span>
                     </div>
