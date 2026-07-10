@@ -18,22 +18,6 @@ import {
 import dynamic from "next/dynamic";
 const ShowroomVideoModal = dynamic(() => import("@/components/shared/ShowroomVideoModal"), { ssr: false });
 
-/* ── Stat pill ─────────────────────────────────────────── */
-function StatPill({ value, label }: { value: string; label: string }) {
-  return (
-    <div className="flex flex-col items-center gap-0.5">
-      <span
-        className="text-white font-display font-bold text-lg sm:text-2xl leading-none"
-        style={{ fontFamily: "var(--font-jakarta)" }}
-      >
-        {value}
-      </span>
-      <span className="text-white/45 text-[10px] sm:text-[11px] font-medium text-center leading-tight">
-        {label}
-      </span>
-    </div>
-  );
-}
 
 /* ── Floating product card ─────────────────────────────── */
 interface FloatCardProps {
@@ -287,31 +271,6 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* ── Stats bar ─────────────────────────────────────── */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 1.15, ease: [0.16, 1, 0.3, 1] }}
-        className="relative z-20 border-t border-white/[0.08]"
-        style={{
-          background: "rgba(3, 8, 19, 0.72)",
-          backdropFilter: "blur(24px)",
-          WebkitBackdropFilter: "blur(24px)",
-        }}
-      >
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-4 sm:py-5">
-          <div className="grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 divide-x-0 sm:divide-x divide-white/[0.08]">
-            {t.hero.stats.map(({ value, label }, i) => (
-              <div
-                key={label}
-                className={`flex justify-center px-2 py-2 sm:py-0 ${i < 2 ? "border-b sm:border-b-0 border-white/[0.08]" : ""} ${i % 2 === 0 ? "border-r sm:border-r-0 border-white/[0.08]" : ""}`}
-              >
-                <StatPill value={value} label={label} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </motion.div>
 
       {/* ── Scroll indicator ──────────────────────────────── */}
       <motion.div
