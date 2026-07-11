@@ -103,7 +103,7 @@ export default function RootLayout({
     <html lang="en" data-scroll-behavior="smooth" className={`${inter.variable} ${plusJakarta.variable}`}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: `try{var m=document.cookie.match(/cookie_consent=([^;]+)/);if(m){var j=JSON.parse(decodeURIComponent(m[1]));if(j&&j.v===1)document.documentElement.dataset.cc="1"}}catch(e){}` }} />
-        <link rel="preconnect" href="https://iax3scoubxgocab7.public.blob.vercel-storage.com" />
+        <link rel="preconnect" href="https://res.cloudinary.com" />
         <link
           rel="preload"
           href="/hero-appliances.webp"

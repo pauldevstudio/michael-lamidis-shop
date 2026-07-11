@@ -3,7 +3,7 @@ export const runtime = "nodejs";
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
-import { put, del, list } from "@vercel/blob";
+import { v2 as cloudinary } from "cloudinary";
 
 import { isValidSessionToken } from "@/lib/admin-auth";
 
@@ -15,7 +15,21 @@ function isAuthorized(req: NextRequest): boolean {
   return isValidSessionToken(req.cookies.get("admin_session")?.value);
 }
 
-const hasBlob = () => Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+function configureCloudinary() {
+  if (
+    process.env.CLOUDINARY_CLOUD_NAME &&
+    process.env.CLOUDINARY_API_KEY &&
+    process.env.CLOUDINARY_API_SECRET
+  ) {
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+    });
+    return true;
+  }
+  return false;
+}
 
 /** POST /api/admin/upload  — multipart/form-data with field "file" */
 export async function POST(request: NextRequest) {
@@ -40,12 +54,25 @@ export async function POST(request: NextRequest) {
   const baseName = path.basename(file.name, ext).replace(/[^a-zA-Z0-9-_]/g, "-").slice(0, 60);
   const fileName = `${Date.now()}-${baseName}${ext}`;
 
-  if (hasBlob()) {
-    const blob = await put(`products/${fileName}`, file, {
-      access: "public",
-      contentType: file.type,
+  if (configureCloudinary()) {
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const result = await new Promise<{ secure_url: string }>((resolve, reject) => {
+      cloudinary.uploader
+        .upload_stream(
+          {
+            folder: "michael-lamidis/products",
+            public_id: `${Date.now()}-${baseName}`,
+            resource_type: "image",
+            transformation: [{ quality: "auto", fetch_format: "auto" }],
+          },
+          (err, res) => {
+            if (err || !res) return reject(err || new Error("Upload failed"));
+            resolve(res);
+          }
+        )
+        .end(buffer);
     });
-    return NextResponse.json({ url: blob.url, fileName });
+    return NextResponse.json({ url: result.secure_url, fileName });
   }
 
   // Local dev fallback: write to public/uploads
@@ -62,17 +89,6 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   if (!isAuthorized(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  if (hasBlob()) {
-    const result = await list({ prefix: "products/" });
-    const files = result.blobs.map((b) => ({
-      fileName: b.pathname.replace(/^products\//, ""),
-      url: b.url,
-      size: b.size,
-      createdAt: b.uploadedAt.toISOString(),
-    }));
-    return NextResponse.json(files);
   }
 
   if (!fs.existsSync(UPLOAD_DIR)) {
@@ -94,22 +110,16 @@ export async function GET(request: NextRequest) {
   return NextResponse.json(files);
 }
 
-/** DELETE /api/admin/upload?file=filename  OR  ?url=<blob-url> */
+/** DELETE /api/admin/upload?file=filename */
 export async function DELETE(request: NextRequest) {
   if (!isAuthorized(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const blobUrl = request.nextUrl.searchParams.get("url");
   const fileName = request.nextUrl.searchParams.get("file");
 
-  if (hasBlob() && blobUrl) {
-    await del(blobUrl);
-    return NextResponse.json({ ok: true });
-  }
-
   if (!fileName) {
-    return NextResponse.json({ error: "Missing file or url param" }, { status: 400 });
+    return NextResponse.json({ error: "Missing file param" }, { status: 400 });
   }
 
   // Local dev: filesystem delete
