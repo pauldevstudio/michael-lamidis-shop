@@ -238,7 +238,7 @@ export default function Hero() {
                 original="€1,499"
                 sale="€699"
                 badge="Grade A · −53%"
-                badgeColor="#10b981"
+                badgeColor="#047857"
                 floatDir="up"
                 delay={0}
               />
@@ -250,7 +250,7 @@ export default function Hero() {
                 original="€1,199"
                 sale="€549"
                 badge="Grade A+ · −54%"
-                badgeColor="#8b5cf6"
+                badgeColor="#6d28d9"
                 floatDir="down"
                 delay={0.4}
               />
@@ -262,7 +262,7 @@ export default function Hero() {
                 original="€899"
                 sale="€449"
                 badge="Grade A+ · −50%"
-                badgeColor="#7c3aed"
+                badgeColor="#6d28d9"
                 floatDir="up"
                 delay={0.8}
               />

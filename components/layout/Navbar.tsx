@@ -114,7 +114,6 @@ export default function Navbar() {
             <Link
               href="/"
               className="flex items-center gap-2.5"
-              aria-label="Michael Lamidis, home"
             >
               <Image
                 src="/logo.webp"

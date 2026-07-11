@@ -244,24 +244,22 @@ export default function ChatBot() {
               whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.93 }}
               onClick={() => setIsOpen(true)}
-              aria-label="Open AI chat"
               className="relative w-14 h-14 rounded-full shadow-2xl flex items-center justify-center"
               style={{ background: "linear-gradient(135deg, #1A3C5E 0%, #2563EB 100%)" }}
             >
-              <Sparkles className="w-7 h-7 text-white" aria-hidden="true" />
-              {hasUnread && (
+              <span className="sr-only">Open AI chat</span>
+              <span aria-hidden="true" className="flex items-center justify-center w-full h-full">
+                <Sparkles className="w-7 h-7 text-white" />
+                {hasUnread && (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-[10px] font-bold shadow">
+                    1
+                  </span>
+                )}
                 <span
-                  aria-hidden="true"
-                  className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-[10px] font-bold shadow"
-                >
-                  1
-                </span>
-              )}
-              {/* Pulse ring */}
-              <span
-                className="absolute inset-0 rounded-full animate-ping opacity-20"
-                style={{ background: "#2563EB" }}
-              />
+                  className="absolute inset-0 rounded-full animate-ping opacity-20"
+                  style={{ background: "#2563EB" }}
+                />
+              </span>
             </motion.button>
           </motion.div>
         )}
