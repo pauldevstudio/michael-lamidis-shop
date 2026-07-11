@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hide cookie banner for returning visitors before React hydrates.
+   The inline head script sets data-cc="1" when a valid consent cookie exists. */
+:root[data-cc="1"] [aria-label="We value your privacy"] { display: none; }
+
 /* ─── Custom Properties ──────────────────────────────────── */
 :root {
   --navy-950: #030813;

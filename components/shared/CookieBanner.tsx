@@ -67,11 +67,14 @@ export default function CookieBanner() {
     }
   }, [settingsOpen, consent.analytics, consent.marketing]);
 
-  // Don't render until we've read the cookie (avoids hydration flash), and only
-  // when there is no stored choice yet OR the user reopened settings.
-  if (!ready) return null;
-  const visible = !hasChoice || settingsOpen;
-  if (!visible) return null;
+  // The inline head script sets data-cc="1" on <html> when a valid consent
+  // cookie exists, letting CSS hide the banner before first paint. On the
+  // client, React takes over: if hasChoice is true, hide; if settingsOpen,
+  // show. ready is false only during SSR (typeof document === 'undefined').
+  const visible = settingsOpen || (!hasChoice && ready);
+  // During SSR (!ready), render the banner HTML so it's in the first paint
+  // for new visitors. The head script + CSS hides it for returning visitors.
+  if (!visible && ready) return null;
 
   const Category = ({
     icon: Icon, title, desc, checked, onChange, locked,
