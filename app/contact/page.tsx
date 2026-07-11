@@ -19,6 +19,12 @@ export const metadata: Metadata = {
   description:
     "Contact Michael Lamidis for certified open box appliances. Visit our Limassol showroom or reach out online. Response within 2 hours.",
   alternates: { canonical: `${SITE_URL}/contact` },
+  openGraph: {
+    title: "Contact Michael Lamidis — Showroom in Limassol, Cyprus",
+    description: "Visit our showroom in Alassa Village or reach out online. Response within 2 hours.",
+    url: `${SITE_URL}/contact`,
+    images: [{ url: `${SITE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Michael Lamidis contact" }],
+  },
 };
 
 export default async function ContactPage() {

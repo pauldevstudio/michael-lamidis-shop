@@ -121,7 +121,7 @@ export default function Footer() {
               { title: t.footer.servicesTitle, links: __ftServicesLinks },
               { title: t.footer.supportTitle,  links: t.footer.supportLinks },
             ].map(({ title, links }) => (
-              <div key={title} className="flex flex-col gap-4">
+              <nav key={title} aria-label={title} className="flex flex-col gap-4">
                 <span className="text-white text-xs font-bold uppercase tracking-widest">{title}</span>
                 <ul className="flex flex-col gap-2.5">
                   {links.map(({ label, href }) => (
@@ -135,7 +135,7 @@ export default function Footer() {
                     </li>
                   ))}
                 </ul>
-              </div>
+              </nav>
             ))}
           </div>
 

@@ -85,10 +85,11 @@ function LoginForm() {
         </div>
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           <div className="flex flex-col gap-1.5">
-            <label className="text-white/60 text-xs font-semibold uppercase tracking-wider">Username</label>
+            <label htmlFor="admin-username" className="text-white/60 text-xs font-semibold uppercase tracking-wider">Username</label>
             <div className="relative">
               <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
               <input
+                id="admin-username"
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -101,10 +102,11 @@ function LoginForm() {
             </div>
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className="text-white/60 text-xs font-semibold uppercase tracking-wider">Password</label>
+            <label htmlFor="admin-password" className="text-white/60 text-xs font-semibold uppercase tracking-wider">Password</label>
             <div className="relative">
               <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
               <input
+                id="admin-password"
                 type={showPw ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

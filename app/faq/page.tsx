@@ -13,6 +13,12 @@ export const metadata: Metadata = {
   description:
     "Everything you need to know about open box appliances, warranties, returns, delivery and shopping with Michael Lamidis.",
   alternates: { canonical: `${SITE_URL}/faq` },
+  openGraph: {
+    title: "FAQ — Open Box Appliances, Warranties & Delivery",
+    description: "Everything you need to know about shopping at Michael Lamidis. Warranties, returns, delivery and more.",
+    url: `${SITE_URL}/faq`,
+    images: [{ url: `${SITE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Michael Lamidis FAQ" }],
+  },
 };
 
 const faqJsonLd = {

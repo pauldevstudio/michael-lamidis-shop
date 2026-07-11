@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import Image from "next/image";
@@ -33,14 +33,19 @@ const navLinks = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   const { t } = useLanguage();
   const content = useContent();
-  // Always use translations for nav labels (translations are source of truth after the
-  // catalog pivot). CMS navigation global is no longer authoritative for link text.
   const __navItems = navLinks.map((l) => ({ href: l.href, label: t.nav[l.key], key: l.href }));
   const phone = content?.business?.phone ?? SITE_PHONE;
   const pathname = usePathname();
+
+  const closeMobile = useCallback(() => {
+    setMobileOpen(false);
+    menuButtonRef.current?.focus();
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -58,6 +63,33 @@ export default function Navbar() {
       document.body.style.overflow = "";
     };
   }, [mobileOpen]);
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") { closeMobile(); return; }
+      if (e.key !== "Tab") return;
+      const container = mobileMenuRef.current;
+      if (!container) return;
+      const focusable = container.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    const firstLink = mobileMenuRef.current?.querySelector<HTMLElement>("a[href]");
+    firstLink?.focus();
+    return () => window.removeEventListener("keydown", onKey);
+  }, [mobileOpen, closeMobile]);
 
   return (
     <>
@@ -144,11 +176,13 @@ export default function Navbar() {
               </a>
 
               <button
+                ref={menuButtonRef}
                 type="button"
                 onClick={() => setMobileOpen((v) => !v)}
                 className="lg:hidden inline-flex items-center justify-center min-w-[44px] min-h-[44px] -mr-1 text-white"
                 aria-label={mobileOpen ? "Close menu" : "Open menu"}
                 aria-expanded={mobileOpen}
+                aria-controls="mobile-nav"
               >
                 {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
@@ -160,43 +194,49 @@ export default function Navbar() {
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
+            ref={mobileMenuRef}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             className="fixed inset-0 z-40 lg:hidden bg-navy-950 pt-24 px-6 overflow-y-auto"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Mobile navigation"
           >
-            <div className="flex flex-col gap-1">
-              {__navItems.map((link) => {
-                const active =
-                  link.href === "/"
-                    ? pathname === "/"
-                    : pathname.startsWith(link.href);
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={cn(
-                      "px-4 py-3 text-lg font-medium rounded-lg transition-colors",
-                      active ? "text-gold-400 bg-white/5" : "text-white/90 hover:bg-white/5"
-                    )}
-                  >
-                    {link.label}
-                  </Link>
-                );
-              })}
+            <nav id="mobile-nav" aria-label="Mobile">
+              <div className="flex flex-col gap-1">
+                {__navItems.map((link) => {
+                  const active =
+                    link.href === "/"
+                      ? pathname === "/"
+                      : pathname.startsWith(link.href);
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className={cn(
+                        "px-4 py-3 text-lg font-medium rounded-lg transition-colors",
+                        active ? "text-gold-400 bg-white/5" : "text-white/90 hover:bg-white/5"
+                      )}
+                    >
+                      {link.label}
+                    </Link>
+                  );
+                })}
 
-              <div className="mt-6 flex items-center gap-3">
-                <LanguageSwitcher />
-                <a
-                  href={`tel:${phone.replace(/\s+/g, "")}`}
-                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold tracking-widest uppercase border border-white/15 text-white/70 hover:text-white hover:border-white/30 hover:bg-white/8 transition"
-                >
-                  <Phone className="w-3.5 h-3.5" />
-                  {phone}
-                </a>
+                <div className="mt-6 flex items-center gap-3">
+                  <LanguageSwitcher />
+                  <a
+                    href={`tel:${phone.replace(/\s+/g, "")}`}
+                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold tracking-widest uppercase border border-white/15 text-white/70 hover:text-white hover:border-white/30 hover:bg-white/8 transition"
+                  >
+                    <Phone className="w-3.5 h-3.5" />
+                    {phone}
+                  </a>
+                </div>
               </div>
-            </div>
+            </nav>
           </motion.div>
         )}
       </AnimatePresence>

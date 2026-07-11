@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Volume2, VolumeX, Play } from "lucide-react";
@@ -21,17 +21,40 @@ export default function ShowroomVideoModal({
   src: string;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
   const [muted, setMuted] = useState(true);
   const [playing, setPlaying] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const triggerRef = useRef<Element | null>(null);
 
   useEffect(() => setMounted(true), []);
 
-  // Esc to close + lock body scroll while open.
+  const stableClose = useCallback(() => {
+    onClose();
+    if (triggerRef.current instanceof HTMLElement) triggerRef.current.focus();
+  }, [onClose]);
+
   useEffect(() => {
     if (!open) return;
+    triggerRef.current = document.activeElement;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") { stableClose(); return; }
+      if (e.key !== "Tab") return;
+      const container = dialogRef.current;
+      if (!container) return;
+      const focusable = container.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     };
     document.addEventListener("keydown", onKey);
     const prev = document.body.style.overflow;
@@ -40,7 +63,7 @@ export default function ShowroomVideoModal({
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = prev;
     };
-  }, [open, onClose]);
+  }, [open, stableClose]);
 
   // Play from the start (muted) on open; pause + reset on close.
   useEffect(() => {
@@ -79,7 +102,8 @@ export default function ShowroomVideoModal({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.25 }}
-          onClick={onClose}
+          ref={dialogRef}
+          onClick={stableClose}
           role="dialog"
           aria-modal="true"
           aria-label="Showroom video"

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useId, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -361,15 +361,17 @@ function Field({
 }: {
   label: string;
   required?: boolean;
-  children: React.ReactNode;
+  children: React.ReactElement<{ id?: string }>;
   className?: string;
 }) {
+  const autoId = useId();
+  const id = children.props.id ?? autoId;
   return (
     <div className={`flex flex-col gap-1.5 ${className}`}>
-      <label className="text-navy-500 text-[11px] font-semibold uppercase tracking-wider">
+      <label htmlFor={id} className="text-navy-500 text-[11px] font-semibold uppercase tracking-wider">
         {label}{required && <span className="text-red-500 ml-0.5">*</span>}
       </label>
-      {children}
+      {React.cloneElement(children, { id })}
     </div>
   );
 }
