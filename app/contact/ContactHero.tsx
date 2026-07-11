@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { useContent } from "@/lib/content-context";
 import { useLanguage } from "@/lib/i18n-context";
 
@@ -13,11 +14,9 @@ export default function ContactHero() {
   const __subheadline = pick(__c?.subheadline, t.pages.contact.defaultSubheadline) ?? t.pages.contact.defaultSubheadline;
 
   return (
-    <section className="relative min-h-[45vh] flex items-end bg-navy-950 noise-overlay overflow-hidden pt-28 pb-16">
-      <div className="absolute inset-0 grid-bg" />
-      <div className="absolute inset-0"
-        style={{ background: "radial-gradient(ellipse at 40% 60%, rgba(200,136,26,0.18) 0%, transparent 60%)" }}
-      />
+    <section className="relative min-h-[45vh] flex items-end overflow-hidden pt-28 pb-16">
+      <Image src="/hero-contact.png" alt="" fill className="object-cover object-center" sizes="100vw" />
+      <div className="absolute inset-0" style={{ background: "linear-gradient(110deg, rgba(3,8,19,0.88) 0%, rgba(3,8,19,0.7) 40%, rgba(3,8,19,0.5) 100%)" }} />
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <motion.span
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}

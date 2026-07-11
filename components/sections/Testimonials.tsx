@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Star, ChevronLeft, ChevronRight, Quote, MapPin } from "lucide-react";
+import Image from "next/image";
 import { useLanguage } from "@/lib/i18n-context";
 import { useContent } from "@/lib/content-context";
 import SectionHeader from "@/components/shared/SectionHeader";
@@ -42,11 +43,15 @@ export default function Testimonials() {
   const next = () => setActive((a) => (a === items.length - 1 ? 0 : a + 1));
 
   return (
-    <section className="bg-navy-950 noise-overlay section-py relative overflow-hidden">
-      <div className="absolute inset-0 grid-bg opacity-50" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] rounded-full pointer-events-none"
-        style={{ background: "radial-gradient(ellipse, rgba(30,72,184,0.15) 0%, transparent 70%)" }}
+    <section className="section-py relative overflow-hidden">
+      <Image
+        src="/hero-home.png"
+        alt=""
+        fill
+        className="object-cover object-center"
+        sizes="100vw"
       />
+      <div className="absolute inset-0" style={{ background: "rgba(3,8,19,0.82)" }} />
 
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <SectionHeader

@@ -434,7 +434,7 @@ const en = {
       ctaSubtitle:
         "Browse our certified open box inventory or get a personalised quote from our team.",
       ctaBrowse: "Browse Products",
-      ctaQuote: "Get a Quote",
+      ctaQuote: "Get a Free Quote",
     },
     services: {
       badge: "Our Services",
@@ -909,7 +909,7 @@ const gr: typeof en = {
       ctaSubtitle:
         "Περιηγηθείτε στο πιστοποιημένο open box απόθεμά μας ή λάβετε μια εξατομικευμένη προσφορά από την ομάδα μας.",
       ctaBrowse: "Δείτε Προϊόντα",
-      ctaQuote: "Λάβετε Προσφορά",
+      ctaQuote: "Δωρεάν Προσφορά",
     },
     services: {
       badge: "Οι Υπηρεσίες Μας",

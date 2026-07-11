@@ -14,7 +14,6 @@ const Services = dynamic(() => import("@/components/sections/Services"));
 const Testimonials = dynamic(() => import("@/components/sections/Testimonials"));
 const Statistics = dynamic(() => import("@/components/sections/Statistics"));
 const FAQ = dynamic(() => import("@/components/sections/FAQ"));
-const LeadCapture = dynamic(() => import("@/components/sections/LeadCapture"));
 const ContactSection = dynamic(() => import("@/components/sections/ContactSection"));
 const PromoPopup = dynamic(() => import("@/components/shared/PromoPopup"));
 
@@ -50,7 +49,6 @@ export default async function HomePage() {
         <Testimonials />
         <Statistics />
         <FAQ />
-        <LeadCapture />
         <ContactSection />
       </main>
       <Footer />

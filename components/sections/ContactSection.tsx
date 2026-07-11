@@ -43,12 +43,13 @@ export default function ContactSection() {
     setTimeout(() => setStatus("sent"), 1500);
   };
 
+  const mapsUrl = `https://maps.google.com/?q=${encodeURIComponent(__biAddress)}`;
   const contactItems = [
-    { icon: MapPin, label: __csAddressLabel, value: __biAddress, href: null },
-    { icon: Phone, label: __csPhoneLabel, value: __biPhone, href: `tel:${__biPhone.replace(/\s/g, "")}` },
-    { icon: MessageCircle, label: "WhatsApp", value: SITE_WHATSAPP, href: `https://wa.me/${SITE_WHATSAPP.replace(/\D/g, "")}` },
-    { icon: Mail, label: __csEmailLabel, value: __biEmail, href: `mailto:${__biEmail}` },
-    { icon: Clock, label: __csHoursLabel, value: __biHours, href: null },
+    { icon: MapPin, label: __csAddressLabel, value: __biAddress, href: mapsUrl, external: true },
+    { icon: Phone, label: __csPhoneLabel, value: __biPhone, href: `tel:${__biPhone.replace(/\s/g, "")}`, external: false },
+    { icon: MessageCircle, label: "WhatsApp", value: SITE_WHATSAPP, href: `https://wa.me/${SITE_WHATSAPP.replace(/\D/g, "")}`, external: true },
+    { icon: Mail, label: __csEmailLabel, value: __biEmail, href: `mailto:${__biEmail}`, external: false },
+    { icon: Clock, label: __csHoursLabel, value: __biHours, href: mapsUrl, external: true },
   ];
 
   return (
@@ -89,23 +90,21 @@ export default function ContactSection() {
             </AnimatedSection>
 
             <div className="flex flex-col gap-4">
-              {contactItems.map(({ icon: Icon, label, value, href }, i) => (
+              {contactItems.map(({ icon: Icon, label, value, href, external }, i) => (
                 <AnimatedSection key={label} delay={i * 0.07}>
-                  <div className="flex items-start gap-4 p-4 rounded-xl border border-navy-100/60 bg-navy-50/40 hover:border-navy-200 hover:bg-white transition-all duration-300">
+                  <a
+                    href={href}
+                    {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                    className="flex items-start gap-4 p-4 rounded-xl border border-navy-100/60 bg-navy-50/40 hover:border-navy-200 hover:bg-white transition-all duration-300"
+                  >
                     <div className="w-9 h-9 rounded-lg bg-navy-950 flex items-center justify-center shrink-0">
                       <Icon className="w-4 h-4 text-gold-400" />
                     </div>
                     <div className="flex flex-col gap-0.5">
                       <span className="text-navy-400 text-[11px] font-bold uppercase tracking-widest">{label}</span>
-                      {href ? (
-                        <a href={href} className="text-navy-900 text-sm font-medium hover:text-blue-600 transition-colors leading-snug">
-                          {value}
-                        </a>
-                      ) : (
-                        <span className="text-navy-900 text-sm font-medium leading-snug">{value}</span>
-                      )}
+                      <span className="text-navy-900 text-sm font-medium leading-snug">{value}</span>
                     </div>
-                  </div>
+                  </a>
                 </AnimatedSection>
               ))}
             </div>

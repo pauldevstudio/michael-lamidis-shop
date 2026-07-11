@@ -502,7 +502,7 @@ export default function ContentClient() {
                   <div className="flex flex-col gap-2">
                     {content.promoPopup.items.map((item, i) => {
                       const p = productById(item.productId);
-                      const img = item.imageUrl || p?.imageUrl || "";
+                      const img = p?.imageUrl || "";
                       const isOver = overItemIdx === i && dragItemIdx !== null && dragItemIdx !== i;
                       return (
                         <div
@@ -532,13 +532,6 @@ export default function ContentClient() {
                               <option key={pr.id} value={pr.id}>{pr.brand} {pr.model} — €{pr.salePrice}</option>
                             ))}
                           </select>
-                          <label className="shrink-0 w-9 h-9 rounded-lg border border-slate-700 bg-slate-900 flex items-center justify-center text-slate-400 hover:text-gold-400 hover:border-gold-400 cursor-pointer transition-colors" title="Upload a custom image (optional)">
-                            <input type="file" accept="image/*" className="sr-only" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadPromoItemImage(i, f); e.currentTarget.value = ""; }} />
-                            {itemUploading === i ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-                          </label>
-                          {item.imageUrl && (
-                            <button type="button" onClick={() => updatePromoItem(i, { imageUrl: "" })} title="Remove custom image" className="shrink-0 hidden sm:block text-[10px] text-slate-500 hover:text-slate-300 underline">reset</button>
-                          )}
                           <button type="button" onClick={() => removePromoItem(i)} aria-label="Remove item" className="shrink-0 w-9 h-9 rounded-lg border border-slate-700 bg-slate-900 flex items-center justify-center text-slate-400 hover:text-red-400 hover:border-red-500/40 transition-colors"><X className="w-4 h-4" /></button>
                         </div>
                       );
@@ -563,7 +556,7 @@ export default function ContentClient() {
                           : (() => {
                               const item = content.promoPopup.items[0];
                               const p = productById(item.productId);
-                              const img = item.imageUrl || p?.imageUrl || "";
+                              const img = p?.imageUrl || "";
                               return (
                                 <div className="rounded-2xl bg-white/[0.04] border border-white/10 overflow-hidden">
                                   <div className="aspect-[16/10] bg-white">

@@ -137,7 +137,7 @@ export default function Hero() {
             "linear-gradient(110deg, rgba(3,8,19,0.92) 0%, rgba(3,8,19,0.72) 35%, rgba(3,8,19,0.40) 62%, rgba(3,8,19,0.20) 100%)",
         }}
       />
-      {/* Bottom fade → stats bar */}
+      {/* Bottom fade */}
       <div
         className="absolute bottom-0 left-0 right-0 z-10"
         style={{
@@ -277,7 +277,7 @@ export default function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.6, duration: 0.8 }}
-        className="absolute bottom-[5.5rem] left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2 z-20"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2 z-20"
       >
         <span className="text-white/28 text-[10px] tracking-[0.22em] uppercase font-semibold">
           {t.hero.scrollHint}

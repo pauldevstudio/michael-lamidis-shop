@@ -25,14 +25,9 @@ export default function AboutContent() {
   return (
     <>
       {/* Hero */}
-      <section className="relative min-h-[60vh] flex items-end bg-navy-950 noise-overlay overflow-hidden pt-28 pb-20">
-        <div className="absolute inset-0 grid-bg" />
-        <div className="absolute inset-0"
-          style={{ background: "radial-gradient(ellipse at 30% 60%, rgba(30,72,184,0.25) 0%, transparent 60%)" }}
-        />
-        <div className="absolute inset-0"
-          style={{ background: "radial-gradient(ellipse at 80% 30%, rgba(200,136,26,0.15) 0%, transparent 55%)" }}
-        />
+      <section className="relative min-h-[60vh] flex items-end overflow-hidden pt-28 pb-20">
+        <Image src="/hero-about.png" alt="" fill className="object-cover object-center" sizes="100vw" />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(110deg, rgba(3,8,19,0.88) 0%, rgba(3,8,19,0.7) 40%, rgba(3,8,19,0.5) 100%)" }} />
         <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
           <motion.span
             initial={{ opacity: 0, y: 20 }}
@@ -199,8 +194,7 @@ export default function AboutContent() {
               {t.pages.about.ctaSubtitle}
             </p>
             <div className="flex items-center justify-center gap-4 flex-wrap">
-              <Link href="/services" className="btn-gold text-sm">{t.pages.about.ctaBrowse} <ArrowRight className="w-4 h-4" /></Link>
-              <Link href="/contact" className="btn-ghost-white text-sm">{t.pages.about.ctaQuote}</Link>
+              <Link href="/products" className="btn-gold text-sm">{t.pages.about.ctaBrowse} <ArrowRight className="w-4 h-4" /></Link>
             </div>
           </AnimatedSection>
         </div>

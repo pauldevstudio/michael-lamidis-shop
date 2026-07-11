@@ -361,22 +361,9 @@ export default function ProductsContent({ products, bestDealIds }: { products?: 
   return (
     <>
       {/* ── Hero ─────────────────────────────────────────── */}
-      <section className="relative min-h-[46vh] flex items-end bg-navy-950 noise-overlay overflow-hidden pt-28 pb-16">
-        <div className="absolute inset-0 grid-bg opacity-60" />
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(ellipse at 25% 60%, rgba(58,95,138,0.28) 0%, transparent 55%)",
-          }}
-        />
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(ellipse at 80% 30%, rgba(30,72,184,0.15) 0%, transparent 50%)",
-          }}
-        />
+      <section className="relative min-h-[46vh] flex items-end overflow-hidden pt-28 pb-16">
+        <Image src="/hero-products.png" alt="" fill className="object-cover object-center" sizes="100vw" />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(110deg, rgba(3,8,19,0.88) 0%, rgba(3,8,19,0.7) 40%, rgba(3,8,19,0.5) 100%)" }} />
 
         <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
           <motion.span

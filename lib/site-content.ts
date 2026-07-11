@@ -175,7 +175,7 @@ export const DEFAULT_CONTENT: SiteContent = {
     title: "This Week's Best Deals",
     message: "Hand-picked open-box appliances at their lowest prices — while stock lasts.",
     ctaLabel: "See all deals",
-    ctaHref: "/products",
+    ctaHref: "/products?category=best-deals",
     items: [],
   },
   bestDeals: { productIds: [] },
@@ -214,7 +214,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       { label: "Blog",         href: "/blog" },
       { label: "Contact",      href: "/contact" },
     ],
-    getQuoteLabel: "Get a Quote",
+    getQuoteLabel: "Get a Free Quote",
     getQuoteHref:  "/contact",
   },
   leadCapture: {
@@ -512,19 +512,16 @@ export async function getFeaturedProducts(limit = 8): Promise<Product[]> {
  * to an unavailable product. The `images` arrays are dropped — the popup only
  * needs the primary `imageUrl` — to keep the homepage RSC payload light.
  */
-export async function getPromoProducts(items: PromoItem[], limit = 4): Promise<Product[]> {
-  const picked = (items ?? []).slice(0, limit);
+export async function getPromoProducts(items: PromoItem[]): Promise<Product[]> {
+  const picked = items ?? [];
   if (picked.length === 0) return [];
   const all = await getPublicProducts(500);
   const byId = new Map(all.map((p) => [p.id, p]));
-  // Resolve each curated item to its product, in the admin's chosen order.
-  // A custom uploaded image overrides the product's own photo. Items whose
-  // product was deleted are silently dropped.
   return picked
     .map((it) => {
       const p = byId.get(it.productId);
       if (!p) return null;
-      return { ...p, imageUrl: it.imageUrl || p.imageUrl, images: [] } as Product;
+      return { ...p, images: [] } as Product;
     })
     .filter((p): p is Product => p !== null);
 }

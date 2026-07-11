@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Star, MapPin, Quote } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useLanguage } from "@/lib/i18n-context";
@@ -25,11 +26,9 @@ export default function TestimonialsContent() {
   return (
     <>
       {/* Hero */}
-      <section className="relative min-h-[50vh] flex items-end bg-navy-950 noise-overlay overflow-hidden pt-28 pb-16">
-        <div className="absolute inset-0 grid-bg" />
-        <div className="absolute inset-0"
-          style={{ background: "radial-gradient(ellipse at 70% 40%, rgba(200,136,26,0.2) 0%, transparent 60%)" }}
-        />
+      <section className="relative min-h-[50vh] flex items-end overflow-hidden pt-28 pb-16">
+        <Image src="/hero-testimonials.png" alt="" fill className="object-cover object-center" sizes="100vw" />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(110deg, rgba(3,8,19,0.88) 0%, rgba(3,8,19,0.7) 40%, rgba(3,8,19,0.5) 100%)" }} />
         <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
           <motion.span
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
