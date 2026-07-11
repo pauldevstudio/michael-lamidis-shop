@@ -214,9 +214,20 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="border-t border-white/[0.06] py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-white/50 text-xs font-medium text-center sm:text-left">
-            {__ftCopyright}
-          </p>
+          <div className="text-white/50 text-xs font-medium text-center sm:text-left">
+            <p>{__ftCopyright}</p>
+            <p className="mt-1">
+              Powered by{" "}
+              <a
+                href="https://smartwebappsolutions.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gold-400 hover:text-gold-300 transition-colors"
+              >
+                smartwebappsolutions.com
+              </a>
+            </p>
+          </div>
           <div className="flex items-center gap-5">
             {t.footer.legal.map(({ label, href }) => (
               <Link
