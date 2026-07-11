@@ -88,10 +88,10 @@ export default function ServicesContent() {
                         <p className="font-bold text-base mt-0.5" style={{ color: c.from }}>{price}</p>
                       </div>
                     </div>
-                    <p className="text-navy-900/55 text-base leading-relaxed">{description}</p>
+                    <p className="text-navy-900/65 text-base leading-relaxed">{description}</p>
                     <ul className="flex flex-col gap-2">
                       {t.pages.services.features.map((feature) => (
-                        <li key={feature} className="flex items-center gap-2 text-sm text-navy-900/55">
+                        <li key={feature} className="flex items-center gap-2 text-sm text-navy-900/65">
                           <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />
                           {feature}
                         </li>

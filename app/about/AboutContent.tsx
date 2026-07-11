@@ -104,7 +104,7 @@ export default function AboutContent() {
                   </h2>
                 </div>
                 {__story.map((paragraph, i) => (
-                  <p key={i} className="text-navy-900/55 text-base leading-relaxed">{paragraph}</p>
+                  <p key={i} className="text-navy-900/65 text-base leading-relaxed">{paragraph}</p>
                 ))}
                 <Link href="/contact" className="btn-primary text-sm w-fit mt-2">
                   {t.pages.about.getInTouch} <ArrowRight className="w-4 h-4" />

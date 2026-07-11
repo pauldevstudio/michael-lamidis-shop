@@ -80,7 +80,7 @@ export default function SectionHeader({
               "text-base sm:text-lg leading-relaxed font-medium",
               align === "center" && maxWidth,
               align === "center" && "mx-auto",
-              isDark ? "text-navy-200/70" : "text-navy-900/55"
+              isDark ? "text-navy-200/70" : "text-navy-900/65"
             )}
           >
             {subtitle}

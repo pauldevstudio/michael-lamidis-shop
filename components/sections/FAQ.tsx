@@ -39,7 +39,7 @@ function FAQItem({
         <div className="flex items-center gap-4">
           <span className={cn(
             "text-xs font-bold tabular-nums min-w-[1.5rem]",
-            isOpen ? "text-navy-500" : "text-navy-200"
+            isOpen ? "text-navy-500" : "text-navy-400"
           )}>
             {String(index + 1).padStart(2, "0")}
           </span>
@@ -75,7 +75,7 @@ function FAQItem({
             transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
           >
             <div className="px-6 pb-6 pl-6 sm:pl-[4.5rem]">
-              <p className="text-navy-900/55 text-sm leading-relaxed">{answer}</p>
+              <p className="text-navy-900/65 text-sm leading-relaxed">{answer}</p>
             </div>
           </motion.div>
         )}

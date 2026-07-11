@@ -24,7 +24,7 @@ export default function StarRating({
         return (
           <span key={i} className="relative inline-block" style={{ width: size, height: size }}>
             <Star
-              className="absolute inset-0 text-navy-200"
+              className="absolute inset-0 text-navy-300"
               style={{ width: size, height: size }}
               strokeWidth={1.5}
             />

@@ -248,11 +248,12 @@ export default function ChatBot() {
               className="relative w-14 h-14 rounded-full shadow-2xl flex items-center justify-center"
               style={{ background: "linear-gradient(135deg, #1A3C5E 0%, #2563EB 100%)" }}
             >
-              <Sparkles className="w-7 h-7 text-white" />
+              <Sparkles className="w-7 h-7 text-white" aria-hidden="true" />
               {hasUnread && (
                 <motion.span
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
+                  aria-hidden="true"
                   className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-[10px] font-bold shadow"
                 >
                   1
