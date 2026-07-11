@@ -7,7 +7,7 @@ import { Facebook, Instagram, Mail, Phone, MapPin, Clock, ArrowRight, CheckCircl
 import { useLanguage } from "@/lib/i18n-context";
 import { useContent } from "@/lib/content-context";
 import CookieSettingsButton from "@/components/shared/CookieSettingsButton";
-import { SITE_ADDRESS, SITE_EMAIL, SITE_HOURS, SITE_PHONE, SOCIAL_LINKS } from "@/lib/constants";
+import { SITE_ADDRESS, SITE_EMAIL, SITE_HOURS, SITE_MAPS_URL, SITE_PHONE, SOCIAL_LINKS } from "@/lib/constants";
 
 export default function Footer() {
   const { t, lang, pick } = useLanguage();
@@ -74,7 +74,7 @@ export default function Footer() {
             {/* Contact info */}
             <div className="flex flex-col gap-3">
               {[
-                { icon: MapPin, text: address, href: "https://www.google.com/maps/place/Michael+Lamidis+Appliances+Store/@34.7616632,32.9508341,17z" },
+                { icon: MapPin, text: address, href: SITE_MAPS_URL },
                 { icon: Phone, text: phone,  href: `tel:${phone.replace(/\s/g, "")}` },
                 { icon: Mail,  text: mail,   href: `mailto:${mail}` },
                 { icon: Clock, text: hours },

@@ -3,7 +3,7 @@ import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/lib/i18n-context";
 import { CartProvider } from "@/lib/cart-context";
-import { SITE_NAME, SITE_DESCRIPTION, SITE_URL, SITE_PHONE, SITE_EMAIL } from "@/lib/constants";
+import { SITE_NAME, SITE_DESCRIPTION, SITE_MAPS_URL, SITE_URL, SITE_PHONE, SITE_EMAIL } from "@/lib/constants";
 import Analytics from "@/components/shared/Analytics";
 import MetaPixel from "@/components/shared/MetaPixel";
 import AutoTrack from "@/components/shared/AutoTrack";
@@ -77,6 +77,7 @@ const jsonLd = {
         "addressLocality": "Limassol",
         "addressCountry": "CY",
       },
+      "hasMap": SITE_MAPS_URL,
       "areaServed": { "@type": "Country", "name": "Cyprus" },
     },
     {

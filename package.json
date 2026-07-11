@@ -18,6 +18,7 @@
     "@payloadcms/email-nodemailer": "^3.84.1",
     "@payloadcms/next": "^3.84.1",
     "@payloadcms/richtext-lexical": "^3.84.1",
+    "@payloadcms/storage-vercel-blob": "^3.86.0",
     "@radix-ui/react-accordion": "^1.2.3",
     "@radix-ui/react-dialog": "^1.1.4",
     "@radix-ui/react-toast": "^1.2.4",

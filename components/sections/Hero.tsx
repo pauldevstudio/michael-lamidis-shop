@@ -14,6 +14,7 @@ import {
   HERO_FRIDGE_IMAGE,
   HERO_WASHER_IMAGE,
   HERO_OVEN_IMAGE,
+  SITE_MAPS_URL,
 } from "@/lib/constants";
 import dynamic from "next/dynamic";
 const ShowroomVideoModal = dynamic(() => import("@/components/shared/ShowroomVideoModal"), { ssr: false });
@@ -168,12 +169,17 @@ export default function Hero() {
 
               {/* Location badge — CSS animation (server-visible for LCP) */}
               <div className="hero-animate hero-animate-1">
-                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gold-500/35 bg-gold-500/12 text-gold-400 text-[11px] font-bold tracking-[0.18em] uppercase">
+                <a
+                  href={SITE_MAPS_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gold-500/35 bg-gold-500/12 text-gold-400 text-[11px] font-bold tracking-[0.18em] uppercase hover:bg-gold-500/20 transition-colors"
+                >
                   <MapPin className="w-3 h-3" />
                   {__cms.locationLabel}
                   <span className="w-1 h-1 rounded-full bg-gold-400/60" />
                   {__cms.badge}
-                </span>
+                </a>
               </div>
 
               {/* Headline — plain <h1>, CSS animation so it's visible in SSR */}

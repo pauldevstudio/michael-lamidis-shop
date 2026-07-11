@@ -8,7 +8,7 @@ import { useLanguage } from "@/lib/i18n-context";
 import { useContent } from "@/lib/content-context";
 import SectionHeader from "@/components/shared/SectionHeader";
 import AnimatedSection from "@/components/shared/AnimatedSection";
-import { SITE_ADDRESS, SITE_EMAIL, SITE_HOURS, SITE_PHONE, SITE_WHATSAPP } from "@/lib/constants";
+import { SITE_ADDRESS, SITE_EMAIL, SITE_HOURS, SITE_MAPS_URL, SITE_PHONE, SITE_WHATSAPP } from "@/lib/constants";
 import { analytics } from "@/lib/analytics";
 
 export default function ContactSection() {
@@ -43,13 +43,12 @@ export default function ContactSection() {
     setTimeout(() => setStatus("sent"), 1500);
   };
 
-  const mapsUrl = `https://maps.google.com/?q=${encodeURIComponent(__biAddress)}`;
   const contactItems = [
-    { icon: MapPin, label: __csAddressLabel, value: __biAddress, href: mapsUrl, external: true },
+    { icon: MapPin, label: __csAddressLabel, value: __biAddress, href: SITE_MAPS_URL, external: true },
     { icon: Phone, label: __csPhoneLabel, value: __biPhone, href: `tel:${__biPhone.replace(/\s/g, "")}`, external: false },
     { icon: MessageCircle, label: "WhatsApp", value: SITE_WHATSAPP, href: `https://wa.me/${SITE_WHATSAPP.replace(/\D/g, "")}`, external: true },
     { icon: Mail, label: __csEmailLabel, value: __biEmail, href: `mailto:${__biEmail}`, external: false },
-    { icon: Clock, label: __csHoursLabel, value: __biHours, href: mapsUrl, external: true },
+    { icon: Clock, label: __csHoursLabel, value: __biHours, href: SITE_MAPS_URL, external: true },
   ];
 
   return (
@@ -78,7 +77,7 @@ export default function ContactSection() {
                   </div>
                   <p className="text-navy-400 text-sm font-medium">{t.pages.contact.showroomLabel}</p>
                   <a
-                    href={`https://maps.google.com/?q=${encodeURIComponent(__biAddress)}`}
+                    href={SITE_MAPS_URL}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn-ghost-dark text-xs !px-4 !py-2"

@@ -10,7 +10,7 @@ import {
   Package, ZoomIn, ZoomOut, X, ChevronLeft, ChevronRight, MessageCircle, MapPin,
 } from "lucide-react";
 import type { Product } from "@/lib/constants";
-import { SITE_PHONE, SITE_WHATSAPP } from "@/lib/constants";
+import { SITE_MAPS_URL, SITE_PHONE, SITE_WHATSAPP } from "@/lib/constants";
 import { useCart } from "@/lib/cart-context";
 import { track, ANALYTICS_EVENTS } from "@/lib/analytics";
 import AnimatedSection, { StaggerChildren, StaggerItem } from "@/components/shared/AnimatedSection";
@@ -395,10 +395,10 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
                   <Truck className="w-4 h-4 text-gold-500" />
                   Ships within 24–48h
                 </div>
-                <div className="flex items-center gap-1.5 text-navy-500 font-medium">
+                <a href={SITE_MAPS_URL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-navy-500 font-medium hover:text-navy-700 transition-colors">
                   <MapPin className="w-4 h-4 text-gold-500" />
                   Delivery may vary
-                </div>
+                </a>
               </div>
 
               {/* Quantity + Add to Cart */}

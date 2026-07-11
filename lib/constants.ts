@@ -13,6 +13,7 @@ export const SITE_EMAIL = "lamidismichaelshop@gmail.com";
 export const SITE_PHONE = "+357 97 755914";
 export const SITE_WHATSAPP = "+357 97 755914";
 export const SITE_ADDRESS = "Alassa Village, Limassol, Cyprus";
+export const SITE_MAPS_URL = "https://www.google.com/maps/place/Michael+Lamidis+Appliances+Store/@34.7616616,32.9517445,934m/data=!3m2!1e3!4b1!4m6!3m5!1s0x14e737f3b6441265:0x718cfc684f86336b!8m2!3d34.7616616!4d32.9517445!16s%2Fg%2F11n_z0vc1p";
 export const SITE_HOURS = "Mon–Sat: 09:00–20:00";
 
 export const NAV_LINKS = [
