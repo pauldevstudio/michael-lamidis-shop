@@ -64,28 +64,14 @@ export const CATEGORY_COLOR_MAP: Record<string, { colorFrom: string; colorTo: st
 };
 export const DEFAULT_CATEGORY_COLOR = { colorFrom: "#475569", colorTo: "#94A3B8" };
 
-// ─── Verified Pexels image URLs ────────────────────────────────────
-// All images verified from pexels.com (free commercial license)
-
-// Hero — premium appliance lineup (washer, fridge, oven, TV, microwave, vacuum)
+// ─── Stock images (self-hosted, originally from Pexels — free license) ──
 export const HERO_IMAGE = "/hero-appliances.webp";
 
-// Floating product card images
-export const HERO_FRIDGE_IMAGE =
-  "https://images.pexels.com/photos/6987718/pexels-photo-6987718.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop";
-
-export const HERO_WASHER_IMAGE =
-  "https://images.pexels.com/photos/7282376/pexels-photo-7282376.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop";
-
-// Built-in oven card — contemporary kitchen with built-in modern ovens
-export const HERO_OVEN_IMAGE =
-  "https://images.pexels.com/photos/8082207/pexels-photo-8082207.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop";
-
-export const KITCHEN_IMAGE =
-  "https://images.pexels.com/photos/18285887/pexels-photo-18285887.jpeg?auto=compress&cs=tinysrgb&w=1200&fit=crop";
-
-export const KITCHEN_IMAGE_2 =
-  "https://images.pexels.com/photos/29080604/pexels-photo-29080604.jpeg?auto=compress&cs=tinysrgb&w=1200&fit=crop";
+export const HERO_FRIDGE_IMAGE = "/images/stock/pexels-6987718.jpg";
+export const HERO_WASHER_IMAGE = "/images/stock/pexels-7282376.jpg";
+export const HERO_OVEN_IMAGE = "/images/stock/pexels-8082207.jpg";
+export const KITCHEN_IMAGE = "/images/stock/pexels-18285887.jpg";
+export const KITCHEN_IMAGE_2 = "/images/stock/pexels-29080604.jpg";
 
 export interface ProductSpec { label: string; value: string; }
 
@@ -130,7 +116,7 @@ export const FEATURED_PRODUCTS: Product[] = [
     colorFrom: "#0F766E",
     colorTo: "#14B8A6",
     imageUrl:
-      "https://images.pexels.com/photos/6987718/pexels-photo-6987718.jpeg?auto=compress&cs=tinysrgb&w=600&h=360&fit=crop",
+      "/images/stock/pexels-6987718.jpg",
     description:
       "Spacious French door refrigerator with Twin Cooling Plus™ technology. No Frost system and All-Around Cooling keeps food fresh for longer — ideal for large families.",
     specs: [
@@ -156,7 +142,7 @@ export const FEATURED_PRODUCTS: Product[] = [
     colorFrom: "#7C3AED",
     colorTo: "#A78BFA",
     imageUrl:
-      "https://images.pexels.com/photos/7282376/pexels-photo-7282376.jpeg?auto=compress&cs=tinysrgb&w=600&h=360&fit=crop",
+      "/images/stock/pexels-7282376.jpg",
     description:
       "i-DOS automatic dosing, EcoSilence Drive motor, and i-Refresh steam function. 9 kg capacity with A energy class rating and ultra-quiet 1600 RPM spin.",
     specs: [
@@ -182,7 +168,7 @@ export const FEATURED_PRODUCTS: Product[] = [
     colorFrom: "#B45309",
     colorTo: "#F59E0B",
     imageUrl:
-      "https://images.pexels.com/photos/6996085/pexels-photo-6996085.jpeg?auto=compress&cs=tinysrgb&w=600&h=360&fit=crop",
+      "/images/stock/pexels-6996085.jpg",
     description:
       "13-piece non-stick cookware set with a detachable Ingenio handle, Thermo-Signal heat indicator and a hard-anodised induction base. Oven-safe to 250°C and fully dishwasher-safe.",
     specs: [
@@ -208,7 +194,7 @@ export const FEATURED_PRODUCTS: Product[] = [
     colorFrom: "#1D4ED8",
     colorTo: "#60A5FA",
     imageUrl:
-      "https://images.pexels.com/photos/8082218/pexels-photo-8082218.jpeg?auto=compress&cs=tinysrgb&w=600&h=360&fit=crop",
+      "/images/stock/pexels-8082218.jpg",
     description:
       "Full-size dishwasher with 13 place settings, varioSpeed Plus for 3× faster cycles, and Zeolith® drying for spotlessly dry results every time.",
     specs: [
@@ -234,7 +220,7 @@ export const FEATURED_PRODUCTS: Product[] = [
     colorFrom: "#0369A1",
     colorTo: "#38BDF8",
     imageUrl:
-      "https://images.pexels.com/photos/8082222/pexels-photo-8082222.jpeg?auto=compress&cs=tinysrgb&w=600&h=360&fit=crop",
+      "/images/stock/pexels-8082222.jpg",
     description:
       "Inverter split-type air conditioning system with WiFi control and ultra-quiet 19 dB indoor operation. Covers up to 35 m² with R-32 refrigerant efficiency.",
     specs: [
@@ -260,7 +246,7 @@ export const FEATURED_PRODUCTS: Product[] = [
     colorFrom: "#9D174D",
     colorTo: "#F472B6",
     imageUrl:
-      "https://images.pexels.com/photos/6032797/pexels-photo-6032797.jpeg?auto=compress&cs=tinysrgb&w=600&h=360&fit=crop",
+      "/images/stock/pexels-6032797.jpg",
     description:
       "Fully automatic bean-to-cup espresso machine with LatteGo milk system. 3 brew settings, ceramic grinder, intuitive touchscreen and 1.8L water tank.",
     specs: [
@@ -286,7 +272,7 @@ export const FEATURED_PRODUCTS: Product[] = [
     colorFrom: "#C2410C",
     colorTo: "#F97316",
     imageUrl:
-      "https://images.pexels.com/photos/8082207/pexels-photo-8082207.jpeg?auto=compress&cs=tinysrgb&w=600&h=360&fit=crop",
+      "/images/stock/pexels-8082207.jpg",
     description:
       "Multifunction built-in electric oven with 9 heating modes, ProClean® catalytic self-cleaning liners, and SteamBake technology for perfect baking every time.",
     specs: [
@@ -312,7 +298,7 @@ export const FEATURED_PRODUCTS: Product[] = [
     colorFrom: "#0F766E",
     colorTo: "#14B8A6",
     imageUrl:
-      "https://images.pexels.com/photos/18285887/pexels-photo-18285887.jpeg?auto=compress&cs=tinysrgb&w=600&h=360&fit=crop",
+      "/images/stock/pexels-18285887.jpg",
     description:
       "Stylish freestanding combi fridge-freezer with IonAir technology and FreshZone+ drawer. No Frost system keeps both compartments ice-free at all times.",
     specs: [
@@ -340,7 +326,7 @@ export const BLOG_POSTS = [
     colorTo: "#3D62CC",
     // Verified: modern kitchen interior with stainless steel appliances
     imageUrl:
-      "https://images.pexels.com/photos/36777886/pexels-photo-36777886.jpeg?auto=compress&cs=tinysrgb&w=800&h=440&fit=crop",
+      "/images/stock/pexels-36777886.jpg",
   },
   {
     slug: "top-brands-open-box-2024",
@@ -355,7 +341,7 @@ export const BLOG_POSTS = [
     colorTo: "#14B8A6",
     // Verified: washing machine in bright home laundry
     imageUrl:
-      "https://images.pexels.com/photos/7282376/pexels-photo-7282376.jpeg?auto=compress&cs=tinysrgb&w=800&h=440&fit=crop",
+      "/images/stock/pexels-7282376.jpg",
   },
   {
     slug: "save-money-on-appliances-greece",
@@ -370,6 +356,6 @@ export const BLOG_POSTS = [
     colorTo: "#F59E0B",
     // Verified: contemporary Dubai kitchen with stainless steel appliances
     imageUrl:
-      "https://images.pexels.com/photos/29080604/pexels-photo-29080604.jpeg?auto=compress&cs=tinysrgb&w=800&h=440&fit=crop",
+      "/images/stock/pexels-29080604.jpg",
   },
 ];

@@ -17,7 +17,7 @@ const nextConfig: NextConfig = {
     // every product photo renders broken on the live site even though the
     // underlying Blob URLs are healthy (200). Bypassing the optimizer makes
     // <Image> emit the raw source URL, which loads straight from Vercel Blob
-    // (and Unsplash/Pexels). Product photos are already cropped/compressed webp
+    // (and Unsplash). Product photos are already cropped/compressed webp
     // (~55 KB) at upload, so quality/size stay good without the optimizer.
     //
     // To RE-ENABLE optimization later: upgrade the Vercel project to Pro (or
@@ -26,7 +26,6 @@ const nextConfig: NextConfig = {
     unoptimized: true,
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
-      { protocol: "https", hostname: "images.pexels.com" },
       { protocol: "https", hostname: "cdn.michaellamidis.com.cy" },
       { protocol: "https", hostname: "res.cloudinary.com" },
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
