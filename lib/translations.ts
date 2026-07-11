@@ -434,7 +434,7 @@ const en = {
       ctaSubtitle:
         "Browse our certified open box inventory or get a personalised quote from our team.",
       ctaBrowse: "Browse Products",
-      ctaQuote: "Get a Free Quote",
+      ctaQuote: "Browse Products",
     },
     services: {
       badge: "Our Services",
@@ -456,7 +456,7 @@ const en = {
       subtitle:
         "Real reviews from real customers who saved big without compromising quality.",
       ctaText: "Join thousands of satisfied customers across Cyprus.",
-      ctaBtn: "Get Your Free Quote",
+      ctaBtn: "Browse Products",
     },
     contact: {
       defaultBadge: "Contact",
@@ -909,7 +909,7 @@ const gr: typeof en = {
       ctaSubtitle:
         "Περιηγηθείτε στο πιστοποιημένο open box απόθεμά μας ή λάβετε μια εξατομικευμένη προσφορά από την ομάδα μας.",
       ctaBrowse: "Δείτε Προϊόντα",
-      ctaQuote: "Δωρεάν Προσφορά",
+      ctaQuote: "Δείτε Προϊόντα",
     },
     services: {
       badge: "Οι Υπηρεσίες Μας",
@@ -931,7 +931,7 @@ const gr: typeof en = {
       subtitle:
         "Αληθινές αξιολογήσεις από αληθινούς πελάτες που εξοικονόμησαν χωρίς να θυσιάσουν την ποιότητα.",
       ctaText: "Γίνετε μέλος χιλιάδων ικανοποιημένων πελατών σε όλη την Κύπρο.",
-      ctaBtn: "Λάβετε Δωρεάν Προσφορά",
+      ctaBtn: "Δείτε Προϊόντα",
     },
     contact: {
       defaultBadge: "Επικοινωνία",

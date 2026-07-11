@@ -15,9 +15,9 @@ import { SITE_URL } from "@/lib/constants";
 export const revalidate = 300;
 
 export const metadata: Metadata = {
-  title: "Contact Us — Get a Free Quote",
+  title: "Contact Us — Visit Our Showroom",
   description:
-    "Contact Michael Lamidis for a free quote on certified open box appliances. Visit our Limassol showroom or reach out online. Response within 2 hours.",
+    "Contact Michael Lamidis for certified open box appliances. Visit our Limassol showroom or reach out online. Response within 2 hours.",
   alternates: { canonical: `${SITE_URL}/contact` },
 };
 

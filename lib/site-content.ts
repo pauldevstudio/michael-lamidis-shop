@@ -214,8 +214,8 @@ export const DEFAULT_CONTENT: SiteContent = {
       { label: "Blog",         href: "/blog" },
       { label: "Contact",      href: "/contact" },
     ],
-    getQuoteLabel: "Get a Free Quote",
-    getQuoteHref:  "/contact",
+    getQuoteLabel: "Browse Products",
+    getQuoteHref:  "/products",
   },
   leadCapture: {
     eyebrow:  "Get the Best Deal",

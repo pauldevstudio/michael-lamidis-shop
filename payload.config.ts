@@ -335,8 +335,8 @@ export default buildConfig({
             { name: "href",  type: "text", required: true, admin: { description: "e.g. /products" } },
           ],
         },
-        { name: "getQuoteLabel", type: "text", defaultValue: "Get a Quote" },
-        { name: "getQuoteHref",  type: "text", defaultValue: "/contact" },
+        { name: "getQuoteLabel", type: "text", defaultValue: "Browse Products" },
+        { name: "getQuoteHref",  type: "text", defaultValue: "/products" },
       ],
     },
 

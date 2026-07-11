@@ -101,7 +101,7 @@ export default function TestimonialsContent() {
           {/* CTA */}
           <div className="mt-14 text-center flex flex-col items-center gap-4">
             <p className="text-navy-900/50 text-sm">{t.pages.testimonials.ctaText}</p>
-            <Link href="/contact" className="btn-primary text-sm">
+            <Link href="/products" className="btn-primary text-sm">
               {t.pages.testimonials.ctaBtn} <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
