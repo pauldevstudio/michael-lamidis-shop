@@ -97,7 +97,7 @@ export default function Statistics() {
             Join thousands of Cypriot families who save with Lamidis every month.
           </p>
           <div className="flex items-center gap-3">
-            <a href="/contact" className="btn-gold text-sm">Start Saving Today</a>
+            <a href="/products" className="btn-gold text-sm">Browse Products</a>
           </div>
         </div>
       </div>
