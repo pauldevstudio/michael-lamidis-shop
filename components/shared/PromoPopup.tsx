@@ -2,13 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import Image from "next/image";
 import Link from "next/link";
 import { X, Sparkles, ArrowRight } from "lucide-react";
 import type { Product } from "@/lib/constants";
 import { useContent } from "@/lib/content-context";
 import { useLanguage } from "@/lib/i18n-context";
 
-const SHOW_DELAY_MS = 2500;
+const SHOW_DELAY_MS = 6000;
 
 export default function PromoPopup({ items }: { items: Product[] }) {
   const content = useContent();
@@ -105,11 +106,13 @@ export default function PromoPopup({ items }: { items: Product[] }) {
           <div className="rounded-2xl bg-white overflow-hidden">
             {/* Full-bleed product image */}
             <div className="relative w-full aspect-square">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src={featured.imageUrl}
                 alt={`${featured.brand} ${featured.model}`}
-                className="absolute inset-0 w-full h-full object-contain p-4"
+                fill
+                loading="lazy"
+                className="object-contain p-4"
+                sizes="(max-width: 640px) 90vw, 480px"
               />
               {discount > 0 && (
                 <span className="absolute top-3 right-3 px-3 py-1.5 rounded-xl bg-red-500 text-xs font-extrabold text-white shadow-lg">
