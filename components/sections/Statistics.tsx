@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState } from "react";
 import { useInView } from "framer-motion";
+import Link from "next/link";
 import { useLanguage } from "@/lib/i18n-context";
 import { useContent } from "@/lib/content-context";
 import SectionHeader from "@/components/shared/SectionHeader";
@@ -97,7 +98,7 @@ export default function Statistics() {
             Join thousands of Cypriot families who save with Lamidis every month.
           </p>
           <div className="flex items-center gap-3">
-            <a href="/products" className="btn-gold text-sm">Browse Products</a>
+            <Link href="/products" className="btn-gold text-sm">Browse Products</Link>
           </div>
         </div>
       </div>
