@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  createContext, useCallback, useContext, useEffect, useMemo, useState,
+  createContext, useCallback, useContext, useMemo, useState,
 } from "react";
 
 /**
@@ -78,17 +78,12 @@ const NOOP: ConsentContextValue = {
 const CookieConsentContext = createContext<ConsentContextValue>(NOOP);
 
 export function CookieConsentProvider({ children }: { children: React.ReactNode }) {
-  const [record, setRecord] = useState<ConsentRecord | null>(null);
-  const [ready, setReady] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
-
-  useEffect(() => {
+  const [record, setRecord] = useState<ConsentRecord | null>(() => {
     const existing = readConsentCookie();
-    // Only honour a stored choice if it matches the current policy version;
-    // otherwise we re-prompt (treated as "no choice yet").
-    if (existing && existing.v === CONSENT_VERSION) setRecord(existing);
-    setReady(true);
-  }, []);
+    return existing && existing.v === CONSENT_VERSION ? existing : null;
+  });
+  const [ready] = useState(() => typeof document !== "undefined");
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const save = useCallback((choice: { analytics: boolean; marketing: boolean }) => {
     const rec: ConsentRecord = {
