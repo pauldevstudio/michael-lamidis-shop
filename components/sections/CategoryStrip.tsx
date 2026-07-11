@@ -80,7 +80,7 @@ export default function CategoryStrip() {
   return (
     <section className="bg-white border-b border-navy-100/60 py-8 overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-        <p className="text-center text-[11px] font-bold uppercase tracking-[0.2em] text-navy-300 mb-6">
+        <p className="text-center text-[11px] font-bold uppercase tracking-[0.2em] text-navy-400 mb-6">
           {eyebrow}
         </p>
 

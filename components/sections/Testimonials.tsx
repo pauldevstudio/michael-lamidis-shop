@@ -115,19 +115,23 @@ export default function Testimonials() {
               <ChevronLeft className="w-4 h-4" />
             </button>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
               {items.map((_, i) => (
                 <button
                   key={i}
                   onClick={() => setActive(i)}
-                  className={cn(
-                    "transition-all duration-300 rounded-full focus-ring",
-                    active === i
-                      ? "w-6 h-2 bg-gold-400"
-                      : "w-2 h-2 bg-white/20 hover:bg-white/40"
-                  )}
+                  className="relative flex items-center justify-center w-11 h-11 focus-ring rounded-full"
                   aria-label={`Go to testimonial ${i + 1}`}
-                />
+                >
+                  <span
+                    className={cn(
+                      "block rounded-full transition-all duration-300",
+                      active === i
+                        ? "w-6 h-2 bg-gold-400"
+                        : "w-2 h-2 bg-white/20 hover:bg-white/40"
+                    )}
+                  />
+                </button>
               ))}
             </div>
 

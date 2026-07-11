@@ -36,7 +36,6 @@ function ProductCard({
   return (
     <Link
       href={`/products/${id}`}
-      aria-label={`View ${brand} ${model}`}
       className="block focus-ring rounded-2xl"
     >
     <motion.div
@@ -108,7 +107,7 @@ function ProductCard({
         <div className="flex items-center gap-1.5">
           <StarRating rating={proof.rating} size={13} />
           <span className="text-navy-800 text-xs font-bold tnum">{proof.rating.toFixed(1)}</span>
-          <span className="text-navy-300 text-xs tnum">({proof.reviews})</span>
+          <span className="text-navy-400 text-xs tnum">({proof.reviews})</span>
         </div>
 
         {/* Price */}
@@ -117,7 +116,7 @@ function ProductCard({
             €{salePrice.toLocaleString("en-US")}
           </span>
           {hasRealSaving && (
-            <span className="text-navy-300 text-sm line-through font-medium tnum">
+            <span className="text-navy-400 text-sm line-through font-medium tnum">
               €{originalPrice.toLocaleString("en-US")}
             </span>
           )}

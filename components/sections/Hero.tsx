@@ -123,6 +123,7 @@ export default function Hero() {
           alt="Premium open box home appliance lineup — washing machine, refrigerator, oven, smart TV, microwave and vacuum — Michael Lamidis, Limassol Cyprus"
           fill
           priority
+          fetchPriority="high"
           className="object-cover object-center"
           sizes="100vw"
         />

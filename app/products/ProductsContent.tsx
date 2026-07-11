@@ -52,7 +52,7 @@ function CategoryButton({
           ? "px-3.5 py-2 min-h-[40px] rounded-full text-[13px]"
           : "w-full justify-between gap-2 px-3 py-2.5 rounded-lg text-[13px]",
         empty
-          ? "bg-navy-50/60 text-navy-300 border border-navy-100 opacity-60 cursor-not-allowed"
+          ? "bg-navy-50/60 text-navy-400 border border-navy-100 opacity-60 cursor-not-allowed"
           : isActive
           ? "text-white shadow-md"
           : variant === "pill"
@@ -205,7 +205,7 @@ function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
         <div className="flex items-center gap-1.5 flex-wrap">
           <StarRating rating={proof.rating} size={13} />
           <span className="text-navy-800 text-xs font-bold tnum">{proof.rating.toFixed(1)}</span>
-          <span className="text-navy-300 text-xs tnum">({proof.reviews})</span>
+          <span className="text-navy-400 text-xs tnum">({proof.reviews})</span>
           <span className="text-navy-200">·</span>
           <span className="text-emerald-600 text-[11px] font-semibold tnum">{proof.sold}+ sold</span>
         </div>
@@ -215,7 +215,7 @@ function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
           <div className="flex flex-wrap gap-x-4 gap-y-1">
             {product.specs.slice(0, 2).map((s) => (
               <span key={s.label} className="text-[11px] text-navy-400 font-medium">
-                <span className="text-navy-300">{s.label}:</span> {s.value}
+                <span className="text-navy-400">{s.label}:</span> {s.value}
               </span>
             ))}
           </div>
@@ -230,7 +230,7 @@ function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
             €{product.salePrice.toLocaleString("en-US")}
           </span>
           {product.originalPrice > product.salePrice && (
-            <span className="text-navy-300 text-sm line-through font-medium tnum">
+            <span className="text-navy-400 text-sm line-through font-medium tnum">
               €{product.originalPrice.toLocaleString("en-US")}
             </span>
           )}
@@ -562,7 +562,7 @@ export default function ProductsContent({ products, bestDealIds }: { products?: 
                 </>
               )}
             </p>
-            <div className="flex items-center gap-1.5 text-xs text-navy-300 font-medium">
+            <div className="flex items-center gap-1.5 text-xs text-navy-400 font-medium">
               <LayoutGrid className="w-3.5 h-3.5" />
               {t.pages.products.gridView}
             </div>
@@ -577,7 +577,7 @@ export default function ProductsContent({ products, bestDealIds }: { products?: 
 
           {/* Empty state */}
           {filtered.length === 0 && (
-            <div className="text-center py-24 text-navy-300">
+            <div className="text-center py-24 text-navy-400">
               <Package className="w-12 h-12 mx-auto mb-4 opacity-30" />
               <p className="text-navy-400 font-medium">{t.pages.products.emptyMessage}</p>
               <button

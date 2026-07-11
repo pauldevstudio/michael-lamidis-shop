@@ -94,7 +94,7 @@ export default function PromoPopup({ items }: { items: Product[] }) {
 
         {/* Eyebrow — compact */}
         <div className="px-5 pt-6 pb-3 text-center">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-500/15 border border-gold-400/30 text-gold-400 text-[11px] font-bold uppercase tracking-widest">
+          <span id="promo-popup-title" className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-500/15 border border-gold-400/30 text-gold-400 text-[11px] font-bold uppercase tracking-widest">
             <Sparkles className="w-3.5 h-3.5" />
             {pick(promo.eyebrow, t.promoPopup.eyebrow)}
           </span>
