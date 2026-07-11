@@ -1,10 +1,10 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import CookieBanner from "@/components/shared/CookieBanner";
 
 const AIChatOnPublic = dynamic(() => import("@/components/shared/AIChatOnPublic"), { ssr: false });
 const WhatsAppButton = dynamic(() => import("@/components/shared/WhatsAppButton"), { ssr: false });
-const CookieBanner = dynamic(() => import("@/components/shared/CookieBanner"), { ssr: false });
 
 export default function LazyWidgets() {
   return (

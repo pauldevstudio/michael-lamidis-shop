@@ -66,7 +66,7 @@ export default function AnnouncementBar({ message, ctaLabel, ctaHref = "/product
             )}
             <button
               onClick={() => setVisible(false)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors"
+              className="absolute right-1 top-1/2 -translate-y-1/2 p-2.5 text-white/50 hover:text-white transition-colors"
               aria-label="Dismiss"
             >
               <X className="w-4 h-4" />
