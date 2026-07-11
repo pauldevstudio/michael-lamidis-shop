@@ -114,7 +114,7 @@ export default function Navbar() {
             <Link
               href="/"
               className="flex items-center gap-2.5"
-              aria-label="Michael Lamidis — home"
+              aria-label="Michael Lamidis, home"
             >
               <Image
                 src="/logo.webp"
@@ -169,7 +169,7 @@ export default function Navbar() {
               <a
                 href={`tel:${phone.replace(/\s+/g, "")}`}
                 className="hidden md:inline-flex items-center gap-2 text-sm text-white/80 hover:text-white transition-colors"
-                aria-label="Call us"
+                aria-label={`Call us ${phone}`}
               >
                 <Phone className="w-4 h-4" />
                 <span className="hidden xl:inline">{phone}</span>

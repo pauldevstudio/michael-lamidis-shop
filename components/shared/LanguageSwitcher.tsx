@@ -27,9 +27,8 @@ export default function LanguageSwitcher({
           : "border-navy-200 text-navy-500 hover:text-navy-900 hover:border-navy-300 hover:bg-navy-50",
         className
       )}
-      aria-label={`Switch to ${lang === "en" ? "Greek" : "English"}`}
     >
-      <span className="text-base leading-none">{lang === "en" ? "🇬🇷" : "🇬🇧"}</span>
+      <span className="text-base leading-none" aria-hidden="true">{lang === "en" ? "🇬🇷" : "🇬🇧"}</span>
       {t.nav.switchLang}
     </button>
   );
