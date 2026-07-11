@@ -10,15 +10,6 @@ import { useLanguage } from "@/lib/i18n-context";
 
 const SHOW_DELAY_MS = 2500;
 
-/**
- * Homepage "Special Offer" promo popup. Shows the curated `promoPopup.items`
- * (fetched server-side and passed in as `items`) and links each straight to its
- * purchase page. Copy + on/off come from the CMS (`promoPopup`, edited at
- * /admin/content). Shows on every homepage visit after a short delay (it's
- * dismissible via ✕/Esc/backdrop); add `?promo=1` to show it instantly.
- * Portaled to <body> so the homepage's framer-motion transforms don't break
- * `position: fixed`.
- */
 export default function PromoPopup({ items }: { items: Product[] }) {
   const content = useContent();
   const promo = content?.promoPopup;
@@ -29,9 +20,6 @@ export default function PromoPopup({ items }: { items: Product[] }) {
 
   useEffect(() => setMounted(true), []);
 
-  // Show whenever enabled + has items, after a short delay (?promo=1 = instant).
-  // No throttle: it appears on every homepage visit (dismissible). To limit
-  // repeat displays later, gate this on sessionStorage/localStorage here.
   useEffect(() => {
     if (!promo?.enabled || items.length === 0) return;
     const force =
@@ -41,7 +29,6 @@ export default function PromoPopup({ items }: { items: Product[] }) {
     return () => clearTimeout(t);
   }, [promo?.enabled, items.length]);
 
-  // While open: lock body scroll, focus close, Esc closes.
   useEffect(() => {
     if (!open) return;
     const prevOverflow = document.body.style.overflow;
@@ -57,11 +44,16 @@ export default function PromoPopup({ items }: { items: Product[] }) {
 
   if (!mounted || !open || !promo) return null;
 
-  const shown = items.slice(0, 4);
+  const featured = items[Math.floor(Math.random() * items.length)];
+  if (!featured) return null;
+
+  const discount = featured.originalPrice > featured.salePrice
+    ? Math.round(((featured.originalPrice - featured.salePrice) / featured.originalPrice) * 100)
+    : 0;
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[10050] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+      className="fixed inset-0 z-[10050] flex items-center justify-center p-3 bg-black/70 backdrop-blur-sm animate-in fade-in duration-300"
       onClick={() => setOpen(false)}
       role="dialog"
       aria-modal="true"
@@ -69,78 +61,80 @@ export default function PromoPopup({ items }: { items: Product[] }) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border border-white/10 shadow-2xl"
+        className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-3xl border border-white/10 shadow-2xl"
         style={{ background: "linear-gradient(180deg, #030813 0%, #071233 100%)" }}
       >
+        {/* Close */}
         <button
           ref={closeRef}
           onClick={() => setOpen(false)}
           aria-label="Close"
-          className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center text-white/70 hover:text-white transition-colors"
+          className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 border border-white/10 flex items-center justify-center text-white/70 hover:text-white transition-colors"
         >
           <X className="w-4 h-4" />
         </button>
 
-        {/* Header */}
-        <div className="px-6 pt-8 pb-5 text-center">
+        {/* Eyebrow — compact */}
+        <div className="px-5 pt-6 pb-3 text-center">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-500/15 border border-gold-400/30 text-gold-400 text-[11px] font-bold uppercase tracking-widest">
             <Sparkles className="w-3.5 h-3.5" />
             {pick(promo.eyebrow, t.promoPopup.eyebrow)}
           </span>
-          <h2 id="promo-popup-title" className="mt-3 text-white font-display font-bold text-2xl sm:text-3xl leading-tight">
-            {promo.title || "This Week's Best Deals"}
-          </h2>
-          {promo.message && (
-            <p className="mt-2 text-white/55 text-sm max-w-md mx-auto leading-relaxed">{promo.message}</p>
-          )}
         </div>
 
-        {/* Curated promo products */}
-        <div className="px-6 pb-2 grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {shown.map((p) => (
-            <Link
-              key={p.id}
-              href={`/products/${p.id}`}
-              onClick={() => setOpen(false)}
-              className="group flex flex-col rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 overflow-hidden transition-colors"
-            >
-              <div className="relative aspect-square bg-white">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={p.imageUrl}
-                  alt={`${p.brand} ${p.model}`}
-                  className="absolute inset-0 w-full h-full object-contain p-2"
-                />
-                <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded bg-navy-950/80 text-[9px] font-bold text-white tracking-wide">
-                  {t.pages.products.gradeLabel} {p.grade}
+        {/* Product — maximum image, minimal text */}
+        <div className="px-4 pb-3">
+          <div className="rounded-2xl bg-white overflow-hidden">
+            {/* Full-bleed product image */}
+            <div className="relative w-full aspect-square">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={featured.imageUrl}
+                alt={`${featured.brand} ${featured.model}`}
+                className="absolute inset-0 w-full h-full object-contain p-4"
+              />
+              {discount > 0 && (
+                <span className="absolute top-3 right-3 px-3 py-1.5 rounded-xl bg-red-500 text-xs font-extrabold text-white shadow-lg">
+                  &minus;{discount}%
                 </span>
-              </div>
-              <div className="p-2.5 flex flex-col gap-0.5">
-                <p className="text-white/50 text-[10px] font-semibold uppercase tracking-wide truncate">{p.brand}</p>
-                <p className="text-white text-xs font-medium truncate">{p.model}</p>
-                <div className="mt-1 flex items-center justify-between">
-                  <span className="text-gold-400 font-bold text-sm tabular-nums">
-                    &euro;{p.salePrice.toLocaleString("en-US")}
-                  </span>
-                  <span className="text-white/40 group-hover:text-gold-400 text-[10px] font-semibold inline-flex items-center gap-0.5 transition-colors">
-                    {t.promoPopup.shop} <ArrowRight className="w-3 h-3" />
-                  </span>
-                </div>
-              </div>
-            </Link>
-          ))}
+              )}
+            </div>
+          </div>
         </div>
 
-        {/* Footer CTA */}
-        <div className="px-6 pt-4 pb-7 text-center">
+        {/* Name + Price + CTA — tight */}
+        <div className="px-5 pb-6 text-center space-y-3">
+          <div>
+            <p className="text-white font-bold text-lg sm:text-xl leading-snug">
+              {featured.brand}
+            </p>
+            <div className="mt-1.5 flex items-baseline justify-center gap-2.5">
+              <span className="text-gold-400 font-extrabold text-2xl sm:text-3xl tabular-nums">
+                &euro;{featured.salePrice.toLocaleString("en-US")}
+              </span>
+              {discount > 0 && (
+                <span className="text-white/30 line-through text-sm tabular-nums">
+                  &euro;{featured.originalPrice.toLocaleString("en-US")}
+                </span>
+              )}
+            </div>
+          </div>
+
           <Link
-            href={promo.ctaHref || "/products"}
+            href={`/products/${featured.id}`}
             onClick={() => setOpen(false)}
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-navy-950 text-sm font-bold transition-transform hover:scale-[1.02]"
+            className="inline-flex items-center justify-center gap-2 w-full px-6 py-3.5 rounded-xl text-navy-950 text-sm font-bold transition-transform hover:scale-[1.02]"
             style={{ background: "linear-gradient(135deg, #E6B450 0%, #C8881A 100%)" }}
           >
-            {pick(promo.ctaLabel, t.promoPopup.cta)}
-            <ArrowRight className="w-4 h-4" />
+            {t.promoPopup.shop} <ArrowRight className="w-4 h-4" />
+          </Link>
+
+          <Link
+            href={promo.ctaHref || "/products?category=best-deals"}
+            onClick={() => setOpen(false)}
+            className="inline-flex items-center justify-center gap-1.5 text-white/40 hover:text-gold-400 text-xs font-medium transition-colors"
+          >
+            {pick(promo.ctaLabel, t.promoPopup.cta)} <ArrowRight className="w-3 h-3" />
           </Link>
         </div>
       </div>
