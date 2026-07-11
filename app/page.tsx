@@ -2,14 +2,14 @@ import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import ScrollProgress from "@/components/shared/ScrollProgress";
 import Hero from "@/components/sections/Hero";
-import CategoryStrip from "@/components/sections/CategoryStrip";
-import ProductGallery from "@/components/sections/ProductGallery";
 import { ContentProvider } from "@/lib/content-context";
 import { getSiteContent, getFeaturedProducts, getPromoProducts } from "@/lib/site-content";
 import { SITE_URL } from "@/lib/constants";
 
+const ScrollProgress = dynamic(() => import("@/components/shared/ScrollProgress"));
+const CategoryStrip = dynamic(() => import("@/components/sections/CategoryStrip"));
+const ProductGallery = dynamic(() => import("@/components/sections/ProductGallery"));
 const Services = dynamic(() => import("@/components/sections/Services"));
 const Testimonials = dynamic(() => import("@/components/sections/Testimonials"));
 const Statistics = dynamic(() => import("@/components/sections/Statistics"));

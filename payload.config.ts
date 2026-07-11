@@ -41,7 +41,15 @@ export default buildConfig({
     },
     {
       slug: "media",
-      upload: true,
+      upload: {
+        mimeTypes: ["image/*"],
+        formatOptions: { format: "webp", options: { quality: 82 } },
+        resizeOptions: { width: 1200, withoutEnlargement: true },
+        imageSizes: [
+          { name: "card", width: 600, height: 400, position: "centre", formatOptions: { format: "webp", options: { quality: 80 } } },
+          { name: "full", width: 1200, formatOptions: { format: "webp", options: { quality: 82 } } },
+        ],
+      },
       // Public site needs to fetch /api/payload/media/file/<name> without
       // an admin session. Anyone can read; only logged-in admins can write.
       access: {

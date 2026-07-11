@@ -101,6 +101,7 @@ export default function RootLayout({
   return (
     <html lang="en" data-scroll-behavior="smooth" className={`${inter.variable} ${plusJakarta.variable}`}>
       <head>
+        <link rel="preconnect" href="https://iax3scoubxgocab7.public.blob.vercel-storage.com" />
         <link
           rel="preload"
           href="/hero-appliances.webp"

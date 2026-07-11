@@ -49,6 +49,7 @@ function FloatCard({
           src={imgSrc}
           alt={imgAlt}
           fill
+          loading="lazy"
           className="object-cover"
           sizes="360px"
         />

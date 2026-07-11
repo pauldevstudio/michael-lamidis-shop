@@ -52,6 +52,7 @@ function ProductCard({
             src={imageUrl}
             alt={`${brand} ${model}`}
             fill
+            loading="lazy"
             className="object-contain p-4 group-hover:scale-105 transition-transform duration-500"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           />

@@ -67,11 +67,11 @@ export const DEFAULT_CATEGORY_COLOR = { colorFrom: "#475569", colorTo: "#94A3B8"
 // ─── Stock images (self-hosted, originally from Pexels — free license) ──
 export const HERO_IMAGE = "/hero-appliances.webp";
 
-export const HERO_FRIDGE_IMAGE = "/images/stock/pexels-6987718.jpg";
-export const HERO_WASHER_IMAGE = "/images/stock/pexels-7282376.jpg";
-export const HERO_OVEN_IMAGE = "/images/stock/pexels-8082207.jpg";
-export const KITCHEN_IMAGE = "/images/stock/pexels-18285887.jpg";
-export const KITCHEN_IMAGE_2 = "/images/stock/pexels-29080604.jpg";
+export const HERO_FRIDGE_IMAGE = "/images/stock/pexels-6987718.webp";
+export const HERO_WASHER_IMAGE = "/images/stock/pexels-7282376.webp";
+export const HERO_OVEN_IMAGE = "/images/stock/pexels-8082207.webp";
+export const KITCHEN_IMAGE = "/images/stock/pexels-18285887.webp";
+export const KITCHEN_IMAGE_2 = "/images/stock/pexels-29080604.webp";
 
 export interface ProductSpec { label: string; value: string; }
 
@@ -116,7 +116,7 @@ export const FEATURED_PRODUCTS: Product[] = [
     colorFrom: "#0F766E",
     colorTo: "#14B8A6",
     imageUrl:
-      "/images/stock/pexels-6987718.jpg",
+      "/images/stock/pexels-6987718.webp",
     description:
       "Spacious French door refrigerator with Twin Cooling Plus™ technology. No Frost system and All-Around Cooling keeps food fresh for longer — ideal for large families.",
     specs: [
@@ -142,7 +142,7 @@ export const FEATURED_PRODUCTS: Product[] = [
     colorFrom: "#7C3AED",
     colorTo: "#A78BFA",
     imageUrl:
-      "/images/stock/pexels-7282376.jpg",
+      "/images/stock/pexels-7282376.webp",
     description:
       "i-DOS automatic dosing, EcoSilence Drive motor, and i-Refresh steam function. 9 kg capacity with A energy class rating and ultra-quiet 1600 RPM spin.",
     specs: [
@@ -168,7 +168,7 @@ export const FEATURED_PRODUCTS: Product[] = [
     colorFrom: "#B45309",
     colorTo: "#F59E0B",
     imageUrl:
-      "/images/stock/pexels-6996085.jpg",
+      "/images/stock/pexels-6996085.webp",
     description:
       "13-piece non-stick cookware set with a detachable Ingenio handle, Thermo-Signal heat indicator and a hard-anodised induction base. Oven-safe to 250°C and fully dishwasher-safe.",
     specs: [
@@ -194,7 +194,7 @@ export const FEATURED_PRODUCTS: Product[] = [
     colorFrom: "#1D4ED8",
     colorTo: "#60A5FA",
     imageUrl:
-      "/images/stock/pexels-8082218.jpg",
+      "/images/stock/pexels-8082218.webp",
     description:
       "Full-size dishwasher with 13 place settings, varioSpeed Plus for 3× faster cycles, and Zeolith® drying for spotlessly dry results every time.",
     specs: [
@@ -220,7 +220,7 @@ export const FEATURED_PRODUCTS: Product[] = [
     colorFrom: "#0369A1",
     colorTo: "#38BDF8",
     imageUrl:
-      "/images/stock/pexels-8082222.jpg",
+      "/images/stock/pexels-8082222.webp",
     description:
       "Inverter split-type air conditioning system with WiFi control and ultra-quiet 19 dB indoor operation. Covers up to 35 m² with R-32 refrigerant efficiency.",
     specs: [
@@ -246,7 +246,7 @@ export const FEATURED_PRODUCTS: Product[] = [
     colorFrom: "#9D174D",
     colorTo: "#F472B6",
     imageUrl:
-      "/images/stock/pexels-6032797.jpg",
+      "/images/stock/pexels-6032797.webp",
     description:
       "Fully automatic bean-to-cup espresso machine with LatteGo milk system. 3 brew settings, ceramic grinder, intuitive touchscreen and 1.8L water tank.",
     specs: [
@@ -272,7 +272,7 @@ export const FEATURED_PRODUCTS: Product[] = [
     colorFrom: "#C2410C",
     colorTo: "#F97316",
     imageUrl:
-      "/images/stock/pexels-8082207.jpg",
+      "/images/stock/pexels-8082207.webp",
     description:
       "Multifunction built-in electric oven with 9 heating modes, ProClean® catalytic self-cleaning liners, and SteamBake technology for perfect baking every time.",
     specs: [
@@ -298,7 +298,7 @@ export const FEATURED_PRODUCTS: Product[] = [
     colorFrom: "#0F766E",
     colorTo: "#14B8A6",
     imageUrl:
-      "/images/stock/pexels-18285887.jpg",
+      "/images/stock/pexels-18285887.webp",
     description:
       "Stylish freestanding combi fridge-freezer with IonAir technology and FreshZone+ drawer. No Frost system keeps both compartments ice-free at all times.",
     specs: [
@@ -326,7 +326,7 @@ export const BLOG_POSTS = [
     colorTo: "#3D62CC",
     // Verified: modern kitchen interior with stainless steel appliances
     imageUrl:
-      "/images/stock/pexels-36777886.jpg",
+      "/images/stock/pexels-36777886.webp",
   },
   {
     slug: "top-brands-open-box-2024",
@@ -341,7 +341,7 @@ export const BLOG_POSTS = [
     colorTo: "#14B8A6",
     // Verified: washing machine in bright home laundry
     imageUrl:
-      "/images/stock/pexels-7282376.jpg",
+      "/images/stock/pexels-7282376.webp",
   },
   {
     slug: "save-money-on-appliances-greece",
@@ -356,6 +356,6 @@ export const BLOG_POSTS = [
     colorTo: "#F59E0B",
     // Verified: contemporary Dubai kitchen with stainless steel appliances
     imageUrl:
-      "/images/stock/pexels-29080604.jpg",
+      "/images/stock/pexels-29080604.webp",
   },
 ];
