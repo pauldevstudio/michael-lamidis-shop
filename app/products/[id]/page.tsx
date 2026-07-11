@@ -33,10 +33,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const product = await getPublicProductById(id);
   if (!product) return { title: "Product Not Found" };
+  const imgUrl = product.imageUrl?.startsWith("http")
+    ? product.imageUrl
+    : `${SITE_URL}${product.imageUrl}`;
   return {
     title: `${product.brand} ${product.model} - Michael Lamidis`,
     description: product.description,
     alternates: { canonical: `${SITE_URL}/products/${id}` },
+    openGraph: {
+      title: `${product.brand} ${product.model} — €${product.salePrice}`,
+      description: product.description,
+      images: [{ url: imgUrl, width: 600, height: 360, alt: `${product.brand} ${product.model}` }],
+    },
   };
 }
 
@@ -58,6 +66,15 @@ export default async function ProductPage({ params }: Props) {
   const sp = productSocialProof(product.id);
   const absolute = (u: string) => (/^https?:\/\//i.test(u) ? u : `${SITE_URL}${u.startsWith("/") ? "" : "/"}${u}`);
   const gallery = (product.images?.length ? product.images : [product.imageUrl]).filter(Boolean).map(absolute);
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "Products", item: `${SITE_URL}/products` },
+      { "@type": "ListItem", position: 3, name: `${product.brand} ${product.model}` },
+    ],
+  };
   const productLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -85,9 +102,13 @@ export default async function ProductPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productLd) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
       <ScrollProgress />
       <Navbar />
-      <main>
+      <main id="main-content">
         <ProductDetail product={product} related={related} />
       </main>
       <Footer />

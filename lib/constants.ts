@@ -68,7 +68,7 @@ export const DEFAULT_CATEGORY_COLOR = { colorFrom: "#475569", colorTo: "#94A3B8"
 // All images verified from pexels.com (free commercial license)
 
 // Hero — premium appliance lineup (washer, fridge, oven, TV, microwave, vacuum)
-export const HERO_IMAGE = "/hero-appliances.jpg";
+export const HERO_IMAGE = "/hero-appliances.webp";
 
 // Floating product card images
 export const HERO_FRIDGE_IMAGE =

@@ -125,7 +125,7 @@ export default function CookieBanner() {
             type="button"
             onClick={closeSettings}
             aria-label={t.close}
-            className="absolute top-3 right-3 text-white/40 hover:text-white transition-colors"
+            className="absolute top-3 right-3 text-white/50 hover:text-white transition-colors"
           >
             <X className="w-4 h-4" />
           </button>

@@ -113,7 +113,7 @@ export default function PromoPopup({ items }: { items: Product[] }) {
                 &euro;{featured.salePrice.toLocaleString("en-US")}
               </span>
               {discount > 0 && (
-                <span className="text-white/30 line-through text-sm tabular-nums">
+                <span className="text-white/50 line-through text-sm tabular-nums">
                   &euro;{featured.originalPrice.toLocaleString("en-US")}
                 </span>
               )}
@@ -132,7 +132,7 @@ export default function PromoPopup({ items }: { items: Product[] }) {
           <Link
             href={promo.ctaHref || "/products?category=best-deals"}
             onClick={() => setOpen(false)}
-            className="inline-flex items-center justify-center gap-1.5 text-white/40 hover:text-gold-400 text-xs font-medium transition-colors"
+            className="inline-flex items-center justify-center gap-1.5 text-white/50 hover:text-gold-400 text-xs font-medium transition-colors"
           >
             {pick(promo.ctaLabel, t.promoPopup.cta)} <ArrowRight className="w-3 h-3" />
           </Link>

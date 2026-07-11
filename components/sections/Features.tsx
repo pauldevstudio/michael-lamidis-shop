@@ -75,7 +75,7 @@ export default function Features() {
                     <h3 className="text-white font-semibold text-base leading-snug" style={{ fontFamily: "var(--font-jakarta)" }}>
                       {title}
                     </h3>
-                    <p className="text-white/45 text-sm leading-relaxed">{description}</p>
+                    <p className="text-white/60 text-sm leading-relaxed">{description}</p>
                   </div>
                 </div>
               </StaggerItem>

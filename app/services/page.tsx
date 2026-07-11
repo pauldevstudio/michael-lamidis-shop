@@ -17,7 +17,7 @@ export default function ServicesPage() {
     <>
       <ScrollProgress />
       <Navbar />
-      <main>
+      <main id="main-content">
         <ServicesContent />
       </main>
       <Footer />

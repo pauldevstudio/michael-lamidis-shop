@@ -40,7 +40,12 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const setLang = (newLang: Language) => {
     setLangState(newLang);
     localStorage.setItem("ml-lang", newLang);
+    document.documentElement.lang = newLang === "gr" ? "el" : "en";
   };
+
+  useEffect(() => {
+    document.documentElement.lang = lang === "gr" ? "el" : "en";
+  }, [lang]);
 
   const pick = (<V,>(cmsValue: V | null | undefined, translationValue: V | undefined): V | undefined => {
     if (lang === "gr") {

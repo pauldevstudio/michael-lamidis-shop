@@ -41,7 +41,7 @@ export default async function HomePage() {
       <PromoPopup items={promoItems} />
       <ScrollProgress />
       <Navbar />
-      <main>
+      <main id="main-content">
         <Hero />
         <CategoryStrip />
         <Services />

@@ -7,6 +7,7 @@ import CheckoutContent from "./CheckoutContent";
 export const metadata: Metadata = {
   title: "Checkout — Michael Lamidis",
   description: "Place your order. Pay by bank transfer, cash on delivery, or in-store pickup.",
+  robots: { index: false },
 };
 
 export default function CheckoutPage() {
@@ -14,7 +15,7 @@ export default function CheckoutPage() {
     <>
       <ScrollProgress />
       <Navbar />
-      <main className="pt-24 pb-16 bg-white min-h-screen">
+      <main id="main-content" className="pt-24 pb-16 bg-white min-h-screen">
         <CheckoutContent />
       </main>
       <Footer />

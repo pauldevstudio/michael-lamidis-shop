@@ -45,7 +45,7 @@ export default function Testimonials() {
   return (
     <section className="section-py relative overflow-hidden">
       <Image
-        src="/hero-home.png"
+        src="/hero-home.webp"
         alt=""
         fill
         className="object-cover object-center"
@@ -96,7 +96,7 @@ export default function Testimonials() {
                     {items[active].name}
                   </p>
                   <p className="text-white/45 text-xs">{items[active].role}</p>
-                  <div className="flex items-center gap-1 text-white/35 text-xs">
+                  <div className="flex items-center gap-1 text-white/50 text-xs">
                     <MapPin className="w-3 h-3" />
                     {items[active].location}
                   </div>
@@ -158,7 +158,7 @@ export default function Testimonials() {
               <p className="text-white text-xs font-semibold mt-2 leading-tight" style={{ fontFamily: "var(--font-jakarta)" }}>
                 {name}
               </p>
-              <p className="text-white/35 text-[10px] mt-0.5">{role}</p>
+              <p className="text-white/50 text-[10px] mt-0.5">{role}</p>
             </button>
           ))}
         </div>

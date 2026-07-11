@@ -32,11 +32,31 @@ export default async function BlogPostPage({ params }: Props) {
   const post = BLOG_POSTS.find((p) => p.slug === slug);
   if (!post) notFound();
 
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.excerpt,
+    author: { "@type": "Person", name: post.author },
+    datePublished: post.date,
+    image: post.imageUrl,
+    publisher: {
+      "@type": "Organization",
+      name: "Michael Lamidis",
+      url: SITE_URL,
+    },
+    mainEntityOfPage: `${SITE_URL}/blog/${slug}`,
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
       <ScrollProgress />
       <Navbar />
-      <main>
+      <main id="main-content">
         {/* Hero */}
         <section
           className="relative min-h-[50vh] flex items-end overflow-hidden pt-28 pb-16 noise-overlay"

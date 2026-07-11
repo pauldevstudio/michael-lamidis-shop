@@ -27,7 +27,7 @@ export default function TestimonialsContent() {
     <>
       {/* Hero */}
       <section className="relative min-h-[50vh] flex items-end overflow-hidden pt-28 pb-16">
-        <Image src="/hero-testimonials.png" alt="" fill className="object-cover object-center" sizes="100vw" />
+        <Image src="/hero-testimonials.webp" alt="" fill className="object-cover object-center" sizes="100vw" />
         <div className="absolute inset-0" style={{ background: "linear-gradient(110deg, rgba(3,8,19,0.88) 0%, rgba(3,8,19,0.7) 40%, rgba(3,8,19,0.5) 100%)" }} />
         <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
           <motion.span

@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -47,8 +48,8 @@ export default async function ProductsPage() {
       />
       <ScrollProgress />
       <Navbar />
-      <main>
-        <ProductsContent products={products} bestDealIds={bestDealIds} />
+      <main id="main-content">
+        <Suspense><ProductsContent products={products} bestDealIds={bestDealIds} /></Suspense>
       </main>
       <Footer />
     </>

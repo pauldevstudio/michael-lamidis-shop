@@ -141,23 +141,23 @@ export default function ContactSection() {
                   <motion.form key="form" onSubmit={handleSubmit} className="flex flex-col gap-5">
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className="flex flex-col gap-1.5">
-                        <label className="text-navy-400 text-xs font-bold uppercase tracking-widest">{f.name}</label>
-                        <input type="text" value={form.name} onChange={set("name")} placeholder={f.name} required className="form-input-light" />
+                        <label htmlFor="contact-name" className="text-navy-400 text-xs font-bold uppercase tracking-widest">{f.name}</label>
+                        <input id="contact-name" type="text" value={form.name} onChange={set("name")} placeholder={f.name} required className="form-input-light" />
                       </div>
                       <div className="flex flex-col gap-1.5">
-                        <label className="text-navy-400 text-xs font-bold uppercase tracking-widest">{f.email}</label>
-                        <input type="email" value={form.email} onChange={set("email")} placeholder={f.email} required className="form-input-light" />
+                        <label htmlFor="contact-email" className="text-navy-400 text-xs font-bold uppercase tracking-widest">{f.email}</label>
+                        <input id="contact-email" type="email" value={form.email} onChange={set("email")} placeholder={f.email} required className="form-input-light" />
                       </div>
                     </div>
 
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-navy-400 text-xs font-bold uppercase tracking-widest">{f.subject}</label>
-                      <input type="text" value={form.subject} onChange={set("subject")} placeholder={f.subject} className="form-input-light" />
+                      <label htmlFor="contact-subject" className="text-navy-400 text-xs font-bold uppercase tracking-widest">{f.subject}</label>
+                      <input id="contact-subject" type="text" value={form.subject} onChange={set("subject")} placeholder={f.subject} className="form-input-light" />
                     </div>
 
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-navy-400 text-xs font-bold uppercase tracking-widest">{f.message}</label>
-                      <textarea value={form.message} onChange={set("message")} placeholder={f.message} rows={5} required className="form-input-light resize-none" />
+                      <label htmlFor="contact-message" className="text-navy-400 text-xs font-bold uppercase tracking-widest">{f.message}</label>
+                      <textarea id="contact-message" value={form.message} onChange={set("message")} placeholder={f.message} rows={5} required className="form-input-light resize-none" />
                     </div>
 
                     <button

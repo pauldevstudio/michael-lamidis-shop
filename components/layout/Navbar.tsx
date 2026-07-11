@@ -61,6 +61,12 @@ export default function Navbar() {
 
   return (
     <>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-white focus:text-navy-950 focus:rounded-lg focus:font-semibold focus:text-sm focus:shadow-lg"
+      >
+        Skip to main content
+      </a>
       <header
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
@@ -79,7 +85,7 @@ export default function Navbar() {
               aria-label="Michael Lamidis — home"
             >
               <Image
-                src="/logo.png"
+                src="/logo.webp"
                 alt="Michael Lamidis logo"
                 width={40}
                 height={40}

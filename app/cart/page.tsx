@@ -7,6 +7,7 @@ import CartContent from "./CartContent";
 export const metadata: Metadata = {
   title: "Your Cart — Michael Lamidis",
   description: "Review the appliances you've added before checking out.",
+  robots: { index: false },
 };
 
 export default function CartPage() {
@@ -14,7 +15,7 @@ export default function CartPage() {
     <>
       <ScrollProgress />
       <Navbar />
-      <main className="pt-24 pb-16 bg-white min-h-screen">
+      <main id="main-content" className="pt-24 pb-16 bg-white min-h-screen">
         <CartContent />
       </main>
       <Footer />

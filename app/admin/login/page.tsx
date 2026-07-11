@@ -69,7 +69,7 @@ function LoginForm() {
       <div className="bg-navy-900/80 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl">
         <div className="flex flex-col items-center mb-8">
           <Image
-            src="/logo.png"
+            src="/logo.webp"
             alt="Michael Lamidis logo"
             width={64}
             height={64}

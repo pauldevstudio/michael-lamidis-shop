@@ -51,7 +51,7 @@ const nextConfig: NextConfig = {
     if (process.env.NODE_ENV !== "production") return [];
     return [
       {
-        source: "/:path*.(jpg|jpeg|png|gif|ico|svg|webp|avif|woff|woff2)",
+        source: "/:path*.(jpg|jpeg|png|gif|ico|svg|webp|avif|woff|woff2|mp4)",
         headers: [
           { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
         ],

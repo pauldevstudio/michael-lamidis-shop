@@ -17,7 +17,7 @@ export default function AboutPage() {
     <>
       <ScrollProgress />
       <Navbar />
-      <main>
+      <main id="main-content">
         <AboutContent />
       </main>
       <Footer />

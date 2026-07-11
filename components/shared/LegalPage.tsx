@@ -34,7 +34,7 @@ export default function LegalPage({
               {title}
             </h1>
             {intro && <p className="text-white/55 text-sm sm:text-base leading-relaxed mt-4 max-w-2xl">{intro}</p>}
-            <p className="text-white/35 text-xs mt-5">Last updated: {lastUpdated}</p>
+            <p className="text-white/50 text-xs mt-5">Last updated: {lastUpdated}</p>
           </div>
         </section>
 

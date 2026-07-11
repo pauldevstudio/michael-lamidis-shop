@@ -17,6 +17,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/faq`,      lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: `${base}/contact`,  lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: `${base}/testimonials`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${base}/privacy-policy`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
+    { url: `${base}/cookie-policy`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
   ];
 
   // Product detail pages — sourced live so new products are discoverable.

@@ -27,7 +27,7 @@ export default async function ContactPage() {
     <ContentProvider content={content}>
       <ScrollProgress />
       <Navbar />
-      <main>
+      <main id="main-content">
         <ContactHero />
         <ContactSection />
         <LeadCapture />

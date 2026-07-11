@@ -17,7 +17,7 @@ export default function TestimonialsPage() {
     <>
       <ScrollProgress />
       <Navbar />
-      <main>
+      <main id="main-content">
         <TestimonialsContent />
       </main>
       <Footer />

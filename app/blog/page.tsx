@@ -17,7 +17,7 @@ export default function BlogPage() {
     <>
       <ScrollProgress />
       <Navbar />
-      <main>
+      <main id="main-content">
         <BlogContent />
       </main>
       <Footer />

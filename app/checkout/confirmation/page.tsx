@@ -18,7 +18,7 @@ export default function ConfirmationPage() {
     <>
       <ScrollProgress />
       <Navbar />
-      <main className="pt-24 pb-16 bg-white min-h-screen">
+      <main id="main-content" className="pt-24 pb-16 bg-white min-h-screen">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-2xl text-center py-12">
           <div className="inline-flex w-20 h-20 rounded-full bg-emerald-50 items-center justify-center mb-6">
             <CheckCircle2 className="w-10 h-10 text-emerald-500" />

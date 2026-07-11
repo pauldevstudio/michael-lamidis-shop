@@ -98,7 +98,7 @@ export default function Sidebar({ mobileOpen = false, onClose }: Props) {
         {/* Logo */}
         <div className={cn("flex items-center gap-3 p-5 pb-4 border-b border-white/[0.06]", collapsed && "lg:justify-center lg:px-3")}>
           <Image
-            src="/logo.png"
+            src="/logo.webp"
             alt="Michael Lamidis logo"
             width={36}
             height={36}

@@ -362,7 +362,7 @@ export default function ProductsContent({ products, bestDealIds }: { products?: 
     <>
       {/* ── Hero ─────────────────────────────────────────── */}
       <section className="relative min-h-[46vh] flex items-end overflow-hidden pt-28 pb-16">
-        <Image src="/hero-products.png" alt="" fill className="object-cover object-center" sizes="100vw" />
+        <Image src="/hero-products.webp" alt="" fill className="object-cover object-center" sizes="100vw" />
         <div className="absolute inset-0" style={{ background: "linear-gradient(110deg, rgba(3,8,19,0.88) 0%, rgba(3,8,19,0.7) 40%, rgba(3,8,19,0.5) 100%)" }} />
 
         <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
@@ -433,6 +433,7 @@ export default function ProductsContent({ products, bestDealIds }: { products?: 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t.pages.products.searchPlaceholder ?? "Search by brand, model, or keyword…"}
+              aria-label="Search products"
               className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-navy-200 bg-white text-navy-900 text-sm placeholder:text-navy-400 focus:outline-none focus:ring-2 focus:ring-gold-400/40 focus:border-gold-400 transition-shadow"
             />
             {searchQuery && (

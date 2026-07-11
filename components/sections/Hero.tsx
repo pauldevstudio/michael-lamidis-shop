@@ -64,7 +64,7 @@ function FloatCard({
           </p>
         </div>
         <div className="flex flex-col items-end gap-0.5">
-          <span className="text-white/38 text-[9px] line-through">{original}</span>
+          <span className="text-white/50 text-[9px] line-through">{original}</span>
           <span className="text-gold-400 font-black text-sm" style={{ fontFamily: "var(--font-jakarta)" }}>
             {sale}
           </span>
@@ -279,14 +279,14 @@ export default function Hero() {
         transition={{ delay: 1.6, duration: 0.8 }}
         className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2 z-20"
       >
-        <span className="text-white/28 text-[10px] tracking-[0.22em] uppercase font-semibold">
+        <span className="text-white/50 text-[10px] tracking-[0.22em] uppercase font-semibold">
           {t.hero.scrollHint}
         </span>
         <motion.div
           animate={{ y: [0, 7, 0] }}
           transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
         >
-          <ChevronDown className="w-4 h-4 text-white/28" />
+          <ChevronDown className="w-4 h-4 text-white/50" />
         </motion.div>
       </motion.div>
     </section>

@@ -205,7 +205,7 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
             <ArrowLeft className="w-4 h-4" />
             Back to Products
           </Link>
-          <div className="flex items-center gap-2 mt-3 text-white/30 text-xs">
+          <div className="flex items-center gap-2 mt-3 text-white/50 text-xs">
             <Link href="/" className="hover:text-white/60 transition-colors">Home</Link>
             <span>/</span>
             <Link href="/products" className="hover:text-white/60 transition-colors">Products</Link>

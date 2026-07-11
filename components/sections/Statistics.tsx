@@ -94,7 +94,7 @@ export default function Statistics() {
 
         {/* Bottom cta */}
         <div className="mt-16 flex flex-col items-center gap-4 text-center">
-          <p className="text-white/40 text-sm">
+          <p className="text-white/50 text-sm">
             Join thousands of Cypriot families who save with Lamidis every month.
           </p>
           <div className="flex items-center gap-3">

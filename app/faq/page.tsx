@@ -6,6 +6,7 @@ import FAQ from "@/components/sections/FAQ";
 import LeadCapture from "@/components/sections/LeadCapture";
 import FAQHero from "./FAQHero";
 import { SITE_URL } from "@/lib/constants";
+import { translations } from "@/lib/translations";
 
 export const metadata: Metadata = {
   title: "FAQ — Frequently Asked Questions",
@@ -14,12 +15,26 @@ export const metadata: Metadata = {
   alternates: { canonical: `${SITE_URL}/faq` },
 };
 
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: translations.en.faq.items.map(({ question, answer }) => ({
+    "@type": "Question",
+    name: question,
+    acceptedAnswer: { "@type": "Answer", text: answer },
+  })),
+};
+
 export default function FAQPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <ScrollProgress />
       <Navbar />
-      <main>
+      <main id="main-content">
         <FAQHero />
         <FAQ />
         <LeadCapture />

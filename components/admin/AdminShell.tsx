@@ -57,7 +57,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           >
             <Menu className="w-5 h-5" />
           </button>
-          <Image src="/logo.png" alt="" width={28} height={28} className="w-7 h-7" />
+          <Image src="/logo.webp" alt="" width={28} height={28} className="w-7 h-7" />
           <span className="text-white font-display font-bold text-sm">Admin Panel</span>
         </header>
         {children}

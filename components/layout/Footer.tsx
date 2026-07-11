@@ -55,7 +55,7 @@ export default function Footer() {
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2.5 w-fit group">
               <Image
-                src="/logo.png"
+                src="/logo.webp"
                 alt="Michael Lamidis logo"
                 width={40}
                 height={40}
@@ -63,7 +63,7 @@ export default function Footer() {
               />
               <div className="flex flex-col">
                 <span className="text-white font-display font-bold text-lg leading-tight">{name}</span>
-                <span className="text-white/35 text-[10px] font-medium tracking-wider uppercase">Open Box Shop</span>
+                <span className="text-white/50 text-[10px] font-medium tracking-wider uppercase">Open Box Shop</span>
               </div>
             </Link>
 
@@ -128,7 +128,7 @@ export default function Footer() {
                     <li key={`${label}-${href}`}>
                       <Link
                         href={href}
-                        className="text-white/40 text-sm hover:text-white/80 transition-colors duration-200 leading-snug"
+                        className="text-white/50 text-sm hover:text-white/80 transition-colors duration-200 leading-snug"
                       >
                         {label}
                       </Link>
@@ -144,7 +144,7 @@ export default function Footer() {
             <span className="text-white text-xs font-bold uppercase tracking-widest">
               {t.footer.newsletterTitle}
             </span>
-            <p className="text-white/40 text-sm leading-relaxed">
+            <p className="text-white/50 text-sm leading-relaxed">
               Get exclusive deals and early access to our best open box finds.
             </p>
             {subscribed ? (
@@ -154,7 +154,9 @@ export default function Footer() {
               </div>
             ) : (
               <form onSubmit={handleSubscribe} className="flex flex-col gap-2.5">
+                <label htmlFor="footer-email" className="sr-only">{t.footer.newsletterPlaceholder}</label>
                 <input
+                  id="footer-email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -186,7 +188,7 @@ export default function Footer() {
         {/* Payment methods */}
         <div className="border-t border-white/[0.06] py-5">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-white/25 text-[11px] font-medium uppercase tracking-widest">
+            <p className="text-white/50 text-[11px] font-medium uppercase tracking-widest">
               Secure Payment
             </p>
             <div className="flex items-center gap-2 flex-wrap justify-center">
@@ -212,7 +214,7 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="border-t border-white/[0.06] py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-white/30 text-xs font-medium text-center sm:text-left">
+          <p className="text-white/50 text-xs font-medium text-center sm:text-left">
             {__ftCopyright}
           </p>
           <div className="flex items-center gap-5">
@@ -220,19 +222,19 @@ export default function Footer() {
               <Link
                 key={href}
                 href={href}
-                className="text-white/30 text-xs hover:text-white/60 transition-colors"
+                className="text-white/50 text-xs hover:text-white/60 transition-colors"
               >
                 {label}
               </Link>
             ))}
             <CookieSettingsButton
               variant="link"
-              className="text-white/30 text-xs hover:text-white/60 transition-colors"
+              className="text-white/50 text-xs hover:text-white/60 transition-colors"
             />
             <Link
               href="/admin"
               aria-label="Admin login"
-              className="inline-flex items-center gap-1 text-white/30 text-xs hover:text-white/60 transition-colors"
+              className="inline-flex items-center gap-1 text-white/50 text-xs hover:text-white/60 transition-colors"
             >
               <Lock className="w-3 h-3" />
               Admin

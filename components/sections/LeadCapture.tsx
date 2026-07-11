@@ -141,8 +141,9 @@ export default function LeadCapture() {
                   >
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className="flex flex-col gap-1.5">
-                        <label className="text-white/50 text-xs font-semibold uppercase tracking-wider">{f.name}</label>
+                        <label htmlFor="lead-name" className="text-white/50 text-xs font-semibold uppercase tracking-wider">{f.name}</label>
                         <input
+                          id="lead-name"
                           type="text"
                           value={form.name}
                           onChange={set("name")}
@@ -152,8 +153,9 @@ export default function LeadCapture() {
                         />
                       </div>
                       <div className="flex flex-col gap-1.5">
-                        <label className="text-white/50 text-xs font-semibold uppercase tracking-wider">{f.email}</label>
+                        <label htmlFor="lead-email" className="text-white/50 text-xs font-semibold uppercase tracking-wider">{f.email}</label>
                         <input
+                          id="lead-email"
                           type="email"
                           value={form.email}
                           onChange={set("email")}
@@ -166,8 +168,9 @@ export default function LeadCapture() {
 
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className="flex flex-col gap-1.5">
-                        <label className="text-white/50 text-xs font-semibold uppercase tracking-wider">{f.phone}</label>
+                        <label htmlFor="lead-phone" className="text-white/50 text-xs font-semibold uppercase tracking-wider">{f.phone}</label>
                         <input
+                          id="lead-phone"
                           type="tel"
                           value={form.phone}
                           onChange={set("phone")}
@@ -176,8 +179,9 @@ export default function LeadCapture() {
                         />
                       </div>
                       <div className="flex flex-col gap-1.5">
-                        <label className="text-white/50 text-xs font-semibold uppercase tracking-wider">{f.interest}</label>
+                        <label htmlFor="lead-interest" className="text-white/50 text-xs font-semibold uppercase tracking-wider">{f.interest}</label>
                         <select
+                          id="lead-interest"
                           value={form.interest}
                           onChange={set("interest")}
                           required
@@ -192,8 +196,9 @@ export default function LeadCapture() {
                     </div>
 
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-white/50 text-xs font-semibold uppercase tracking-wider">{f.message}</label>
+                      <label htmlFor="lead-message" className="text-white/50 text-xs font-semibold uppercase tracking-wider">{f.message}</label>
                       <textarea
+                        id="lead-message"
                         value={form.message}
                         onChange={set("message")}
                         placeholder={f.message}
@@ -217,7 +222,7 @@ export default function LeadCapture() {
                       )}
                     </button>
 
-                    <p className="text-white/25 text-[11px] text-center">
+                    <p className="text-white/50 text-[11px] text-center">
                       No spam ever. We respect your privacy.
                     </p>
                   </motion.form>
