@@ -217,14 +217,14 @@ export default function Footer() {
           <div className="text-white/50 text-xs font-medium text-center sm:text-left">
             <p>{__ftCopyright}</p>
             <p className="mt-1">
-              Powered by{" "}
+              Developed & Maintained by{" "}
               <a
                 href="https://smartwebappsolutions.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gold-400 hover:text-gold-300 transition-colors"
               >
-                smartwebappsolutions.com
+                Smart Web App Solutions
               </a>
             </p>
           </div>
