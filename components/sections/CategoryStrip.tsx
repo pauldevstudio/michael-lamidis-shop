@@ -17,6 +17,8 @@ import {
   Wrench,
   Utensils,
   Bike,
+  Dumbbell,
+  PawPrint,
 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n-context";
 import { useContent } from "@/lib/content-context";
@@ -36,6 +38,8 @@ const ICONS: Record<string, React.ElementType> = {
   tools: Wrench,
   kitchenware: Utensils,
   bicycles: Bike,
+  "fitness-equipment": Dumbbell,
+  "pet-accessories": PawPrint,
 };
 
 const COLORS: Record<string, { from: string; to: string }> = {
@@ -53,6 +57,8 @@ const COLORS: Record<string, { from: string; to: string }> = {
   tools: { from: "#991B1B", to: "#DC2626" },
   kitchenware: { from: "#65A30D", to: "#84CC16" },
   bicycles: { from: "#1E40AF", to: "#3B82F6" },
+  "fitness-equipment": { from: "#DC2626", to: "#F87171" },
+  "pet-accessories": { from: "#D97706", to: "#FBBF24" },
 };
 
 const DEFAULT_COLOR = { from: "#475569", to: "#94A3B8" };

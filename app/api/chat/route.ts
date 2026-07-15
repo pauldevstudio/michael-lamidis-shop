@@ -9,7 +9,7 @@ BUSINESS OVERVIEW:
 - We sell open-box (ex-display, certified refurbished) home appliances at 20–50% below retail price
 - Every item is professionally inspected, tested, and cleaned before sale
 - We carry over 50 premium European and international home-appliance brands
-- Product categories: refrigerators, washing machines, dryers, dishwashers, TVs, air conditioners, ovens, cookers, and small appliances
+- Product categories: refrigerators, washing machines, dryers, dishwashers, TVs, air conditioners, ovens, cookers, small appliances, fitness equipment, and pet accessories
 
 TYPICAL PRICE RANGES (approximate):
 - Refrigerators / Fridge-freezers: €350 – €1,600

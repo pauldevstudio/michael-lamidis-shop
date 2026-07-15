@@ -18,6 +18,7 @@ const GRADE_OPTIONS = ["A", "B", "C", "D", "E", "F"];
 const CATEGORY_OPTIONS = [
   "refrigerators", "washing-machines", "ovens", "dishwashers",
   "air-conditioners", "cookware", "small-appliances", "furniture", "garden-furniture", "office-equipment",
+  "fitness-equipment", "pet-accessories",
 ];
 
 const EMPTY_PRODUCT: Omit<Product, "id"> = {

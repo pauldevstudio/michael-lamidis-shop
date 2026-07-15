@@ -53,6 +53,8 @@ const en = {
       { id: "kitchenware", label: "Cookware & Kitchen" },
       { id: "mattresses", label: "Mattresses" },
       { id: "furniture", label: "Bedding & Furniture" },
+      { id: "fitness-equipment", label: "Fitness Equipment" },
+      { id: "pet-accessories", label: "Pet Accessories" },
     ],
   },
   features: {
@@ -161,6 +163,8 @@ const en = {
       furniture: "Furniture",
       "garden-furniture": "Garden Furniture",
       "office-equipment": "Office Equipment",
+      "fitness-equipment": "Fitness Equipment",
+      "pet-accessories": "Pet Accessories",
     },
   },
   testimonials: {
@@ -396,6 +400,8 @@ const en = {
         furniture: "Furniture",
         "garden-furniture": "Garden Furniture",
         "office-equipment": "Office Equipment",
+        "fitness-equipment": "Fitness Equipment",
+        "pet-accessories": "Pet Accessories",
       },
     },
     about: {
@@ -528,6 +534,8 @@ const gr: typeof en = {
       { id: "kitchenware", label: "Σκεύη Κουζίνας" },
       { id: "mattresses", label: "Στρώματα" },
       { id: "furniture", label: "Κλινοσκεπάσματα & Έπιπλα" },
+      { id: "fitness-equipment", label: "Εξοπλισμός Γυμναστικής" },
+      { id: "pet-accessories", label: "Αξεσουάρ Κατοικιδίων" },
     ],
   },
   features: {
@@ -636,6 +644,8 @@ const gr: typeof en = {
       furniture: "Έπιπλα",
       "garden-furniture": "Έπιπλα Κήπου",
       "office-equipment": "Εξοπλισμός Γραφείου",
+      "fitness-equipment": "Εξοπλισμός Γυμναστικής",
+      "pet-accessories": "Αξεσουάρ Κατοικιδίων",
     },
   },
   testimonials: {
@@ -871,6 +881,8 @@ const gr: typeof en = {
         furniture: "Έπιπλα",
         "garden-furniture": "Έπιπλα Κήπου",
         "office-equipment": "Εξοπλισμός Γραφείου",
+        "fitness-equipment": "Εξοπλισμός Γυμναστικής",
+        "pet-accessories": "Αξεσουάρ Κατοικιδίων",
       },
     },
     about: {

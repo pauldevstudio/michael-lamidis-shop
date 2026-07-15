@@ -31,6 +31,8 @@ const FILTER_IDS = [
   "furniture",
   "garden-furniture",
   "office-equipment",
+  "fitness-equipment",
+  "pet-accessories",
 ] as const;
 
 /* ── Category button (pill on desktop, full-width row in the mobile dropdown) ── */

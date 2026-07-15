@@ -202,7 +202,9 @@ export const DEFAULT_CONTENT: SiteContent = {
       { id: "dishwashers",       label: "Dishwashers" },
       { id: "air-conditioners",  label: "Air Conditioning" },
       { id: "cookware",          label: "Cookware" },
-      { id: "small-appliances",  label: "Small Appliances" },
+      { id: "small-appliances",    label: "Small Appliances" },
+      { id: "fitness-equipment",   label: "Fitness Equipment" },
+      { id: "pet-accessories",     label: "Pet Accessories" },
     ],
   },
   navigation: {

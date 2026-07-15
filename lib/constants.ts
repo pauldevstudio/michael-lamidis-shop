@@ -41,7 +41,9 @@ export const PRODUCT_CATEGORIES = [
   { id: "air-conditioners",icon: "Wind",       colorFrom: "#0369A1", colorTo: "#38BDF8" },
   { id: "furniture",       icon: "Sofa",       colorFrom: "#854D0E", colorTo: "#A16207" },
   { id: "garden-furniture",icon: "Trees",      colorFrom: "#166534", colorTo: "#22C55E" },
-  { id: "office-equipment",icon: "Printer",    colorFrom: "#4338CA", colorTo: "#6366F1" },
+  { id: "office-equipment",   icon: "Printer",    colorFrom: "#4338CA", colorTo: "#6366F1" },
+  { id: "fitness-equipment",  icon: "Dumbbell",   colorFrom: "#DC2626", colorTo: "#F87171" },
+  { id: "pet-accessories",    icon: "PawPrint",   colorFrom: "#D97706", colorTo: "#FBBF24" },
 ];
 
 // Color lookup keyed by slug, with a default for any CMS slug not in the map.
@@ -61,7 +63,9 @@ export const CATEGORY_COLOR_MAP: Record<string, { colorFrom: string; colorTo: st
   "office-equipment": { colorFrom: "#4338CA", colorTo: "#6366F1" },
   tools:              { colorFrom: "#991B1B", colorTo: "#DC2626" },
   kitchenware:        { colorFrom: "#65A30D", colorTo: "#84CC16" },
-  bicycles:           { colorFrom: "#1E40AF", colorTo: "#3B82F6" },
+  bicycles:              { colorFrom: "#1E40AF", colorTo: "#3B82F6" },
+  "fitness-equipment":   { colorFrom: "#DC2626", colorTo: "#F87171" },
+  "pet-accessories":     { colorFrom: "#D97706", colorTo: "#FBBF24" },
 };
 export const DEFAULT_CATEGORY_COLOR = { colorFrom: "#475569", colorTo: "#94A3B8" };
 

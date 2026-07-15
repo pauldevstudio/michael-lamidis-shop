@@ -107,7 +107,9 @@ export default buildConfig({
             { label: "Office Equipment", value: "office-equipment" },
             { label: "Tools",            value: "tools" },
             { label: "Kitchenware",      value: "kitchenware" },
-            { label: "Bicycles",         value: "bicycles" },
+            { label: "Bicycles",           value: "bicycles" },
+            { label: "Fitness Equipment",  value: "fitness-equipment" },
+            { label: "Pet Accessories",    value: "pet-accessories" },
           ],
         },
         {
