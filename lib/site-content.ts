@@ -386,6 +386,7 @@ export async function getPublicProductById(id: string): Promise<Product | null> 
     if (!d) return null;
     return {
       id:            String(d.id ?? ""),
+      name:          (d.name as string)          ?? "",
       brand:         (d.brand as string)         ?? "",
       model:         (d.model as string)         ?? "",
       category:      (d.category as string)      ?? "all",
@@ -455,6 +456,7 @@ export async function getPublicProducts(limit = 500): Promise<Product[]> {
       })
       .map((d) => ({
         id:            String(d.id ?? ""),
+        name:          (d.name as string)          ?? "",
         brand:         (d.brand as string)         ?? "",
         model:         (d.model as string)         ?? "",
         category:      (d.category as string)      ?? "all",

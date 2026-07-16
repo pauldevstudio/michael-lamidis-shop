@@ -28,6 +28,7 @@ function toPayloadData(p: Partial<Product>) {
   }
   const primary = images[0] ?? p.imageUrl ?? "";
   return {
+    name:          p.name ?? "",
     brand:         p.brand ?? "",
     model:         p.model ?? "",
     category:      p.category ?? "refrigerators",
@@ -68,6 +69,7 @@ function fromPayloadDoc(d: Record<string, unknown>): Product {
   const imageUrl = images[0] ?? "";
   return {
     id:            String(d.id ?? ""),
+    name:          (d.name as string)          ?? "",
     brand:         (d.brand as string)         ?? "",
     model:         (d.model as string)         ?? "",
     category:      (d.category as string)      ?? "",

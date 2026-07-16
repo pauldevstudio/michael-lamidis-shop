@@ -101,7 +101,12 @@ function RelatedCard({ product }: { product: Product }) {
       </div>
       <div className="p-4">
         <p className="text-navy-400 text-[10px] font-bold uppercase tracking-widest mb-1">{product.brand}</p>
-        <p className="text-navy-950 font-semibold text-sm leading-snug mb-3" style={{ fontFamily: "var(--font-jakarta)" }}>
+        {product.name && (
+          <p className="text-navy-950 font-bold text-sm leading-snug" style={{ fontFamily: "var(--font-jakarta)" }}>
+            {product.name}
+          </p>
+        )}
+        <p className={`text-navy-950 font-semibold leading-snug mb-3 ${product.name ? "text-xs text-navy-600" : "text-sm"}`} style={{ fontFamily: "var(--font-jakarta)" }}>
           {product.model}
         </p>
         <div className="flex items-baseline gap-2">
@@ -341,6 +346,11 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
 
               {/* Product name */}
               <div>
+                {product.name && (
+                  <p className="text-gold-600 font-bold text-lg tracking-tight mb-1" style={{ fontFamily: "var(--font-jakarta)" }}>
+                    {product.name}
+                  </p>
+                )}
                 <h1
                   className="text-navy-950 font-black leading-[1.08] tracking-tighter"
                   style={{ fontFamily: "var(--font-jakarta)", fontSize: "clamp(1.75rem, 3vw, 2.5rem)" }}

@@ -82,6 +82,11 @@ export default buildConfig({
           },
         },
         {
+          name: "name",
+          type: "text",
+          admin: { description: "Customer-friendly display name (e.g. \"Dumbbell Set\", \"Sea Lounge\"). Shown on the storefront." },
+        },
+        {
           type: "row",
           fields: [
             { name: "brand", type: "text", required: true, admin: { width: "50%" } },

@@ -192,8 +192,13 @@ function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
           <p className="text-navy-400 text-[10px] font-bold uppercase tracking-widest mb-1">
             {product.brand}
           </p>
+          {product.name && (
+            <p className="text-navy-950 font-bold text-[15px] leading-snug" style={{ fontFamily: "var(--font-jakarta)" }}>
+              {product.name}
+            </p>
+          )}
           <h3
-            className="text-navy-950 font-semibold text-[15px] leading-snug"
+            className={`text-navy-950 font-semibold leading-snug ${product.name ? "text-[12px] text-navy-600" : "text-[15px]"}`}
             style={{ fontFamily: "var(--font-jakarta)" }}
           >
             {product.model}
@@ -354,7 +359,7 @@ export default function ProductsContent({ products, bestDealIds }: { products?: 
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase().trim();
       list = list.filter((p) =>
-        `${p.brand} ${p.model} ${p.description ?? ""}`.toLowerCase().includes(q)
+        `${p.name ?? ""} ${p.brand} ${p.model} ${p.description ?? ""}`.toLowerCase().includes(q)
       );
     }
     return list;

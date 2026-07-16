@@ -82,6 +82,7 @@ export interface ProductSpec { label: string; value: string; }
 
 export interface Product {
   id: string;
+  name?: string;
   brand: string;
   model: string;
   category: string;

@@ -22,7 +22,7 @@ const CATEGORY_OPTIONS = [
 ];
 
 const EMPTY_PRODUCT: Omit<Product, "id"> = {
-  brand: "", model: "", category: "refrigerators", originalPrice: 0, salePrice: 0, savings: 0,
+  name: "", brand: "", model: "", category: "refrigerators", originalPrice: 0, salePrice: 0, savings: 0,
   grade: "A", warranty: 12, icon: "Package", colorFrom: "#3A5F8A", colorTo: "#5B82A8",
   imageUrl: "", images: [], videoUrl: "", sold: false, description: "", specs: [{ label: "", value: "" }],
 };
@@ -235,6 +235,17 @@ export default function EditProductModal({
           </button>
         </div>
         <div className="p-6 overflow-y-auto max-h-[70vh] space-y-5">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Name</label>
+            <input
+              value={formData.name ?? ""}
+              onChange={(e) => updateForm("name", e.target.value)}
+              placeholder="e.g. Dumbbell Set, Sea Lounge, Portable Chair"
+              autoComplete="off"
+              spellCheck={false}
+              className="border border-slate-700 bg-slate-800 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-400"
+            />
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">
