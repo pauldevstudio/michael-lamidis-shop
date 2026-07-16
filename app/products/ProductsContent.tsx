@@ -192,17 +192,12 @@ function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
           <p className="text-navy-400 text-[10px] font-bold uppercase tracking-widest mb-1">
             {product.brand}
           </p>
-          {product.name && (
-            <p className="text-navy-950 font-bold text-[15px] leading-snug" style={{ fontFamily: "var(--font-jakarta)" }}>
-              {product.name}
-            </p>
-          )}
-          <h3
-            className={`text-navy-950 font-semibold leading-snug ${product.name ? "text-[12px] text-navy-600" : "text-[15px]"}`}
-            style={{ fontFamily: "var(--font-jakarta)" }}
-          >
-            {product.model}
+          <h3 className="text-navy-950 font-bold text-[15px] leading-snug" style={{ fontFamily: "var(--font-jakarta)" }}>
+            {product.name || product.model}
           </h3>
+          {product.name && (
+            <p className="text-[12px] text-navy-500 leading-snug">{product.model}</p>
+          )}
           <p className="text-navy-900/50 text-xs leading-relaxed mt-1.5 line-clamp-2">
             {product.description}
           </p>
