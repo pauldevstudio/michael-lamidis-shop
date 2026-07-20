@@ -363,46 +363,46 @@ export default function ProductsContent({ products, bestDealIds }: { products?: 
   return (
     <>
       {/* ── Hero ─────────────────────────────────────────── */}
-      <section className="relative min-h-[46vh] flex items-end overflow-hidden pt-28 pb-16">
+      <section className="relative min-h-[44vh] flex items-end overflow-hidden pt-28 pb-16">
         <Image src="/hero-products.webp" alt="" fill className="object-cover object-center" sizes="100vw" />
-        <div className="absolute inset-0" style={{ background: "linear-gradient(110deg, rgba(3,8,19,0.88) 0%, rgba(3,8,19,0.7) 40%, rgba(3,8,19,0.5) 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(105deg, rgba(3,8,19,0.76) 0%, rgba(3,8,19,0.46) 42%, rgba(3,8,19,0.14) 100%)" }} />
 
-        <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+        <div className="relative z-10 container mx-auto px-5 sm:px-6 lg:px-8 max-w-7xl">
           <motion.span
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gold-500/35 bg-gold-500/12 text-gold-300 text-xs font-bold tracking-[0.18em] uppercase mb-6"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/15 bg-white/8 backdrop-blur-sm text-white/75 text-[11px] font-medium tracking-[0.12em] uppercase mb-7"
           >
-            <Package className="w-3 h-3" />
+            <Package className="w-3 h-3 opacity-70" />
             {t.pages.products.badge}
           </motion.span>
 
           <motion.h1
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
-            className="font-display font-black text-white leading-[1.05] tracking-tighter max-w-3xl"
-            style={{ fontFamily: "var(--font-jakarta)", fontSize: "clamp(2.2rem, 5vw, 3.75rem)" }}
+            transition={{ delay: 0.06, ease: [0.16, 1, 0.3, 1] }}
+            className="font-display font-black text-white leading-[1.06] tracking-[-0.025em] max-w-3xl"
+            style={{ fontFamily: "var(--font-jakarta)", fontSize: "clamp(2.2rem, 5vw, 3.5rem)" }}
           >
             {t.pages.products.titleLine1}{" "}
-            <span className="text-gradient-gold">{t.pages.products.titleLine2}</span>
+            <span className="text-blue-400">{t.pages.products.titleLine2}</span>
           </motion.h1>
 
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.18 }}
-            className="text-white/50 text-lg mt-4 max-w-lg leading-relaxed"
+            transition={{ delay: 0.14 }}
+            className="text-white/55 text-[0.95rem] sm:text-[1.05rem] leading-[1.7] mt-5 max-w-[480px]"
           >
             {t.pages.products.subtitle}
           </motion.p>
 
           {/* Mini stats */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.28 }}
-            className="flex flex-wrap items-center gap-x-8 gap-y-3 mt-8"
+            transition={{ delay: 0.24 }}
+            className="flex flex-wrap items-center gap-x-10 gap-y-3 mt-9"
           >
             {[
               { value: "500+", label: t.pages.products.statProductsInStock },
@@ -411,12 +411,12 @@ export default function ProductsContent({ products, bestDealIds }: { products?: 
             ].map(({ value, label }) => (
               <div key={label} className="flex flex-col">
                 <span
-                  className="text-white font-black text-2xl leading-none"
+                  className="text-white font-black text-xl leading-none tnum"
                   style={{ fontFamily: "var(--font-jakarta)" }}
                 >
                   {value}
                 </span>
-                <span className="text-white/40 text-xs font-medium mt-0.5">{label}</span>
+                <span className="text-white/40 text-[11px] font-medium mt-1 tracking-wide">{label}</span>
               </div>
             ))}
           </motion.div>

@@ -24,17 +24,17 @@ export default function LegalPage({
       <Navbar />
       <main className="bg-white">
         {/* Hero */}
-        <section className="relative bg-navy-950 noise-overlay overflow-hidden pt-32 pb-14">
-          <div className="absolute top-0 right-0 w-[420px] h-[420px] rounded-full pointer-events-none"
-            style={{ background: "radial-gradient(circle, rgba(30,72,184,0.22) 0%, transparent 70%)" }} />
-          <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
-            <span className="eyebrow text-gold-400">Legal</span>
-            <h1 className="font-display font-black text-white text-3xl sm:text-4xl mt-3 leading-tight"
-              style={{ fontFamily: "var(--font-jakarta)" }}>
+        <section className="relative bg-navy-900 overflow-hidden pt-32 pb-14">
+          <div className="absolute inset-0"
+            style={{ background: "radial-gradient(ellipse at 70% 90%, rgba(59,130,246,0.06) 0%, transparent 55%)" }} />
+          <div className="relative z-10 container mx-auto px-5 sm:px-6 lg:px-8 max-w-3xl">
+            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/15 bg-white/8 backdrop-blur-sm text-white/75 text-[11px] font-medium tracking-[0.12em] uppercase">Legal</span>
+            <h1 className="font-display font-black text-white leading-[1.06] tracking-[-0.025em] mt-7"
+              style={{ fontFamily: "var(--font-jakarta)", fontSize: "clamp(2rem, 4.5vw, 3rem)" }}>
               {title}
             </h1>
-            {intro && <p className="text-white/55 text-sm sm:text-base leading-relaxed mt-4 max-w-2xl">{intro}</p>}
-            <p className="text-white/50 text-xs mt-5">Last updated: {lastUpdated}</p>
+            {intro && <p className="text-white/55 text-[0.95rem] sm:text-[1.05rem] leading-[1.7] max-w-[480px] mt-5">{intro}</p>}
+            <p className="text-white/40 text-[11px] tracking-wide mt-5">Last updated: {lastUpdated}</p>
           </div>
         </section>
 

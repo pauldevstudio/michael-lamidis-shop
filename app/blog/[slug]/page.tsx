@@ -59,18 +59,20 @@ export default async function BlogPostPage({ params }: Props) {
       <main id="main-content">
         {/* Hero */}
         <section
-          className="relative min-h-[50vh] flex items-end overflow-hidden pt-28 pb-16 noise-overlay"
-          style={{ background: `linear-gradient(135deg, ${post.colorFrom}20 0%, #030813 60%)` }}
+          className="relative min-h-[42vh] flex items-end bg-navy-900 overflow-hidden pt-28 pb-16"
+          style={{ background: `linear-gradient(135deg, ${post.colorFrom}08 0%, #0a1628 55%)` }}
         >
-          <div className="absolute inset-0 grid-bg opacity-60" />
-          <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
-            <Link href="/blog" className="inline-flex items-center gap-2 text-white/50 hover:text-white text-sm mb-8 transition-colors">
-              <ArrowLeft className="w-4 h-4" /> Back to Blog
+          <div className="absolute inset-0"
+            style={{ background: "radial-gradient(ellipse at 30% 90%, rgba(59,130,246,0.06) 0%, transparent 55%)" }}
+          />
+          <div className="relative z-10 container mx-auto px-5 sm:px-6 lg:px-8 max-w-4xl">
+            <Link href="/blog" className="inline-flex items-center gap-2 text-white/45 hover:text-white/80 text-[13px] mb-8 transition-colors">
+              <ArrowLeft className="w-3.5 h-3.5" /> Back to Blog
             </Link>
 
-            <div className="flex items-center gap-3 mb-6">
+            <div className="flex items-center gap-3 mb-7">
               <span
-                className="text-[11px] font-bold px-3 py-1 rounded-full text-white"
+                className="text-[11px] font-medium px-3.5 py-1.5 rounded-full text-white tracking-[0.06em]"
                 style={{ background: `linear-gradient(135deg, ${post.colorFrom}, ${post.colorTo})` }}
               >
                 {post.category}
@@ -78,16 +80,16 @@ export default async function BlogPostPage({ params }: Props) {
             </div>
 
             <h1
-              className="font-display font-black text-white leading-tight tracking-tighter mb-6"
-              style={{ fontFamily: "var(--font-jakarta)", fontSize: "clamp(1.8rem, 4vw, 3rem)" }}
+              className="font-display font-black text-white leading-[1.06] tracking-[-0.025em] mb-6"
+              style={{ fontFamily: "var(--font-jakarta)", fontSize: "clamp(1.8rem, 4vw, 2.75rem)" }}
             >
               {post.title}
             </h1>
 
-            <div className="flex items-center gap-5 text-white/45 text-sm">
-              <div className="flex items-center gap-2"><User className="w-4 h-4" />{post.author}</div>
-              <div className="flex items-center gap-2"><Calendar className="w-4 h-4" />{post.date}</div>
-              <div className="flex items-center gap-2"><Clock className="w-4 h-4" />{post.readTime}</div>
+            <div className="flex items-center gap-5 text-white/45 text-[13px]">
+              <div className="flex items-center gap-2"><User className="w-3.5 h-3.5" />{post.author}</div>
+              <div className="flex items-center gap-2"><Calendar className="w-3.5 h-3.5" />{post.date}</div>
+              <div className="flex items-center gap-2"><Clock className="w-3.5 h-3.5" />{post.readTime}</div>
             </div>
           </div>
         </section>

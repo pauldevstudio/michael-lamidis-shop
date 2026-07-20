@@ -23,7 +23,7 @@ const ICONS: Record<string, React.ElementType> = {
 };
 
 function ProductCard({
-  id, brand, model, originalPrice, salePrice, savings, grade,
+  id, name, brand, model, originalPrice, salePrice, savings, grade,
   warranty, colorFrom, colorTo, icon, imageUrl, videoUrl, sold,
 }: (typeof FEATURED_PRODUCTS)[0]) {
   const Icon = ICONS[icon] ?? Square;
@@ -99,9 +99,12 @@ function ProductCard({
       <div className="p-5 flex flex-col gap-3">
         <div>
           <p className="text-navy-400 text-[11px] font-bold uppercase tracking-widest mb-1">{brand}</p>
-          <h3 className="text-navy-950 font-semibold text-sm leading-snug" style={{ fontFamily: "var(--font-jakarta)" }}>
-            {model}
+          <h3 className="text-navy-950 font-bold text-sm leading-snug" style={{ fontFamily: "var(--font-jakarta)" }}>
+            {name || model}
           </h3>
+          {name && (
+            <p className="text-navy-400 text-xs leading-snug mt-0.5">{model}</p>
+          )}
         </div>
 
         {/* Rating */}
