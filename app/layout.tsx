@@ -95,15 +95,13 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Layout is intentionally synchronous so Vercel can cache the HTML shell.
-  // The previous version awaited headers() and getSiteContent() on every
-  // request, forcing dynamic rendering and 18 MongoDB queries per page.
-  // Admin/cms route detection moved into the AIChatOnPublic client wrapper.
   return (
     <html lang="en" data-scroll-behavior="smooth" className={`${inter.variable} ${plusJakarta.variable}`}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: `try{var m=document.cookie.match(/cookie_consent=([^;]+)/);if(m){var j=JSON.parse(decodeURIComponent(m[1]));if(j&&j.v===1)document.documentElement.dataset.cc="1"}}catch(e){}` }} />
         <link rel="preconnect" href="https://res.cloudinary.com" />
+        <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+        <link rel="preconnect" href="https://iax3scoubxgocab7.public.blob.vercel-storage.com" crossOrigin="anonymous" />
         <link
           rel="preload"
           href="/hero-appliances.webp"
@@ -125,9 +123,6 @@ export default function RootLayout({
             <CartProvider>{children}</CartProvider>
             <LazyWidgets />
           </LanguageProvider>
-          {/* Vercel Speed Insights — cookieless real-user Core Web Vitals (LCP,
-              INP, CLS, FCP, TTFB) from actual visitors. Mounted unconditionally
-              because it sets no cookies and collects no PII. */}
           <SpeedInsights />
         </CookieConsentProvider>
       </body>

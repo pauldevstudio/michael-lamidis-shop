@@ -4,15 +4,12 @@ import type { NextRequest } from "next/server";
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Hide Payload's admin UI — anyone hitting /cms gets sent to /admin.
   if (pathname === "/cms" || pathname.startsWith("/cms/")) {
     const url = request.nextUrl.clone();
     url.pathname = "/admin";
     return NextResponse.redirect(url);
   }
 
-  // Maintenance mode: rewrite all public routes to /maintenance.
-  // Admin, API, and the maintenance page itself are excluded.
   if (process.env.MAINTENANCE_MODE === "true") {
     const isExcluded =
       pathname.startsWith("/admin") ||
@@ -28,11 +25,9 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("x-pathname", pathname);
-  return NextResponse.next({ request: { headers: requestHeaders } });
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/cms/:path*", "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:jpg|jpeg|png|gif|ico|svg|webp|avif|woff|woff2|mp4|webm)$).*)"],
 };

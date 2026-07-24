@@ -67,6 +67,25 @@ h1, h2, h3 { letter-spacing: -0.02em; }
 .hero-animate-4 { animation-delay: 0.84s; }
 .hero-animate-5 { animation-delay: 1.05s; }
 
+/* Hero background slow zoom — replaces framer-motion on LCP element */
+@keyframes hero-zoom {
+  from { transform: scale(1.03); }
+  to   { transform: scale(1); }
+}
+.hero-zoom { animation: hero-zoom 14s ease-out both; }
+
+/* Scroll indicator fade-in + bounce */
+@keyframes hero-scroll-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes hero-scroll-bounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(5px); }
+}
+.hero-scroll-indicator { animation: hero-scroll-in 0.6s ease-out 1.8s both; }
+.hero-scroll-bounce    { animation: hero-scroll-bounce 2s ease-in-out infinite; }
+
 /* Tabular figures for prices, stats and any aligned numbers */
 .tnum { font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
 
@@ -246,6 +265,27 @@ h1, h2, h3 { letter-spacing: -0.02em; }
 }
 .orb-1 { animation: orbFloat1 12s ease-in-out infinite; }
 .orb-2 { animation: orbFloat2 15s ease-in-out infinite; }
+
+/* ─── Stagger Animations (replaces framer-motion AnimatedSection) ── */
+.stagger-item {
+  opacity: 0;
+  transform: var(--stagger-offset, translateY(30px));
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.stagger-visible > .stagger-item {
+  opacity: 1;
+  transform: none;
+}
+.stagger-visible > .stagger-item:nth-child(1)  { transition-delay: calc(var(--container-delay, 0s)); }
+.stagger-visible > .stagger-item:nth-child(2)  { transition-delay: calc(var(--container-delay, 0s) + var(--stagger-delay, 0.1s)); }
+.stagger-visible > .stagger-item:nth-child(3)  { transition-delay: calc(var(--container-delay, 0s) + var(--stagger-delay, 0.1s) * 2); }
+.stagger-visible > .stagger-item:nth-child(4)  { transition-delay: calc(var(--container-delay, 0s) + var(--stagger-delay, 0.1s) * 3); }
+.stagger-visible > .stagger-item:nth-child(5)  { transition-delay: calc(var(--container-delay, 0s) + var(--stagger-delay, 0.1s) * 4); }
+.stagger-visible > .stagger-item:nth-child(6)  { transition-delay: calc(var(--container-delay, 0s) + var(--stagger-delay, 0.1s) * 5); }
+.stagger-visible > .stagger-item:nth-child(7)  { transition-delay: calc(var(--container-delay, 0s) + var(--stagger-delay, 0.1s) * 6); }
+.stagger-visible > .stagger-item:nth-child(8)  { transition-delay: calc(var(--container-delay, 0s) + var(--stagger-delay, 0.1s) * 7); }
+.stagger-visible > .stagger-item:nth-child(n+9){ transition-delay: calc(var(--container-delay, 0s) + var(--stagger-delay, 0.1s) * 8); }
 
 /* ─── Counter Animation ──────────────────────────────────── */
 @keyframes countUp {

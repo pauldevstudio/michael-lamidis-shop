@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -44,13 +43,8 @@ export default function Hero() {
       className="relative flex flex-col overflow-hidden"
       style={{ height: "100svh", minHeight: "660px" }}
     >
-      {/* Background image */}
-      <motion.div
-        className="absolute inset-0 z-0"
-        initial={{ scale: 1.03 }}
-        animate={{ scale: 1 }}
-        transition={{ duration: 14, ease: "easeOut" }}
-      >
+      {/* Background image — CSS zoom avoids framer-motion on the LCP path */}
+      <div className="absolute inset-0 z-0 hero-zoom">
         <Image
           src={__h?.imageUrl || HERO_IMAGE}
           alt="Premium open box home appliance lineup — washing machine, refrigerator, oven, smart TV, microwave and vacuum — Michael Lamidis, Limassol Cyprus"
@@ -60,7 +54,7 @@ export default function Hero() {
           className="object-cover object-center"
           sizes="100vw"
         />
-      </motion.div>
+      </div>
 
       {/* Overlay — left-weighted for copy readability, right side lets image breathe */}
       <div
@@ -153,23 +147,15 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.8, duration: 0.6 }}
-        className="absolute bottom-7 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-1.5 z-20"
-      >
+      {/* Scroll indicator — CSS animations, no framer-motion */}
+      <div className="hero-scroll-indicator absolute bottom-7 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-1.5 z-20">
         <span className="text-white/35 text-[10px] tracking-[0.2em] uppercase font-medium">
           {t.hero.scrollHint}
         </span>
-        <motion.div
-          animate={{ y: [0, 5, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-        >
+        <div className="hero-scroll-bounce">
           <ChevronDown className="w-4 h-4 text-white/35" />
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </section>
   );
 }

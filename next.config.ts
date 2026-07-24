@@ -51,6 +51,12 @@ const nextConfig: NextConfig = {
 
   async headers() {
     if (process.env.NODE_ENV !== "production") return [];
+    const securityHeaders = [
+      { key: "X-Content-Type-Options", value: "nosniff" },
+      { key: "X-Frame-Options", value: "DENY" },
+      { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+      { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+    ];
     return [
       {
         source: "/:path*.(jpg|jpeg|png|gif|ico|svg|webp|avif|woff|woff2|mp4)",
@@ -63,6 +69,10 @@ const nextConfig: NextConfig = {
         headers: [
           { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
         ],
+      },
+      {
+        source: "/(.*)",
+        headers: securityHeaders,
       },
     ];
   },

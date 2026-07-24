@@ -456,6 +456,9 @@ export default function ProductsClient() {
                   <div className="p-4 flex flex-col gap-3 flex-1">
                     <div className="min-h-[44px]">
                       <p className="text-slate-100 font-bold text-sm leading-snug line-clamp-2">
+                        {p.name}
+                      </p>
+                      <p className="text-slate-400 text-xs mt-0.5 line-clamp-1">
                         {p.brand} {p.model}
                       </p>
                     </div>

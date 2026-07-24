@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { useRef, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface AnimatedSectionProps {
@@ -14,6 +13,14 @@ interface AnimatedSectionProps {
   once?: boolean;
 }
 
+const OFFSETS = {
+  up: "translateY(40px)",
+  down: "translateY(-40px)",
+  left: "translateX(40px)",
+  right: "translateX(-40px)",
+  none: "none",
+};
+
 export default function AnimatedSection({
   children,
   className,
@@ -23,31 +30,40 @@ export default function AnimatedSection({
   amount = 0.15,
   once = true,
 }: AnimatedSectionProps) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { amount, once });
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
 
-  const directions = {
-    up: { y: 40, x: 0 },
-    down: { y: -40, x: 0 },
-    left: { y: 0, x: 40 },
-    right: { y: 0, x: -40 },
-    none: { y: 0, x: 0 },
-  };
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          if (once) observer.disconnect();
+        } else if (!once) {
+          setVisible(false);
+        }
+      },
+      { threshold: amount },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [amount, once]);
 
   return (
-    <motion.div
+    <div
       ref={ref}
       className={cn(className)}
-      initial={{ opacity: 0, ...directions[direction] }}
-      animate={isInView ? { opacity: 1, y: 0, x: 0 } : {}}
-      transition={{
-        duration,
-        delay,
-        ease: [0.16, 1, 0.3, 1],
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "none" : OFFSETS[direction],
+        transition: `opacity ${duration}s cubic-bezier(0.16,1,0.3,1) ${delay}s, transform ${duration}s cubic-bezier(0.16,1,0.3,1) ${delay}s`,
+        willChange: visible ? "auto" : "opacity, transform",
       }}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
 
@@ -62,24 +78,33 @@ export function StaggerChildren({
   staggerDelay?: number;
   containerDelay?: number;
 }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { amount: 0.1, once: true });
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <motion.div
+    <div
       ref={ref}
-      className={cn(className)}
-      initial="hidden"
-      animate={isInView ? "visible" : "hidden"}
-      variants={{
-        hidden: {},
-        visible: {
-          transition: { staggerChildren: staggerDelay, delayChildren: containerDelay },
-        },
-      }}
+      className={cn("stagger-parent", visible && "stagger-visible", className)}
+      style={{ "--stagger-delay": `${staggerDelay}s`, "--container-delay": `${containerDelay}s` } as React.CSSProperties}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
 
@@ -93,26 +118,18 @@ export function StaggerItem({
   direction?: "up" | "left" | "right" | "none";
 }) {
   const dirs = {
-    up: { y: 30, x: 0 },
-    left: { y: 0, x: 30 },
-    right: { y: 0, x: -30 },
-    none: { y: 0, x: 0 },
+    up: "translateY(30px)",
+    left: "translateX(30px)",
+    right: "translateX(-30px)",
+    none: "none",
   };
 
   return (
-    <motion.div
-      className={cn(className)}
-      variants={{
-        hidden: { opacity: 0, ...dirs[direction] },
-        visible: {
-          opacity: 1,
-          y: 0,
-          x: 0,
-          transition: { duration: 0.65, ease: [0.16, 1, 0.3, 1] },
-        },
-      }}
+    <div
+      className={cn("stagger-item", className)}
+      style={{ "--stagger-offset": dirs[direction] } as React.CSSProperties}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
