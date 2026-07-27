@@ -16,10 +16,10 @@ const en = {
     badge: "Direct From Warehouse",
     eyebrow: "Michael Lamidis",
     locationLabel: "Limassol, Cyprus",
-    titleLine1: "Quality Home Goods.",
-    titleLine2: "Honest Cyprus Prices.",
+    titleLine1: "Premium Appliances & Furniture",
+    titleLine2: "Same Quality, Better Price",
     subtitle:
-      "Cookware, mattresses, kitchen appliances and bedding — sourced direct, priced fair, delivered across Cyprus. Visit our Limassol showroom or browse online.",
+      "Top-brand appliances and furniture at open box prices — certified, warranted, and delivered island-wide. Visit our Limassol showroom or shop online.",
     cta1: "Shop Now",
     cta2: "View Our Showroom",
     cta3: "Visit Our Showroom",
