@@ -101,7 +101,7 @@ export default function Navbar() {
       </a>
       <header
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
+          "fixed top-0 left-0 right-0 z-[60] transition-all duration-500",
           scrolled
             ? "bg-navy-950/95 backdrop-blur-xl border-b border-white/[0.06] shadow-nav-dark"
             : "bg-transparent"
@@ -198,7 +198,7 @@ export default function Navbar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-40 lg:hidden bg-navy-950 pt-24 px-6 overflow-y-auto"
+            className="fixed inset-0 z-50 lg:hidden bg-navy-950 pt-28 px-6 overflow-y-auto"
             role="dialog"
             aria-modal="true"
             aria-label="Mobile navigation"
