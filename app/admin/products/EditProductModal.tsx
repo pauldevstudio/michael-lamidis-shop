@@ -17,7 +17,8 @@ type CropTask =
 const GRADE_OPTIONS = ["A", "B", "C", "D", "E", "F"];
 const CATEGORY_OPTIONS = [
   "refrigerators", "washing-machines", "ovens", "dishwashers",
-  "air-conditioners", "cookware", "small-appliances", "furniture", "garden-furniture", "office-equipment",
+  "air-conditioners", "cookware", "small-appliances", "vacuum-cleaners",
+  "furniture", "garden-furniture", "office-equipment",
   "fitness-equipment", "pet-accessories",
 ];
 

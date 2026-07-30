@@ -32,18 +32,21 @@ export const SOCIAL_LINKS = {
 };
 
 export const PRODUCT_CATEGORIES = [
-  { id: "all",              icon: "LayoutGrid", colorFrom: "#1E48B8", colorTo: "#3D62CC" },
-  { id: "refrigerators",   icon: "Square",     colorFrom: "#0F766E", colorTo: "#14B8A6" },
-  { id: "washing-machines",icon: "Loader",     colorFrom: "#7C3AED", colorTo: "#A78BFA" },
-  { id: "ovens",           icon: "Flame",      colorFrom: "#C2410C", colorTo: "#F97316" },
-  { id: "dishwashers",     icon: "Droplets",   colorFrom: "#1D4ED8", colorTo: "#60A5FA" },
-  { id: "freezers",        icon: "Snowflake",  colorFrom: "#0E7490", colorTo: "#22D3EE" },
-  { id: "air-conditioners",icon: "Wind",       colorFrom: "#0369A1", colorTo: "#38BDF8" },
-  { id: "furniture",       icon: "Sofa",       colorFrom: "#854D0E", colorTo: "#A16207" },
-  { id: "garden-furniture",icon: "Trees",      colorFrom: "#166534", colorTo: "#22C55E" },
-  { id: "office-equipment",   icon: "Printer",    colorFrom: "#4338CA", colorTo: "#6366F1" },
-  { id: "fitness-equipment",  icon: "Dumbbell",   colorFrom: "#DC2626", colorTo: "#F87171" },
-  { id: "pet-accessories",    icon: "PawPrint",   colorFrom: "#D97706", colorTo: "#FBBF24" },
+  { id: "all",               icon: "LayoutGrid",  colorFrom: "#1E48B8", colorTo: "#3D62CC" },
+  { id: "refrigerators",    icon: "Square",      colorFrom: "#0F766E", colorTo: "#14B8A6" },
+  { id: "washing-machines",  icon: "Loader",      colorFrom: "#7C3AED", colorTo: "#A78BFA" },
+  { id: "ovens",             icon: "Flame",       colorFrom: "#C2410C", colorTo: "#F97316" },
+  { id: "dishwashers",      icon: "Droplets",    colorFrom: "#1D4ED8", colorTo: "#60A5FA" },
+  { id: "freezers",         icon: "Snowflake",   colorFrom: "#0E7490", colorTo: "#22D3EE" },
+  { id: "air-conditioners",  icon: "Wind",        colorFrom: "#0369A1", colorTo: "#38BDF8" },
+  { id: "cookware",          icon: "CookingPot",  colorFrom: "#B45309", colorTo: "#F59E0B" },
+  { id: "small-appliances",  icon: "Coffee",      colorFrom: "#9D174D", colorTo: "#F472B6" },
+  { id: "vacuum-cleaners",   icon: "Sparkles",    colorFrom: "#6D28D9", colorTo: "#8B5CF6" },
+  { id: "furniture",         icon: "Sofa",        colorFrom: "#854D0E", colorTo: "#A16207" },
+  { id: "garden-furniture",  icon: "Trees",       colorFrom: "#166534", colorTo: "#22C55E" },
+  { id: "office-equipment",  icon: "Printer",     colorFrom: "#4338CA", colorTo: "#6366F1" },
+  { id: "fitness-equipment", icon: "Dumbbell",    colorFrom: "#DC2626", colorTo: "#F87171" },
+  { id: "pet-accessories",   icon: "PawPrint",    colorFrom: "#D97706", colorTo: "#FBBF24" },
 ];
 
 // Color lookup keyed by slug, with a default for any CMS slug not in the map.
@@ -66,6 +69,7 @@ export const CATEGORY_COLOR_MAP: Record<string, { colorFrom: string; colorTo: st
   bicycles:              { colorFrom: "#1E40AF", colorTo: "#3B82F6" },
   "fitness-equipment":   { colorFrom: "#DC2626", colorTo: "#F87171" },
   "pet-accessories":     { colorFrom: "#D97706", colorTo: "#FBBF24" },
+  "vacuum-cleaners":     { colorFrom: "#6D28D9", colorTo: "#8B5CF6" },
 };
 export const DEFAULT_CATEGORY_COLOR = { colorFrom: "#475569", colorTo: "#94A3B8" };
 

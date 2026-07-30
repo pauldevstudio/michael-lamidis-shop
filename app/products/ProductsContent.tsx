@@ -1,14 +1,15 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  ArrowRight, Shield, Zap, ChevronDown,
+  ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, Shield, Zap,
   LayoutGrid, Package, ShoppingCart, Check, X, Search,
 } from "lucide-react";
+import { MEGA_MENU_CATEGORIES, MEGA_MENU_SPECIAL } from "@/lib/mega-menu-categories";
 import AnimatedSection from "@/components/shared/AnimatedSection";
 import StarRating from "@/components/shared/StarRating";
 import VideoCardButton from "@/components/shared/VideoCardButton";
@@ -17,68 +18,6 @@ import { useCart } from "@/lib/cart-context";
 import { useLanguage } from "@/lib/i18n-context";
 import { productSocialProof } from "@/lib/social-proof";
 import { cn } from "@/lib/utils";
-
-/* ── Category ids (labels come from translations) ───────── */
-const FILTER_IDS = [
-  "all",
-  "refrigerators",
-  "washing-machines",
-  "ovens",
-  "dishwashers",
-  "air-conditioners",
-  "cookware",
-  "small-appliances",
-  "furniture",
-  "garden-furniture",
-  "office-equipment",
-  "fitness-equipment",
-  "pet-accessories",
-] as const;
-
-/* ── Category button (pill on desktop, full-width row in the mobile dropdown) ── */
-function CategoryButton({
-  id, label, count, isActive, empty, onSelect, variant,
-}: {
-  id: string; label: string; count: number; isActive: boolean; empty: boolean;
-  onSelect: (id: string) => void; variant: "pill" | "row";
-}) {
-  return (
-    <button
-      type="button"
-      disabled={empty}
-      aria-pressed={isActive}
-      onClick={() => onSelect(id)}
-      className={cn(
-        "inline-flex items-center gap-1.5 font-semibold transition-all duration-200 focus-ring",
-        variant === "pill"
-          ? "px-3.5 py-2 min-h-[40px] rounded-full text-[13px]"
-          : "w-full justify-between gap-2 px-3 py-2.5 rounded-lg text-[13px]",
-        empty
-          ? "bg-navy-50/60 text-navy-400 border border-navy-100 opacity-60 cursor-not-allowed"
-          : isActive
-          ? "text-white shadow-md"
-          : variant === "pill"
-          ? "bg-navy-50 text-navy-500 hover:bg-navy-100 hover:text-navy-800 border border-navy-100"
-          : "text-navy-700 hover:bg-navy-50"
-      )}
-      style={isActive && !empty ? { background: "linear-gradient(135deg, #1E48B8, #163A96)" } : undefined}
-    >
-      <span className="truncate">{label}</span>
-      <span
-        className={cn(
-          "shrink-0 text-[10px] font-bold leading-none px-1.5 py-0.5 rounded-full tnum",
-          isActive && !empty
-            ? "bg-white/25 text-white"
-            : variant === "pill"
-            ? "bg-white text-navy-400 border border-navy-100"
-            : "bg-navy-50 text-navy-400"
-        )}
-      >
-        {count}
-      </span>
-    </button>
-  );
-}
 
 /* ── Product Card ──────────────────────────────────────── */
 function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
@@ -291,12 +230,20 @@ function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
 
 /* ══════════════════════════════════════════════════════ */
 export default function ProductsContent({ products, bestDealIds }: { products?: Product[]; bestDealIds?: string[] }) {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const searchParams = useSearchParams();
-  const initialCategory = searchParams.get("category") || "all";
-  const [activeCategory, setActiveCategory] = useState(initialCategory);
+  const hasCategory = searchParams.has("category");
+  const urlCategory = searchParams.get("category") || "all";
+  const [activeCategory, setActiveCategory] = useState(hasCategory ? urlCategory : "landing");
+
+  useEffect(() => {
+    setActiveCategory(hasCategory ? urlCategory : "landing");
+  }, [hasCategory, urlCategory]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const [imgErrors, setImgErrors] = useState<Set<string>>(new Set());
+  const handleImgError = useCallback((id: string) => {
+    setImgErrors((prev) => new Set(prev).add(id));
+  }, []);
 
   // Server-fetched live products (Payload/Mongo). No static-seed fallback:
   // an empty list renders the empty state below rather than stale ghost
@@ -306,36 +253,8 @@ export default function ProductsContent({ products, bestDealIds }: { products?: 
   // in the chosen order. Drives an extra filter pill in the category bar.
   const __bestDealIds = useMemo(() => bestDealIds ?? [], [bestDealIds]);
 
-  // Per-category product counts for the badges.
-  const countFor = (id: string) =>
-    id === "all" ? __products.length : __products.filter((p) => p.category === id).length;
-
-  const FILTERS = [
-    // "Best Deals" leads the row whenever items are curated in the admin.
-    ...(__bestDealIds.length > 0
-      ? [{ id: "best-deals", label: t.pages.products.filters["best-deals"], count: __bestDealIds.length }]
-      : []),
-    ...FILTER_IDS.map((id) => ({
-      id,
-      label: t.pages.products.filters[id as keyof typeof t.pages.products.filters],
-      count: countFor(id),
-    })),
-  ];
-
-  const activeCat = FILTERS.find((f) => f.id === activeCategory) ?? FILTERS[0];
-
-  // Close the category sheet on Escape + lock body scroll while it's open.
-  useEffect(() => {
-    if (!openMenu) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpenMenu(null); };
-    document.addEventListener("keydown", onKey);
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prevOverflow;
-    };
-  }, [openMenu]);
+  const categoryLabel = (id: string) =>
+    t.pages.products.filters[id as keyof typeof t.pages.products.filters] ?? id;
 
   const filtered = useMemo(() => {
     let list: Product[];
@@ -359,6 +278,28 @@ export default function ProductsContent({ products, bestDealIds }: { products?: 
     }
     return list;
   }, [activeCategory, __products, __bestDealIds, searchQuery]);
+
+  const PRODUCTS_PER_PAGE = 24;
+  const [page, setPage] = useState(1);
+  useEffect(() => { setPage(1); }, [activeCategory, searchQuery]);
+  const totalPages = Math.ceil(filtered.length / PRODUCTS_PER_PAGE);
+  const paged = useMemo(
+    () => filtered.slice((page - 1) * PRODUCTS_PER_PAGE, page * PRODUCTS_PER_PAGE),
+    [filtered, page]
+  );
+  const gridRef = useRef<HTMLDivElement>(null);
+  const goToPage = useCallback((p: number) => {
+    setPage(p);
+    gridRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
+
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const p of __products) {
+      counts[p.category] = (counts[p.category] ?? 0) + 1;
+    }
+    return counts;
+  }, [__products]);
 
   return (
     <>
@@ -423,12 +364,27 @@ export default function ProductsContent({ products, bestDealIds }: { products?: 
         </div>
       </section>
 
-      {/* ── Category bar (only the product category — sticky on desktop) ── */}
-      <div className="lg:sticky lg:top-12 z-30 bg-white/95 backdrop-blur-xl border-b border-navy-100/60 shadow-sm">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-3 space-y-3">
-
-          {/* Search bar */}
-          <div className="relative">
+      {/* ── Sticky toolbar (search + breadcrumb) ── */}
+      <div className="sticky top-[56px] z-30 bg-white/95 backdrop-blur-xl border-b border-navy-100/60 shadow-sm">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+          {activeCategory !== "landing" && (
+            <div className="flex items-center gap-2 pt-2.5 pb-1 text-sm">
+              <Link
+                href="/products"
+                className="inline-flex items-center gap-1.5 font-medium text-navy-500 hover:text-navy-950 transition-colors group"
+              >
+                <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5" />
+                {lang === "gr" ? "Κατηγορίες" : "Categories"}
+              </Link>
+              <span className="text-navy-300">/</span>
+              <span className="font-semibold text-navy-950 capitalize">
+                {activeCategory === "all"
+                  ? (lang === "gr" ? "Όλα τα Προϊόντα" : "All Products")
+                  : categoryLabel(activeCategory)}
+              </span>
+            </div>
+          )}
+          <div className="relative py-2.5">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-navy-400 pointer-events-none" />
             <input
               type="text"
@@ -449,98 +405,117 @@ export default function ProductsContent({ products, bestDealIds }: { products?: 
               </button>
             )}
           </div>
-
-          {/* Mobile: category trigger → bottom sheet */}
-          <button
-            type="button"
-            onClick={() => setOpenMenu("cats")}
-            aria-haspopup="dialog"
-            aria-expanded={openMenu === "cats"}
-            className="lg:hidden w-full flex items-center justify-between gap-2 px-4 py-3 rounded-xl border border-navy-200 bg-white text-navy-800 text-sm font-semibold focus-ring"
-          >
-            <span className="flex items-center gap-2 min-w-0">
-              <LayoutGrid className="w-4 h-4 text-navy-400 shrink-0" />
-              <span className="truncate">{activeCat?.label}</span>
-              <span className="shrink-0 text-[10px] font-bold leading-none px-1.5 py-0.5 rounded-full bg-navy-100 text-navy-500 tnum">
-                {activeCat?.count}
-              </span>
-            </span>
-            <ChevronDown className={cn("w-4 h-4 text-navy-400 transition-transform shrink-0", openMenu === "cats" && "rotate-180")} />
-          </button>
-
-          {/* Desktop: wrapping category pills */}
-          <div className="hidden lg:flex flex-wrap gap-2">
-            {FILTERS.map(({ id, label, count }) => (
-              <CategoryButton
-                key={id}
-                id={id}
-                label={label}
-                count={count}
-                isActive={activeCategory === id}
-                empty={id !== "all" && count === 0}
-                onSelect={setActiveCategory}
-                variant="pill"
-              />
-            ))}
-          </div>
-
         </div>
       </div>
 
-      {/* ── Mobile category bottom sheet (always fully visible) ── */}
-      <AnimatePresence>
-        {openMenu === "cats" && (
-          <div className="lg:hidden">
-            <motion.div
-              className="fixed inset-0 z-[10000] bg-black/50"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              onClick={() => setOpenMenu(null)}
-              aria-hidden="true"
-            />
-            <motion.div
-              className="fixed bottom-0 left-0 right-0 z-[10001] bg-white rounded-t-2xl shadow-2xl flex flex-col max-h-[80vh]"
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              exit={{ y: "100%" }}
-              transition={{ type: "tween", duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-              role="dialog"
-              aria-modal="true"
-              aria-label="Choose a category"
-            >
-              <div className="flex items-center justify-between px-4 py-3 border-b border-navy-100">
-                <span className="font-bold text-navy-900">Categories</span>
-                <button
-                  type="button"
-                  onClick={() => setOpenMenu(null)}
-                  aria-label="Close"
-                  className="w-8 h-8 flex items-center justify-center rounded-full text-navy-400 hover:bg-navy-50 focus-ring"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-              <div className="overflow-y-auto p-3 grid grid-cols-2 gap-2">
-                {FILTERS.map(({ id, label, count }) => (
-                  <CategoryButton
-                    key={id}
-                    id={id}
-                    label={label}
-                    count={count}
-                    isActive={activeCategory === id}
-                    empty={id !== "all" && count === 0}
-                    onSelect={(cid) => { setActiveCategory(cid); setOpenMenu(null); }}
-                    variant="row"
-                  />
-                ))}
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+      {/* ── Category cards (only on the main /products landing) ── */}
+      {activeCategory === "landing" && (
+      <section className="bg-navy-50/40 py-10">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+          <h2 className="text-navy-950 font-display font-bold text-lg tracking-tight mb-6">
+            {lang === "gr" ? "Κατηγορίες Προϊόντων" : "Shop by Category"}
+          </h2>
 
-      {/* ── Product grid ─────────────────────────────────── */}
+          {/* Special cards: Best Deals + All Products */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            {MEGA_MENU_SPECIAL.map((cat) => {
+              const hasImage = !imgErrors.has(cat.id);
+              const href = `/products?category=${cat.id}`;
+              const count = cat.id === "all" ? __products.length : (cat.id === "best-deals" ? __bestDealIds.length : 0);
+              return (
+                <Link
+                  key={cat.id}
+                  href={href}
+                  className={cn(
+                    "group relative overflow-hidden rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1",
+                    activeCategory === cat.id && "ring-2 ring-blue-500"
+                  )}
+                >
+                  <div className="relative aspect-[5/2] overflow-hidden">
+                    {hasImage ? (
+                      <Image
+                        src={cat.image}
+                        alt={lang === "gr" ? cat.labelGr : cat.label}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        sizes="(max-width: 640px) 100vw, 50vw"
+                        onError={() => handleImgError(cat.id)}
+                      />
+                    ) : (
+                      <div
+                        className="absolute inset-0 flex items-center justify-center"
+                        style={{ background: `linear-gradient(135deg, ${cat.colorFrom}, ${cat.colorTo})` }}
+                      >
+                        <cat.icon className="w-10 h-10 text-white/80" strokeWidth={1.5} />
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 className="text-white font-semibold text-base leading-tight">
+                      {lang === "gr" ? cat.labelGr : cat.label}
+                    </h3>
+                    <p className="text-white/60 text-xs mt-1">
+                      {count > 0 ? `${count} ${count === 1 ? "Product" : "Products"}` : (lang === "gr" ? "Σύντομα" : "Coming Soon")}
+                    </p>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+
+          {/* Category cards */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {MEGA_MENU_CATEGORIES.map((cat) => {
+              const hasImage = !imgErrors.has(cat.id);
+              const count = categoryCounts[cat.id] ?? 0;
+              return (
+                <Link
+                  key={cat.id}
+                  href={`/products?category=${cat.id}`}
+                  className={cn(
+                    "group relative overflow-hidden rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1",
+                    activeCategory === cat.id && "ring-2 ring-blue-500"
+                  )}
+                >
+                  <div className="relative aspect-[4/3] overflow-hidden">
+                    {hasImage ? (
+                      <Image
+                        src={cat.image}
+                        alt={lang === "gr" ? cat.labelGr : cat.label}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                        onError={() => handleImgError(cat.id)}
+                      />
+                    ) : (
+                      <div
+                        className="absolute inset-0 flex items-center justify-center"
+                        style={{ background: `linear-gradient(135deg, ${cat.colorFrom}, ${cat.colorTo})` }}
+                      >
+                        <cat.icon className="w-12 h-12 text-white/80" strokeWidth={1.5} />
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 className="text-white font-semibold text-sm leading-tight">
+                      {lang === "gr" ? cat.labelGr : cat.label}
+                    </h3>
+                    <p className="text-white/60 text-xs mt-1">
+                      {count > 0 ? `${count} ${count === 1 ? "Product" : "Products"}` : (lang === "gr" ? "Σύντομα" : "Coming Soon")}
+                    </p>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+      )}
+
+      {/* ── Product grid (only when a category is selected) ── */}
+      {activeCategory !== "landing" && (
       <section className="bg-white section-py">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
 
@@ -548,7 +523,7 @@ export default function ProductsContent({ products, bestDealIds }: { products?: 
           <h2 className="sr-only">
             {activeCategory === "all"
               ? "All products"
-              : FILTERS.find((f) => f.id === activeCategory)?.label ?? "Products"}
+              : categoryLabel(activeCategory)}
           </h2>
           <div className="flex items-center justify-between mb-8">
             <p className="text-navy-400 text-sm font-medium" role="status" aria-live="polite">
@@ -559,7 +534,7 @@ export default function ProductsContent({ products, bestDealIds }: { products?: 
                 <>
                   {" "}{t.pages.products.inCategory}{" "}
                   <span className="text-gold-500 font-semibold capitalize">
-                    {FILTERS.find((f) => f.id === activeCategory)?.label}
+                    {categoryLabel(activeCategory)}
                   </span>
                 </>
               )}
@@ -571,11 +546,59 @@ export default function ProductsContent({ products, bestDealIds }: { products?: 
           </div>
 
           {/* Grid */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filtered.map((product) => (
+          <div ref={gridRef} className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 scroll-mt-32">
+            {paged.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <nav aria-label="Product pages" className="flex items-center justify-center gap-1.5 mt-10">
+              <button
+                onClick={() => goToPage(page - 1)}
+                disabled={page === 1}
+                className="w-9 h-9 rounded-lg flex items-center justify-center border border-navy-200 text-navy-500 hover:border-navy-400 hover:text-navy-800 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                aria-label="Previous page"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter((p) => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
+                .reduce<(number | "...")[]>((acc, p, i, arr) => {
+                  if (i > 0 && p - (arr[i - 1] ?? 0) > 1) acc.push("...");
+                  acc.push(p);
+                  return acc;
+                }, [])
+                .map((p, i) =>
+                  p === "..." ? (
+                    <span key={`dots-${i}`} className="w-9 h-9 flex items-center justify-center text-navy-400 text-sm">…</span>
+                  ) : (
+                    <button
+                      key={p}
+                      onClick={() => goToPage(p as number)}
+                      className={cn(
+                        "w-9 h-9 rounded-lg text-sm font-medium transition-colors",
+                        p === page
+                          ? "bg-navy-950 text-white"
+                          : "border border-navy-200 text-navy-600 hover:border-navy-400 hover:text-navy-800"
+                      )}
+                      aria-current={p === page ? "page" : undefined}
+                    >
+                      {p}
+                    </button>
+                  )
+                )}
+              <button
+                onClick={() => goToPage(page + 1)}
+                disabled={page === totalPages}
+                className="w-9 h-9 rounded-lg flex items-center justify-center border border-navy-200 text-navy-500 hover:border-navy-400 hover:text-navy-800 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                aria-label="Next page"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </nav>
+          )}
 
           {/* Empty state */}
           {filtered.length === 0 && (
@@ -592,6 +615,7 @@ export default function ProductsContent({ products, bestDealIds }: { products?: 
           )}
         </div>
       </section>
+      )}
 
       {/* ── CTA section ──────────────────────────────────── */}
       <section className="section-py bg-navy-950 noise-overlay relative overflow-hidden">

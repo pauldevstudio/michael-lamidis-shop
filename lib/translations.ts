@@ -402,6 +402,7 @@ const en = {
         "office-equipment": "Office Equipment",
         "fitness-equipment": "Fitness Equipment",
         "pet-accessories": "Pet Accessories",
+        "vacuum-cleaners": "Vacuum Cleaners",
       },
     },
     about: {
@@ -883,6 +884,7 @@ const gr: typeof en = {
         "office-equipment": "Εξοπλισμός Γραφείου",
         "fitness-equipment": "Εξοπλισμός Γυμναστικής",
         "pet-accessories": "Αξεσουάρ Κατοικιδίων",
+        "vacuum-cleaners": "Ηλεκτρικές Σκούπες",
       },
     },
     about: {
