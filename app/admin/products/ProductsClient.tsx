@@ -17,7 +17,7 @@ type Toast = { type: "success" | "error"; msg: string } | null;
 
 const GRADE_OPTIONS = ["A", "B", "C", "D", "E", "F"];
 const CATEGORY_OPTIONS = [
-  "refrigerators","washing-machines","ovens","dishwashers","air-conditioners","cookware","small-appliances","vacuum-cleaners","furniture","garden-furniture","office-equipment","fitness-equipment","pet-accessories",
+  "refrigerators","washing-machines","ovens","dishwashers","air-conditioners","cookware","small-appliances","vacuum-cleaners","furniture","garden-furniture","home-accessories","office-equipment","fitness-equipment","pet-accessories",
 ];
 
 interface CategoryDef { id: string; label: string }
@@ -33,6 +33,7 @@ const DEFAULT_CATEGORIES: CategoryDef[] = [
   { id: "vacuum-cleaners",   label: "Vacuum Cleaners" },
   { id: "furniture",         label: "Furniture" },
   { id: "garden-furniture",  label: "Garden Furniture" },
+  { id: "home-accessories",  label: "Home Accessories" },
   { id: "office-equipment",  label: "Office Equipment" },
   { id: "fitness-equipment", label: "Fitness Equipment" },
   { id: "pet-accessories",   label: "Pet Accessories" },

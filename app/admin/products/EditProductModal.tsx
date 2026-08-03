@@ -18,7 +18,7 @@ const GRADE_OPTIONS = ["A", "B", "C", "D", "E", "F"];
 const CATEGORY_OPTIONS = [
   "refrigerators", "washing-machines", "ovens", "dishwashers",
   "air-conditioners", "cookware", "small-appliances", "vacuum-cleaners",
-  "furniture", "garden-furniture", "office-equipment",
+  "furniture", "garden-furniture", "home-accessories", "office-equipment",
   "fitness-equipment", "pet-accessories",
 ];
 
