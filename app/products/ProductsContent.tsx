@@ -256,18 +256,20 @@ export default function ProductsContent({ products, bestDealIds }: { products?: 
   const categoryLabel = (id: string) =>
     t.pages.products.filters[id as keyof typeof t.pages.products.filters] ?? id;
 
+  const effectiveCategory = activeCategory === "landing" && searchQuery.trim() ? "all" : activeCategory;
+
   const filtered = useMemo(() => {
     let list: Product[];
-    if (activeCategory === "best-deals") {
+    if (effectiveCategory === "best-deals") {
       const order = new Map(__bestDealIds.map((id, i) => [id, i]));
       list = __products
         .filter((p) => order.has(p.id))
         .sort((a, b) => (order.get(a.id) ?? 0) - (order.get(b.id) ?? 0));
     } else {
       list =
-        activeCategory === "all"
+        effectiveCategory === "all"
           ? [...__products]
-          : __products.filter((p) => p.category === activeCategory);
+          : __products.filter((p) => p.category === effectiveCategory);
       list.sort((a, b) => b.savings - a.savings);
     }
     if (searchQuery.trim()) {
@@ -277,11 +279,11 @@ export default function ProductsContent({ products, bestDealIds }: { products?: 
       );
     }
     return list;
-  }, [activeCategory, __products, __bestDealIds, searchQuery]);
+  }, [effectiveCategory, __products, __bestDealIds, searchQuery]);
 
   const PRODUCTS_PER_PAGE = 24;
   const [page, setPage] = useState(1);
-  useEffect(() => { setPage(1); }, [activeCategory, searchQuery]);
+  useEffect(() => { setPage(1); }, [effectiveCategory, searchQuery]);
   const totalPages = Math.ceil(filtered.length / PRODUCTS_PER_PAGE);
   const paged = useMemo(
     () => filtered.slice((page - 1) * PRODUCTS_PER_PAGE, page * PRODUCTS_PER_PAGE),
@@ -367,7 +369,7 @@ export default function ProductsContent({ products, bestDealIds }: { products?: 
       {/* ── Sticky toolbar (search + breadcrumb) ── */}
       <div className="sticky top-[56px] z-30 bg-white/95 backdrop-blur-xl border-b border-navy-100/60 shadow-sm">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-          {activeCategory !== "landing" && (
+          {effectiveCategory !== "landing" && (
             <div className="flex items-center gap-2 pt-2.5 pb-1 text-sm">
               <Link
                 href="/products"
@@ -378,9 +380,9 @@ export default function ProductsContent({ products, bestDealIds }: { products?: 
               </Link>
               <span className="text-navy-300">/</span>
               <span className="font-semibold text-navy-950 capitalize">
-                {activeCategory === "all"
-                  ? (lang === "gr" ? "Όλα τα Προϊόντα" : "All Products")
-                  : categoryLabel(activeCategory)}
+                {effectiveCategory === "all"
+                  ? (lang === "gr" ? "Όλα τα Προϊόντα" : searchQuery.trim() ? "Search Results" : "All Products")
+                  : categoryLabel(effectiveCategory)}
               </span>
             </div>
           )}
@@ -409,7 +411,7 @@ export default function ProductsContent({ products, bestDealIds }: { products?: 
       </div>
 
       {/* ── Category cards (only on the main /products landing) ── */}
-      {activeCategory === "landing" && (
+      {effectiveCategory === "landing" && (
       <section className="bg-navy-50/40 py-10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
           <h2 className="text-navy-950 font-display font-bold text-lg tracking-tight mb-6">
@@ -515,26 +517,26 @@ export default function ProductsContent({ products, bestDealIds }: { products?: 
       )}
 
       {/* ── Product grid (only when a category is selected) ── */}
-      {activeCategory !== "landing" && (
+      {effectiveCategory !== "landing" && (
       <section className="bg-white section-py">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
 
           {/* Heading + count */}
           <h2 className="sr-only">
-            {activeCategory === "all"
+            {effectiveCategory === "all"
               ? "All products"
-              : categoryLabel(activeCategory)}
+              : categoryLabel(effectiveCategory)}
           </h2>
           <div className="flex items-center justify-between mb-8">
             <p className="text-navy-400 text-sm font-medium" role="status" aria-live="polite">
               {t.pages.products.showing}{" "}
               <span className="text-navy-950 font-semibold">{filtered.length}</span>{" "}
               {filtered.length === 1 ? t.pages.products.productSingular : t.pages.products.productPlural}
-              {activeCategory !== "all" && (
+              {effectiveCategory !== "all" && (
                 <>
                   {" "}{t.pages.products.inCategory}{" "}
                   <span className="text-gold-500 font-semibold capitalize">
-                    {categoryLabel(activeCategory)}
+                    {categoryLabel(effectiveCategory)}
                   </span>
                 </>
               )}

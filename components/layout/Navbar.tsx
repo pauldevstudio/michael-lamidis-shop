@@ -14,9 +14,6 @@ import CartIndicator from "@/components/layout/CartIndicator";
 import { cn } from "@/lib/utils";
 import { SITE_PHONE } from "@/lib/constants";
 
-// framer-motion's AnimatePresence with initial={...} emits inline styles on
-// mount that diverge from SSR HTML and trigger React hydration mismatches.
-// Loading the bar client-only sidesteps SSR entirely.
 const AnnouncementBar = dynamic(
   () => import("@/components/shared/AnnouncementBar"),
   { ssr: false }
@@ -59,9 +56,7 @@ export default function Navbar() {
 
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
+    return () => { document.body.style.overflow = ""; };
   }, [mobileOpen]);
 
   useEffect(() => {
@@ -137,7 +132,7 @@ export default function Navbar() {
                     : pathname.startsWith(link.href);
                 return (
                   <Link
-                    key={link.href}
+                    key={link.key}
                     href={link.href}
                     className={cn(
                       "px-3 py-2 text-sm font-medium tracking-wide transition-colors rounded-md",
@@ -151,7 +146,6 @@ export default function Navbar() {
             </div>
 
             <div className="ml-auto flex items-center gap-2 sm:gap-3">
-              {/* Small, discreet admin entry (not the old amber button) */}
               <Link
                 href="/admin"
                 aria-label="Admin login"
@@ -190,6 +184,7 @@ export default function Navbar() {
         </nav>
       </header>
 
+      {/* Mobile menu */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
@@ -198,7 +193,7 @@ export default function Navbar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 lg:hidden bg-navy-950 pt-28 px-6 overflow-y-auto"
+            className="fixed inset-0 z-50 lg:hidden bg-navy-950 pt-28 px-6 overflow-y-auto pb-8"
             role="dialog"
             aria-modal="true"
             aria-label="Mobile navigation"
@@ -212,7 +207,7 @@ export default function Navbar() {
                       : pathname.startsWith(link.href);
                   return (
                     <Link
-                      key={link.href}
+                      key={link.key}
                       href={link.href}
                       className={cn(
                         "px-4 py-3 text-lg font-medium rounded-lg transition-colors",

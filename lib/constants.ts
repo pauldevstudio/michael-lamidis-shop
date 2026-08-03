@@ -9,7 +9,7 @@ export const SITE_DESCRIPTION =
 export const SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.michaellamidisshop.com"
 ).replace(/\/+$/, "");
-export const SITE_EMAIL = "lamidismichaelshop@gmail.com";
+export const SITE_EMAIL = "info@michaellamidisshop.com";
 export const SITE_PHONE = "+357 97 755914";
 export const SITE_WHATSAPP = "+357 97 755914";
 export const SITE_ADDRESS = "Alassa Village, Limassol, Cyprus";
@@ -44,6 +44,7 @@ export const PRODUCT_CATEGORIES = [
   { id: "vacuum-cleaners",   icon: "Sparkles",    colorFrom: "#6D28D9", colorTo: "#8B5CF6" },
   { id: "furniture",         icon: "Sofa",        colorFrom: "#854D0E", colorTo: "#A16207" },
   { id: "garden-furniture",  icon: "Trees",       colorFrom: "#166534", colorTo: "#22C55E" },
+  { id: "home-accessories",  icon: "Lamp",        colorFrom: "#E11D48", colorTo: "#FB7185" },
   { id: "office-equipment",  icon: "Printer",     colorFrom: "#4338CA", colorTo: "#6366F1" },
   { id: "fitness-equipment", icon: "Dumbbell",    colorFrom: "#DC2626", colorTo: "#F87171" },
   { id: "pet-accessories",   icon: "PawPrint",    colorFrom: "#D97706", colorTo: "#FBBF24" },
@@ -63,6 +64,7 @@ export const CATEGORY_COLOR_MAP: Record<string, { colorFrom: string; colorTo: st
   mattresses:         { colorFrom: "#475569", colorTo: "#94A3B8" },
   furniture:          { colorFrom: "#854D0E", colorTo: "#A16207" },
   "garden-furniture": { colorFrom: "#166534", colorTo: "#22C55E" },
+  "home-accessories": { colorFrom: "#E11D48", colorTo: "#FB7185" },
   "office-equipment": { colorFrom: "#4338CA", colorTo: "#6366F1" },
   tools:              { colorFrom: "#991B1B", colorTo: "#DC2626" },
   kitchenware:        { colorFrom: "#65A30D", colorTo: "#84CC16" },

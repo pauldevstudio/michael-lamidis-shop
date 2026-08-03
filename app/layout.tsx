@@ -3,6 +3,8 @@ import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/lib/i18n-context";
 import { CartProvider } from "@/lib/cart-context";
+import { ContentProvider } from "@/lib/content-context";
+import { getSiteContent } from "@/lib/site-content";
 import { SITE_NAME, SITE_DESCRIPTION, SITE_MAPS_URL, SITE_URL, SITE_PHONE, SITE_EMAIL } from "@/lib/constants";
 import Analytics from "@/components/shared/Analytics";
 import MetaPixel from "@/components/shared/MetaPixel";
@@ -90,11 +92,12 @@ const jsonLd = {
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const siteContent = await getSiteContent();
   return (
     <html lang="en" data-scroll-behavior="smooth" className={`${inter.variable} ${plusJakarta.variable}`}>
       <head>
@@ -120,8 +123,10 @@ export default function RootLayout({
           <MetaPixel />
           <AutoTrack />
           <LanguageProvider>
-            <CartProvider>{children}</CartProvider>
-            <LazyWidgets />
+            <ContentProvider content={siteContent}>
+              <CartProvider>{children}</CartProvider>
+              <LazyWidgets />
+            </ContentProvider>
           </LanguageProvider>
           <SpeedInsights />
         </CookieConsentProvider>

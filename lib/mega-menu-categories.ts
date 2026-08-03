@@ -1,6 +1,6 @@
 import {
   Square, RefreshCw, Flame, Droplets, Wind,
-  CookingPot, Coffee, Sofa, TreePine, Printer, Dumbbell, PawPrint, Sparkles,
+  CookingPot, Coffee, Sofa, TreePine, Printer, Dumbbell, PawPrint, Sparkles, Lamp,
   Tag, LayoutGrid,
 } from "lucide-react";
 import type { ElementType } from "react";
@@ -17,7 +17,7 @@ export interface MegaMenuCategory {
 }
 
 export const MEGA_MENU_SPECIAL: MegaMenuCategory[] = [
-  { id: "best-deals",   label: "Best Deals",    labelGr: "Καλύτερες Προσφορές", icon: Tag,        colorFrom: "#DC2626", colorTo: "#F59E0B", image: "/categories/best-deals.webp",   special: true },
+  { id: "best-deals",   label: "Best Deals",    labelGr: "Καλύτερες Προσφορές", icon: Tag,        colorFrom: "#DC2626", colorTo: "#F59E0B", image: "/categories/best-deals.png",   special: true },
   { id: "all",           label: "All Products",  labelGr: "Όλα τα Προϊόντα",     icon: LayoutGrid, colorFrom: "#1E3A8A", colorTo: "#3B82F6", image: "/categories/all-products.webp", special: true },
 ];
 
@@ -32,6 +32,7 @@ export const MEGA_MENU_CATEGORIES: MegaMenuCategory[] = [
   { id: "vacuum-cleaners",    label: "Vacuum Cleaners",    labelGr: "Ηλεκτρικές Σκούπες",       icon: Sparkles,   colorFrom: "#6D28D9", colorTo: "#8B5CF6", image: "/categories/vacuum-cleaners.webp" },
   { id: "furniture",          label: "Furniture",          labelGr: "Έπιπλα",                    icon: Sofa,       colorFrom: "#854D0E", colorTo: "#A16207", image: "/categories/furniture.webp" },
   { id: "garden-furniture",   label: "Garden Furniture",   labelGr: "Έπιπλα Κήπου",             icon: TreePine,   colorFrom: "#166534", colorTo: "#22C55E", image: "/categories/garden-furniture.webp" },
+  { id: "home-accessories",   label: "Home Accessories",   labelGr: "Αξεσουάρ Σπιτιού",          icon: Lamp,       colorFrom: "#E11D48", colorTo: "#FB7185", image: "/categories/home-accessories.webp" },
   { id: "office-equipment",   label: "Office Equipment",   labelGr: "Εξοπλισμός Γραφείου",      icon: Printer,    colorFrom: "#4338CA", colorTo: "#6366F1", image: "/categories/office-equipment.webp" },
   { id: "fitness-equipment",  label: "Fitness Equipment",  labelGr: "Εξοπλισμός Γυμναστικής",   icon: Dumbbell,   colorFrom: "#DC2626", colorTo: "#F87171", image: "/categories/fitness-equipment.webp" },
   { id: "pet-accessories",    label: "Pet Accessories",    labelGr: "Αξεσουάρ Κατοικιδίων",     icon: PawPrint,   colorFrom: "#D97706", colorTo: "#FBBF24", image: "/categories/pet-accessories.webp" },

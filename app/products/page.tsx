@@ -4,6 +4,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ScrollProgress from "@/components/shared/ScrollProgress";
 import ProductsContent from "./ProductsContent";
+import { ContentProvider } from "@/lib/content-context";
 import { getPublicProducts, getSiteContent } from "@/lib/site-content";
 import { SITE_URL } from "@/lib/constants";
 
@@ -41,7 +42,7 @@ export default async function ProductsPage() {
     })),
   };
   return (
-    <>
+    <ContentProvider content={content}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListLd) }}
@@ -52,6 +53,6 @@ export default async function ProductsPage() {
         <Suspense><ProductsContent products={products} bestDealIds={bestDealIds} /></Suspense>
       </main>
       <Footer />
-    </>
+    </ContentProvider>
   );
 }
