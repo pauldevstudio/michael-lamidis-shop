@@ -7,6 +7,7 @@ import config from "@payload-config";
 import { isValidSessionToken } from "@/lib/admin-auth";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { SITE_CONTENT_TAG } from "@/lib/site-content";
+import { safeParseProduct } from "@/lib/parse-product";
 import type { Product } from "@/lib/constants";
 
 function isAuthorized(req: NextRequest): boolean {
@@ -14,6 +15,11 @@ function isAuthorized(req: NextRequest): boolean {
 }
 
 function toPayloadData(p: Partial<Product>) {
+  // Auto-parse messy marketplace copy-paste into clean brand/model/name on
+  // save. Idempotent on already-clean products; wrapped so a parser error
+  // can never break a save (falls back to the submitted values). The original
+  // paste stays in `description`.
+  const cleaned = safeParseProduct({ name: p.name, brand: p.brand, model: p.model, description: p.description });
   // Single-price model: mirror originalPrice to salePrice so public
   // displays show one figure (the "real saving" guards hide the badge
   // + strikethrough when these are equal).
@@ -28,9 +34,9 @@ function toPayloadData(p: Partial<Product>) {
   }
   const primary = images[0] ?? p.imageUrl ?? "";
   return {
-    name:          p.name ?? "",
-    brand:         p.brand ?? "",
-    model:         p.model ?? "",
+    name:          cleaned.name,
+    brand:         cleaned.brand,
+    model:         cleaned.model,
     category:      p.category ?? "refrigerators",
     originalPrice: sale,
     salePrice:     sale,
