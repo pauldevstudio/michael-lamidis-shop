@@ -436,9 +436,9 @@ const en = {
       teamTitle: "The People Behind Lamidis",
       team: [
         { name: "Michael Lamidis", role: "Founder & CEO" },
-        { name: "Katerina Lamidis", role: "Operations Director" },
-        { name: "Giorgos Petrou", role: "Head Technician" },
-        { name: "Anna Stavridis", role: "Customer Relations" },
+        { name: "Taza Lamidis", role: "Operations Director" },
+        { name: "Jun Lamidis", role: "Head Technician" },
+        { name: "Paul Norelga", role: "Digital Marketing" },
       ],
       ctaTitle: "Ready to Start Saving?",
       ctaSubtitle:
@@ -921,9 +921,9 @@ const gr: typeof en = {
       teamTitle: "Οι Άνθρωποι Πίσω από τον Lamidis",
       team: [
         { name: "Michael Lamidis", role: "Ιδρυτής & CEO" },
-        { name: "Katerina Lamidis", role: "Διευθύντρια Λειτουργιών" },
-        { name: "Giorgos Petrou", role: "Επικεφαλής Τεχνικός" },
-        { name: "Anna Stavridis", role: "Σχέσεις Πελατών" },
+        { name: "Taza Lamidis", role: "Διευθυντής Λειτουργιών" },
+        { name: "Jun Lamidis", role: "Επικεφαλής Τεχνικός" },
+        { name: "Paul Norelga", role: "Ψηφιακό Μάρκετινγκ" },
       ],
       ctaTitle: "Έτοιμοι να Ξεκινήσετε να Εξοικονομείτε;",
       ctaSubtitle:
