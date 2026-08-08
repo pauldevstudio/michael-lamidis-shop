@@ -87,11 +87,11 @@ export default function PromoPopup({ items }: { items: Product[] }) {
             <X className="w-4 h-4" />
           </button>
           <Link href={promo.ctaHref || "/products"} onClick={() => setOpen(false)} className="block">
-            <Image
+            {/* Plain img so any admin-uploaded poster aspect ratio renders undistorted. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               src={promo.imageUrl}
               alt={promo.title || "Special promotion"}
-              width={1122}
-              height={1402}
               className="w-full h-auto rounded-2xl"
             />
           </Link>

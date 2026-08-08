@@ -99,6 +99,25 @@ export default function ContentClient() {
     if (!content) return;
     setContent({ ...content, promoPopup: { ...content.promoPopup, [key]: val } });
   };
+  // Upload a custom promo poster; when set, the popup shows it instead of the deals.
+  const uploadPromoImage = async (file: File) => {
+    if (!file.type.startsWith("image/")) { showToast("error", "Please choose an image file"); return; }
+    if (file.size > 5 * 1024 * 1024) { showToast("error", "Image is too large (max 5 MB)"); return; }
+    setUploading(true);
+    try {
+      const fd = new FormData(); fd.append("file", file);
+      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: "Upload failed" }));
+        showToast("error", err.error ?? "Upload failed");
+        return;
+      }
+      const data = (await res.json()) as { url: string };
+      setPromo("imageUrl", data.url);
+      showToast("success", "Poster uploaded — Save & Publish to go live");
+    } catch { showToast("error", "Network error during upload"); }
+    finally { setUploading(false); }
+  };
   // ── Promo items (up to 8 curated products) ──────────────────────────
   const productById = (id: string) => products.find((p) => p.id === id);
   const setPromoItems = (items: PromoItem[]) => {
@@ -449,6 +468,32 @@ export default function ContentClient() {
                   Add products below — each visitor sees <span className="text-gold-400 font-medium">1 random product</span> per popup. More items = more variety. Drag to reorder, optionally upload a custom image per item. They also appear in the Best Deals section on the Products page. Add <code className="text-slate-300">?promo=1</code> to the homepage URL to preview any time.
                 </div>
 
+                {/* Promo poster — when set, the popup shows this image instead of the deals below */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Promo Poster (optional)</label>
+                  <p className="text-slate-500 text-xs -mt-0.5">Upload a poster and the popup shows it <span className="text-slate-300">instead of</span> the product deals below. Leave empty to show the deals. The Button Link below still sets where clicking the poster goes.</p>
+                  {content.promoPopup.imageUrl ? (
+                    <div className="relative rounded-xl border border-slate-700 bg-white overflow-hidden">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={content.promoPopup.imageUrl} alt="Promo poster" className="w-full max-h-72 object-contain" />
+                      <button type="button" onClick={() => setPromo("imageUrl", "")} aria-label="Remove poster" className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/60 hover:bg-red-500/80 border border-white/20 flex items-center justify-center text-white transition-colors"><X className="w-4 h-4" /></button>
+                      <label className="absolute bottom-2 right-2 cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/60 hover:bg-black/80 border border-white/20 text-white text-xs font-medium transition-colors">
+                        {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />} Replace
+                        <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadPromoImage(f); e.currentTarget.value = ""; }} />
+                      </label>
+                    </div>
+                  ) : (
+                    <label className="cursor-pointer rounded-xl border border-dashed border-slate-600 bg-slate-800/40 px-4 py-8 flex flex-col items-center justify-center gap-2 text-center hover:border-gold-400 transition-colors">
+                      {uploading ? (
+                        <><Loader2 className="w-5 h-5 text-slate-400 animate-spin" /><p className="text-slate-400 text-sm font-medium">Uploading…</p></>
+                      ) : (
+                        <><Upload className="w-5 h-5 text-slate-500" /><p className="text-slate-400 text-sm font-medium">Upload a promo poster</p><p className="text-slate-500 text-xs">Portrait works best (e.g. 1080×1350). Max 5 MB.</p></>
+                      )}
+                      <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadPromoImage(f); e.currentTarget.value = ""; }} />
+                    </label>
+                  )}
+                </div>
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div className="flex flex-col gap-1.5">
                     <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Eyebrow</label>
@@ -546,6 +591,12 @@ export default function ContentClient() {
                 <div className="flex flex-col gap-2">
                   <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Live Preview</label>
                   {content.promoPopup.enabled ? (
+                    content.promoPopup.imageUrl ? (
+                      <div className="rounded-2xl overflow-hidden border border-slate-700 bg-white">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={content.promoPopup.imageUrl} alt="Promo poster preview" className="w-full max-h-[28rem] object-contain" />
+                      </div>
+                    ) : (
                     <div className="rounded-2xl overflow-hidden border border-slate-700 p-6 text-center" style={{ background: "linear-gradient(180deg, #030813 0%, #071233 100%)" }}>
                       <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-500/15 border border-gold-400/30 text-gold-400 text-[11px] font-bold uppercase tracking-widest">{content.promoPopup.eyebrow || "Special Offer"}</span>
                       <p className="mt-3 text-white font-display font-bold text-xl">{content.promoPopup.title || "This Week's Best Deals"}</p>
@@ -577,6 +628,7 @@ export default function ContentClient() {
                       </div>
                       <span className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-navy-950 text-sm font-bold" style={{ background: "linear-gradient(135deg, #E6B450 0%, #C8881A 100%)" }}>{content.promoPopup.ctaLabel || "See all deals"} &rarr;</span>
                     </div>
+                    )
                   ) : (
                     <div className="rounded-xl border border-dashed border-slate-700 bg-slate-800/50 px-4 py-4 text-center text-slate-500 text-xs">
                       The popup is turned off — visitors won&rsquo;t see it.
