@@ -22,13 +22,14 @@ export default function PromoPopup({ items }: { items: Product[] }) {
   useEffect(() => setMounted(true), []);
 
   useEffect(() => {
-    if (!promo?.enabled || items.length === 0) return;
+    // Image mode (a custom poster) doesn't need curated products; product mode does.
+    if (!promo?.enabled || (!promo.imageUrl && items.length === 0)) return;
     const force =
       typeof window !== "undefined" &&
       new URLSearchParams(window.location.search).has("promo");
     const t = setTimeout(() => setOpen(true), force ? 0 : SHOW_DELAY_MS);
     return () => clearTimeout(t);
-  }, [promo?.enabled, items.length]);
+  }, [promo?.enabled, promo?.imageUrl, items.length]);
 
   useEffect(() => {
     if (!open) return;
@@ -62,6 +63,43 @@ export default function PromoPopup({ items }: { items: Product[] }) {
   }, [open]);
 
   if (!mounted || !open || !promo) return null;
+
+  // Image mode — show a custom promo poster (no product needed).
+  if (promo.imageUrl) {
+    return createPortal(
+      <div
+        className="fixed inset-0 z-[10050] flex items-center justify-center p-3 bg-black/70 backdrop-blur-sm animate-in fade-in duration-300"
+        onClick={() => setOpen(false)}
+        role="dialog"
+        aria-modal="true"
+        aria-label={promo.title || "Promotion"}
+      >
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className="relative w-full max-w-md max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl"
+        >
+          <button
+            ref={closeRef}
+            onClick={() => setOpen(false)}
+            aria-label="Close"
+            className="absolute top-2.5 right-2.5 z-10 w-9 h-9 rounded-full bg-black/50 hover:bg-black/70 border border-white/20 flex items-center justify-center text-white transition-transform hover:scale-105"
+          >
+            <X className="w-4 h-4" />
+          </button>
+          <Link href={promo.ctaHref || "/products"} onClick={() => setOpen(false)} className="block">
+            <Image
+              src={promo.imageUrl}
+              alt={promo.title || "Special promotion"}
+              width={1122}
+              height={1402}
+              className="w-full h-auto rounded-2xl"
+            />
+          </Link>
+        </div>
+      </div>,
+      document.body
+    );
+  }
 
   const featured = items[Math.floor(Math.random() * items.length)];
   if (!featured) return null;

@@ -48,6 +48,9 @@ export interface PromoPopupContent {
   message: string;
   ctaLabel: string;
   ctaHref: string;
+  /** Optional custom promo poster. When set, the popup shows this image instead
+   *  of a product card; product mode stays as the fallback when it's empty. */
+  imageUrl?: string;
   /** Up to 4 curated items shown in the popup (and merged into Best Deals). */
   items: PromoItem[];
 }
@@ -176,6 +179,7 @@ export const DEFAULT_CONTENT: SiteContent = {
     message: "Hand-picked open-box appliances at their lowest prices — while stock lasts.",
     ctaLabel: "See all deals",
     ctaHref: "/products?category=best-deals",
+    imageUrl: "",
     items: [],
   },
   bestDeals: { productIds: [] },
