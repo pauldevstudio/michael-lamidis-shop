@@ -57,7 +57,7 @@ export default function AnnouncementBar({ message, ctaLabel, ctaHref = "/product
                 from { transform: translateX(0); }
                 to { transform: translateX(-50%); }
               }
-              .ann-track { animation: ann-marquee 42s linear infinite; }
+              .ann-track { animation: ann-marquee 63s linear infinite; }
               .ann-bar:hover .ann-track { animation-play-state: paused; }
               @media (prefers-reduced-motion: reduce) {
                 .ann-track { animation: none; }
