@@ -51,26 +51,60 @@ export default function AnnouncementBar({ message, ctaLabel, ctaHref = "/product
           className="overflow-hidden"
           style={{ background: "linear-gradient(90deg, #1E48B8 0%, #3D62CC 50%, #1E48B8 100%)" }}
         >
-          <div className="flex items-center justify-center gap-3 px-4 py-2.5 relative">
-            <Tag className="w-3.5 h-3.5 text-white/70 shrink-0 hidden sm:block" />
-            <p className="text-white text-xs sm:text-sm font-medium text-center leading-snug">
-              {resolvedMessage}
-            </p>
-            {resolvedCta && (
-              <Link
-                href={resolvedCtaHref}
-                className="shrink-0 ml-1 px-3 py-1 rounded-full bg-white/20 hover:bg-white/30 text-white text-[11px] sm:text-xs font-bold transition-colors border border-white/30 whitespace-nowrap"
-              >
-                {resolvedCta} &rarr;
-              </Link>
-            )}
-            <button
-              onClick={() => setVisible(false)}
-              className="absolute right-1 top-1/2 -translate-y-1/2 p-2.5 text-white/50 hover:text-white transition-colors"
-              aria-label="Dismiss"
+          <div className="ann-bar relative flex items-center h-9 sm:h-10 overflow-hidden">
+            <style jsx>{`
+              @keyframes ann-marquee {
+                from { transform: translateX(0); }
+                to { transform: translateX(-50%); }
+              }
+              .ann-track { animation: ann-marquee 32s linear infinite; }
+              .ann-bar:hover .ann-track { animation-play-state: paused; }
+              @media (prefers-reduced-motion: reduce) {
+                .ann-track { animation: none; }
+              }
+            `}</style>
+
+            {/* One clean copy for screen readers (the visual ticker is decorative) */}
+            <Link href={resolvedCtaHref} className="sr-only">
+              {resolvedMessage} {resolvedCta}
+            </Link>
+
+            {/* Scrolling ticker — duplicated for a seamless, gap-free loop */}
+            <div aria-hidden className="ann-track flex items-center whitespace-nowrap will-change-transform">
+              {[0, 1].map((copy) => (
+                <div key={copy} className="flex items-center shrink-0">
+                  {[0, 1, 2, 3, 4].map((k) => (
+                    <Link
+                      key={k}
+                      href={resolvedCtaHref}
+                      className="flex items-center gap-2.5 px-7 sm:px-12 text-white text-xs sm:text-sm font-medium tracking-wide"
+                    >
+                      <Tag className="w-3.5 h-3.5 text-white/70 shrink-0" />
+                      <span>{resolvedMessage}</span>
+                      {resolvedCta && (
+                        <span className="font-bold underline underline-offset-2 decoration-white/40">
+                          {resolvedCta} &rarr;
+                        </span>
+                      )}
+                    </Link>
+                  ))}
+                </div>
+              ))}
+            </div>
+
+            {/* Right-edge fade so the ticker slides out cleanly behind the dismiss button */}
+            <div
+              className="absolute right-0 inset-y-0 flex items-center pl-12 pr-1"
+              style={{ background: "linear-gradient(to left, #1E48B8 60%, transparent)" }}
             >
-              <X className="w-4 h-4" />
-            </button>
+              <button
+                onClick={() => setVisible(false)}
+                className="p-2 text-white/60 hover:text-white transition-colors"
+                aria-label="Dismiss announcement"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </motion.div>
       )}
