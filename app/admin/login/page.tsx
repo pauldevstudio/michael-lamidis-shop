@@ -132,7 +132,8 @@ function LoginForm() {
                 aria-label={showPw ? "Hide password" : "Show password"}
                 aria-pressed={showPw}
                 title={showPw ? "Hide password" : "Show password"}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-gold-400 hover:text-gold-300 hover:bg-white/10 transition-colors"
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-lg hover:bg-white/10 transition-colors"
+                style={{ color: "#F0B429" }}
               >
                 {showPw ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
