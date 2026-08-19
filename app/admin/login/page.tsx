@@ -65,6 +65,17 @@ function LoginForm() {
           75% { transform: translateX(-3px); }
           90% { transform: translateX(3px); }
         }
+        /* Browsers force a light background on autofilled inputs, which hides the
+           white text and the show/hide eye icon. Keep them on the dark theme. */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus,
+        input:-webkit-autofill:active {
+          -webkit-text-fill-color: #ffffff !important;
+          -webkit-box-shadow: 0 0 0 1000px #151d33 inset !important;
+          caret-color: #ffffff;
+          transition: background-color 9999s ease-in-out 0s;
+        }
       `}</style>
       <div className="bg-navy-900/80 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl">
         <div className="flex flex-col items-center mb-8">
@@ -121,9 +132,9 @@ function LoginForm() {
                 aria-label={showPw ? "Hide password" : "Show password"}
                 aria-pressed={showPw}
                 title={showPw ? "Hide password" : "Show password"}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-colors"
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-gold-400 hover:text-gold-300 hover:bg-white/10 transition-colors"
               >
-                {showPw ? <EyeOff className="w-[18px] h-[18px]" /> : <Eye className="w-[18px] h-[18px]" />}
+                {showPw ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
             </div>
           </div>
