@@ -14,6 +14,9 @@ const SHOW_DELAY_MS = 6000;
 export default function PromoPopup({ items }: { items: Product[] }) {
   const content = useContent();
   const promo = content?.promoPopup;
+  // Poster mode = a custom image is set AND the "Show poster" toggle isn't off.
+  // When off (or no image), the popup falls back to the curated product list.
+  const posterMode = !!promo?.imageUrl && promo?.imageMode !== false;
   const { t, pick } = useLanguage();
   const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
@@ -22,14 +25,14 @@ export default function PromoPopup({ items }: { items: Product[] }) {
   useEffect(() => setMounted(true), []);
 
   useEffect(() => {
-    // Image mode (a custom poster) doesn't need curated products; product mode does.
-    if (!promo?.enabled || (!promo.imageUrl && items.length === 0)) return;
+    // Poster mode doesn't need curated products; product (list) mode does.
+    if (!promo?.enabled || (!posterMode && items.length === 0)) return;
     const force =
       typeof window !== "undefined" &&
       new URLSearchParams(window.location.search).has("promo");
     const t = setTimeout(() => setOpen(true), force ? 0 : SHOW_DELAY_MS);
     return () => clearTimeout(t);
-  }, [promo?.enabled, promo?.imageUrl, items.length]);
+  }, [promo?.enabled, posterMode, items.length]);
 
   useEffect(() => {
     if (!open) return;
@@ -64,8 +67,8 @@ export default function PromoPopup({ items }: { items: Product[] }) {
 
   if (!mounted || !open || !promo) return null;
 
-  // Image mode — show a custom promo poster (no product needed).
-  if (promo.imageUrl) {
+  // Poster mode — show the custom promo poster (no product needed).
+  if (posterMode) {
     return createPortal(
       <div
         className="fixed inset-0 z-[10050] flex items-center justify-center p-3 bg-black/70 backdrop-blur-sm animate-in fade-in duration-300"

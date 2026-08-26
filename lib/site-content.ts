@@ -51,6 +51,9 @@ export interface PromoPopupContent {
   /** Optional custom promo poster. When set, the popup shows this image instead
    *  of a product card; product mode stays as the fallback when it's empty. */
   imageUrl?: string;
+  /** Toggle: true (default) shows a set imageUrl as the poster; false shows the
+   *  curated product list instead, even when an image is uploaded. */
+  imageMode?: boolean;
   /** Up to 4 curated items shown in the popup (and merged into Best Deals). */
   items: PromoItem[];
 }
@@ -180,6 +183,7 @@ export const DEFAULT_CONTENT: SiteContent = {
     ctaLabel: "See all deals",
     ctaHref: "/products?category=best-deals",
     imageUrl: "",
+    imageMode: true,
     items: [],
   },
   bestDeals: { productIds: [] },

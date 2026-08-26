@@ -492,6 +492,23 @@ export default function ContentClient() {
                       <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadPromoImage(f); e.currentTarget.value = ""; }} />
                     </label>
                   )}
+                  {content.promoPopup.imageUrl && (
+                    <div className="flex items-center gap-3 mt-1 rounded-xl border border-slate-700 bg-slate-800/60 px-4 py-3">
+                      <button
+                        type="button"
+                        role="switch"
+                        aria-checked={content.promoPopup.imageMode !== false}
+                        onClick={() => setPromo("imageMode", content.promoPopup.imageMode === false)}
+                        className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${content.promoPopup.imageMode !== false ? "bg-emerald-500" : "bg-slate-600"}`}
+                      >
+                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${content.promoPopup.imageMode !== false ? "translate-x-6" : "translate-x-1"}`} />
+                      </button>
+                      <div className="text-sm leading-tight">
+                        <p className="text-slate-100 font-medium">{content.promoPopup.imageMode !== false ? "Showing the poster image" : "Showing the product deals"}</p>
+                        <p className="text-slate-500 text-xs mt-0.5">On = poster · Off = product-deals list (the poster stays saved either way)</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -591,7 +608,7 @@ export default function ContentClient() {
                 <div className="flex flex-col gap-2">
                   <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Live Preview</label>
                   {content.promoPopup.enabled ? (
-                    content.promoPopup.imageUrl ? (
+                    (content.promoPopup.imageUrl && content.promoPopup.imageMode !== false) ? (
                       <div className="rounded-2xl overflow-hidden border border-slate-700 bg-white">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={content.promoPopup.imageUrl} alt="Promo poster preview" className="w-full max-h-[28rem] object-contain" />
