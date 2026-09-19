@@ -436,7 +436,7 @@ const en = {
       teamTitle: "The People Behind Lamidis",
       team: [
         { name: "Michael Lamidis", role: "Founder & CEO" },
-        { name: "Taza Lamidis", role: "Operations Director" },
+        { name: "Dinah Lamidis", role: "Operations Director" },
         { name: "Jun Lamidis", role: "Head Technician" },
         { name: "Paul Norelga", role: "Digital Marketing" },
       ],
@@ -921,7 +921,7 @@ const gr: typeof en = {
       teamTitle: "Οι Άνθρωποι Πίσω από τον Lamidis",
       team: [
         { name: "Michael Lamidis", role: "Ιδρυτής & CEO" },
-        { name: "Taza Lamidis", role: "Διευθυντής Λειτουργιών" },
+        { name: "Dinah Lamidis", role: "Διευθυντής Λειτουργιών" },
         { name: "Jun Lamidis", role: "Επικεφαλής Τεχνικός" },
         { name: "Paul Norelga", role: "Ψηφιακό Μάρκετινγκ" },
       ],
