@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useEffect, useId, useState } from "react";
+import React, { useEffect, useId, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeft, ArrowRight, Loader2, CreditCard, Banknote, Store, ShoppingBag,
 } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
+import { analytics } from "@/lib/analytics";
 import { formatPrice } from "@/lib/utils";
 
 type PaymentMethod = "bank_transfer" | "cash_on_delivery" | "showroom_pickup";
@@ -51,7 +52,7 @@ export default function CheckoutContent() {
   const { items, totalItems, totalPrice, clearCart } = useCart();
   const [mounted, setMounted] = useState(false);
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
-  const [payment, setPayment] = useState<PaymentMethod>("bank_transfer");
+  const [payment, setPayment] = useState<PaymentMethod>("cash_on_delivery");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -63,6 +64,18 @@ export default function CheckoutContent() {
       router.replace("/cart");
     }
   }, [mounted, items.length, submitting, router]);
+
+  // Report "checkout started" once per visit to this page, as soon as the cart is known.
+  const checkoutTracked = useRef(false);
+  useEffect(() => {
+    if (!mounted || items.length === 0 || checkoutTracked.current) return;
+    checkoutTracked.current = true;
+    analytics.beginCheckout({
+      productIds: items.map((i) => i.product.id),
+      numItems: totalItems,
+      value: totalPrice,
+    });
+  }, [mounted, items, totalItems, totalPrice]);
 
   const update = (key: keyof FormState, value: string) =>
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -99,19 +112,17 @@ export default function CheckoutContent() {
         setSubmitting(false);
         return;
       }
-      // Meta Pixel Purchase conversion — fire BEFORE clearCart() so the cart
-      // values are still populated. Only fires if marketing consent already
-      // loaded fbq (guarded); see components/shared/MetaPixel.tsx.
-      if (typeof window !== "undefined" && window.fbq) {
-        window.fbq("track", "Purchase", {
-          value: Number(totalPrice),
-          currency: "EUR",
-          content_type: "product",
-          content_ids: items.map((i) => i.product.id),
-          num_items: totalItems,
-        });
-      }
+      // The order is placed. Capture the cart for the Purchase conversion
+      // (Meta Pixel, GA4 and our own tracker), empty the cart, then report it.
+      // Each destination only receives it if the visitor consented, and a
+      // tracking failure cannot make a placed order look like a failed one.
+      const purchased = {
+        productIds: items.map((i) => i.product.id),
+        numItems: totalItems,
+        value: Number(totalPrice),
+      };
       clearCart();
+      analytics.purchase(data.orderId, purchased);
       router.replace(`/checkout/confirmation?order=${data.orderId}`);
     } catch {
       setError("Network error — please try again");

@@ -77,14 +77,19 @@ const FALLBACK_ITEMS = [
   { id: "small-appliances", label: "Small Appliances" },
 ];
 
-export default function CategoryStrip() {
+export default function CategoryStrip({ listedCategoryIds }: { listedCategoryIds?: string[] | null } = {}) {
   const { t, lang, pick } = useLanguage();
   const __content = useContent();
   const __cs = __content?.categoryStrip;
   const eyebrow = pick(__cs?.eyebrow, t?.categoryStrip?.eyebrow) ?? "Shop by Category";
-  const items = (lang === "en" && __cs?.items && __cs.items.length > 0)
+  const __items = (lang === "en" && __cs?.items && __cs.items.length > 0)
     ? __cs.items
     : (t?.categoryStrip?.items ?? FALLBACK_ITEMS);
+  // Hide a chip whose category has no products, so no chip opens an empty
+  // list. Without the list (read failed), every chip stays.
+  const items = listedCategoryIds
+    ? __items.filter(({ id }) => id === "all" || listedCategoryIds.includes(id))
+    : __items;
 
   return (
     <section className="bg-white border-b border-navy-100/60 py-8 overflow-hidden">
@@ -107,7 +112,7 @@ export default function CategoryStrip() {
                 className="flex-shrink-0 snap-start"
               >
                 <Link
-                  href={id === "all" ? "/products" : `/products?cat=${id}`}
+                  href={id === "all" ? "/products" : `/products?category=${id}`}
                   className="group flex flex-col items-center gap-2.5 w-[72px]"
                 >
                   <div

@@ -8,6 +8,7 @@ import { useContent } from "@/lib/content-context";
 import AnimatedSection from "@/components/shared/AnimatedSection";
 import { cn } from "@/lib/utils";
 import { analytics } from "@/lib/analytics";
+import { HONEYPOT_FIELD } from "@/lib/validate";
 
 const BENEFIT_ICONS = [Clock, Shield, Tag, Sparkles];
 
@@ -24,16 +25,32 @@ export default function LeadCapture() {
   const [form, setForm] = useState({
     name: "", email: "", phone: "", interest: "", message: "",
   });
-  const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  // Hidden field real visitors never see. Bots fill it, and the server drops those.
+  const [website, setWebsite] = useState("");
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setForm((prev) => ({ ...prev, [k]: e.target.value }));
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (status === "sending") return;
     setStatus("sending");
-    analytics.generateLead("lead_capture");
-    setTimeout(() => setStatus("sent"), 1500);
+    try {
+      const res = await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ origin: "lead_capture", ...form, [HONEYPOT_FIELD]: website }),
+      });
+      if (!res.ok) {
+        setStatus("error");
+        return;
+      }
+      analytics.generateLead("lead_capture");
+      setStatus("sent");
+    } catch {
+      setStatus("error");
+    }
   };
 
   return (
@@ -206,6 +223,21 @@ export default function LeadCapture() {
                         className="form-input resize-none"
                       />
                     </div>
+
+                    <input
+                      type="text"
+                      name={HONEYPOT_FIELD}
+                      value={website}
+                      onChange={(e) => setWebsite(e.target.value)}
+                      tabIndex={-1}
+                      autoComplete="off"
+                      aria-hidden="true"
+                      className="absolute -left-[9999px] h-px w-px opacity-0"
+                    />
+
+                    {status === "error" && (
+                      <p role="alert" className="text-red-300 text-sm">{f.error}</p>
+                    )}
 
                     <button
                       type="submit"

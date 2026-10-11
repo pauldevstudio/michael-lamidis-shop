@@ -303,6 +303,7 @@ const en = {
       successMsg:
         "We'll reach out within 2 hours with the best options available for you.",
       sending: "Sending...",
+      error: "Your request could not be sent. Please try again, or call or WhatsApp us.",
     },
   },
   contact: {
@@ -323,6 +324,7 @@ const en = {
       submit: "Send Message",
       success: "Message Sent!",
       successMsg: "We'll get back to you within a few hours.",
+      error: "Your message could not be sent. Please try again, or call or WhatsApp us.",
     },
   },
   footer: {
@@ -377,6 +379,7 @@ const en = {
       warrantyMo: "mo Warranty",
       inStock: "In Stock",
       viewDetails: "View Details",
+      viewCart: "View cart",
       searchPlaceholder: "Search by brand, model, or keyword…",
       showing: "Showing",
       productSingular: "product",
@@ -788,6 +791,7 @@ const gr: typeof en = {
       successMsg:
         "Θα επικοινωνήσουμε εντός 2 ωρών με τις καλύτερες διαθέσιμες επιλογές.",
       sending: "Αποστολή...",
+      error: "Το αίτημά σας δεν στάλθηκε. Δοκιμάστε ξανά ή επικοινωνήστε μαζί μας τηλεφωνικά ή μέσω WhatsApp.",
     },
   },
   contact: {
@@ -808,6 +812,7 @@ const gr: typeof en = {
       submit: "Αποστολή Μηνύματος",
       success: "Το Μήνυμα Εστάλη!",
       successMsg: "Θα επικοινωνήσουμε μαζί σας εντός λίγων ωρών.",
+      error: "Το μήνυμά σας δεν στάλθηκε. Δοκιμάστε ξανά ή επικοινωνήστε μαζί μας τηλεφωνικά ή μέσω WhatsApp.",
     },
   },
   footer: {
@@ -862,6 +867,7 @@ const gr: typeof en = {
       warrantyMo: "μη Εγγύηση",
       inStock: "Σε Απόθεμα",
       viewDetails: "Λεπτομέρειες",
+      viewCart: "Προβολή καλαθιού",
       searchPlaceholder: "Αναζήτηση μάρκας, μοντέλου ή λέξης-κλειδιού…",
       showing: "Εμφάνιση",
       productSingular: "προϊόν",

@@ -20,6 +20,37 @@ export const SiteContentModel: Model<{ key: string; data: unknown }> =
   (models.SiteContent as Model<{ key: string; data: unknown }>) ||
   model("SiteContent", SiteContentSchema);
 
+/* ─── Attribution (where an order or message came from) ────────── */
+
+const AttributionSchema = new Schema(
+  {
+    source:      String, // classified channel, e.g. "Paid Advertising"
+    utmSource:   String,
+    utmMedium:   String,
+    utmCampaign: String,
+    utmContent:  String,
+    utmTerm:     String,
+    clickId:     String, // "fbclid" | "gclid" | "" — the kind only, never the value
+    landingPath: String,
+    touchAt:     Date,   // when the attributed visit happened
+    firstSeen:   Date,   // first time this visitor was ever seen
+  },
+  { _id: false }
+);
+
+export interface AttributionDoc {
+  source: string;
+  utmSource: string;
+  utmMedium: string;
+  utmCampaign: string;
+  utmContent: string;
+  utmTerm: string;
+  clickId: string;
+  landingPath: string;
+  touchAt: Date;
+  firstSeen: Date;
+}
+
 /* ─── Leads ────────────────────────────────────────────────────── */
 
 const ChatMessageSchema = new Schema(
@@ -32,6 +63,16 @@ const LeadSchema = new Schema(
     name:      { type: String, default: "Unknown" },
     phone:     { type: String, default: "Unknown" },
     chatLog:   { type: [ChatMessageSchema], default: [] },
+    // Website forms (contact form, offers form). Empty for chatbot leads.
+    origin:    { type: String, default: "chatbot" }, // chatbot | contact | lead_capture
+    email:     { type: String, default: "" },
+    subject:   { type: String, default: "" },
+    interest:  { type: String, default: "" },
+    message:   { type: String, default: "" },
+    attribution: { type: AttributionSchema, default: undefined },
+    // Outcome of the email notice to the shop: sent | not_configured |
+    // daily_cap | provider_error | network_error. Empty for older leads.
+    noticeStatus: { type: String, default: "" },
   },
   { timestamps: true }
 );
@@ -41,6 +82,13 @@ export interface LeadDoc {
   name: string;
   phone: string;
   chatLog: Array<{ role: string; content: string }>;
+  origin?: string;
+  email?: string;
+  subject?: string;
+  interest?: string;
+  message?: string;
+  attribution?: AttributionDoc | null;
+  noticeStatus?: string;
   createdAt: Date;
 }
 
@@ -84,6 +132,9 @@ const OrderSchema = new Schema(
       required: true,
     },
     status: { type: String, default: "new" },
+    attribution: { type: AttributionSchema, default: undefined },
+    // Outcome of the email notice to the shop (see LeadSchema). Empty for older orders.
+    noticeStatus: { type: String, default: "" },
   },
   { timestamps: true }
 );
@@ -101,6 +152,8 @@ export interface OrderDoc {
   totalPrice: number;
   payment: "bank_transfer" | "cash_on_delivery" | "showroom_pickup";
   status: string;
+  attribution?: AttributionDoc | null;
+  noticeStatus?: string;
   createdAt: Date;
 }
 
@@ -125,6 +178,14 @@ const AnalyticsEventSchema = new Schema(
     region:   { type: String, default: "" },
     label:    { type: String, default: "" },  // CTA/button/link label
     isNew:    { type: Boolean, default: false }, // first time we ever saw this vid
+    // Campaign tags from the landing URL (see lib/attribution.ts).
+    utmSource:   { type: String, default: "" },
+    utmMedium:   { type: String, default: "" },
+    utmCampaign: { type: String, default: "" },
+    utmContent:  { type: String, default: "" },
+    utmTerm:     { type: String, default: "" },
+    clickId:     { type: String, default: "" }, // "fbclid" | "gclid" | ""
+    value:       { type: Number, default: 0 },  // money value in EUR (add_to_cart, begin_checkout, purchase)
   },
   { timestamps: false }
 );
@@ -145,6 +206,13 @@ export interface AnalyticsEventDoc {
   region: string;
   label: string;
   isNew: boolean;
+  utmSource: string;
+  utmMedium: string;
+  utmCampaign: string;
+  utmContent: string;
+  utmTerm: string;
+  clickId: string;
+  value: number;
 }
 
 export const AnalyticsEventModel: Model<AnalyticsEventDoc> =

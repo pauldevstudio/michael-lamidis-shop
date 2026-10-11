@@ -40,6 +40,11 @@ function StatCard({
   );
 }
 
+const FORM_LABELS: Record<string, string> = {
+  contact: "Contact form",
+  lead_capture: "Offers form",
+};
+
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-GB", {
     day: "2-digit",
@@ -153,11 +158,17 @@ export default function LeadsDashboard({ initialLeads }: { initialLeads: Lead[] 
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-semibold text-slate-100 truncate">{lead.name}</p>
-                        <p className="text-sm text-blue-600 truncate">{lead.phone}</p>
+                        <p className="text-sm text-blue-600 truncate">
+                          {lead.phone && lead.phone !== "Unknown" ? lead.phone : lead.email || lead.phone}
+                        </p>
                       </div>
                       <div className="text-right flex-shrink-0 mr-1">
                         <p className="text-xs text-gray-400">{formatDate(lead.timestamp)}</p>
-                        <p className="text-xs text-gray-400 mt-0.5">{lead.chatLog.length} msgs</p>
+                        <p className="text-xs text-gray-400 mt-0.5">
+                          {lead.origin && FORM_LABELS[lead.origin]
+                            ? FORM_LABELS[lead.origin]
+                            : `${lead.chatLog.length} msgs`}
+                        </p>
                       </div>
                       <div className="flex items-center gap-1">
                         <button
@@ -219,7 +230,29 @@ export default function LeadsDashboard({ initialLeads }: { initialLeads: Lead[] 
 
                     {/* Messages */}
                     <div className="p-4 space-y-3 max-h-[480px] overflow-y-auto">
+                      {(selected.email || selected.subject || selected.interest || selected.message) && (
+                        <div className="rounded-xl bg-slate-800 border border-slate-700 p-4 text-sm text-slate-200 space-y-1.5">
+                          {selected.email && (
+                            <p>
+                              <span className="text-slate-500">Email:</span>{" "}
+                              <a href={`mailto:${selected.email}`} className="text-blue-400 hover:underline">
+                                {selected.email}
+                              </a>
+                            </p>
+                          )}
+                          {selected.subject && (
+                            <p><span className="text-slate-500">Subject:</span> {selected.subject}</p>
+                          )}
+                          {selected.interest && (
+                            <p><span className="text-slate-500">Interested in:</span> {selected.interest}</p>
+                          )}
+                          {selected.message && (
+                            <p className="whitespace-pre-wrap pt-1">{selected.message}</p>
+                          )}
+                        </div>
+                      )}
                       {selected.chatLog.length === 0 ? (
+                        selected.message ? null :
                         <p className="text-center text-gray-400 text-sm py-8">
                           No chat log saved for this lead.
                         </p>

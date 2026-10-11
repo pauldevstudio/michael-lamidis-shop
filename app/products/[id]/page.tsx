@@ -6,7 +6,7 @@ import ScrollProgress from "@/components/shared/ScrollProgress";
 import ProductDetail from "./ProductDetail";
 import { getPublicProductById, getPublicProducts } from "@/lib/site-content";
 import { SITE_URL, SITE_NAME } from "@/lib/constants";
-import { productSocialProof } from "@/lib/social-proof";
+import { inStockFirst } from "@/lib/product-order";
 
 // Cache each product page for 30s. Admin saves call revalidatePath after PUT
 // so edits still flush immediately.
@@ -56,14 +56,13 @@ export default async function ProductPage({ params }: Props) {
   // Related products must come from the live product list (same source this
   // page resolves from) — not the static FEATURED_PRODUCTS seed, whose old IDs
   // 404 when clicked. Prefer same-category, fall back to any other product.
+  // In-stock products come before sold ones.
   const all = await getPublicProducts();
   const sameCategory = all.filter((p) => p.category === product.category && p.id !== product.id);
-  const related = (sameCategory.length > 0 ? sameCategory : all.filter((p) => p.id !== product.id)).slice(0, 3);
+  const related = inStockFirst(sameCategory.length > 0 ? sameCategory : all.filter((p) => p.id !== product.id)).slice(0, 3);
 
   // Product structured data → eligible for Google rich results (price,
-  // availability, rating stars). Ratings are the same deterministic social
-  // proof shown on the page, so the markup matches visible content.
-  const sp = productSocialProof(product.id);
+  // availability). No rating or review markup: there is no real review data.
   const absolute = (u: string) => (/^https?:\/\//i.test(u) ? u : `${SITE_URL}${u.startsWith("/") ? "" : "/"}${u}`);
   const gallery = (product.images?.length ? product.images : [product.imageUrl]).filter(Boolean).map(absolute);
   const breadcrumbLd = {
@@ -84,13 +83,11 @@ export default async function ProductPage({ params }: Props) {
     sku: product.id,
     mpn: product.model,
     brand: { "@type": "Brand", name: product.brand },
-    aggregateRating: { "@type": "AggregateRating", ratingValue: sp.rating, reviewCount: sp.reviews },
     offers: {
       "@type": "Offer",
       url: `${SITE_URL}/products/${product.id}`,
       priceCurrency: "EUR",
       price: product.salePrice,
-      itemCondition: "https://schema.org/RefurbishedCondition",
       availability: product.sold ? "https://schema.org/OutOfStock" : "https://schema.org/InStock",
       seller: { "@type": "Organization", name: SITE_NAME },
     },

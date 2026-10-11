@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowLeft, ArrowRight, Truck, Award,
-  CheckCircle2, Phone, Mail, ShoppingCart, Minus, Plus, Star,
+  CheckCircle2, Phone, Mail, ShoppingCart, Minus, Plus,
   Package, ZoomIn, ZoomOut, X, ChevronLeft, ChevronRight, MessageCircle, MapPin,
 } from "lucide-react";
 import type { Product } from "@/lib/constants";
@@ -14,9 +14,7 @@ import { SITE_MAPS_URL, SITE_PHONE, SITE_WHATSAPP } from "@/lib/constants";
 import { useCart } from "@/lib/cart-context";
 import { track, ANALYTICS_EVENTS } from "@/lib/analytics";
 import AnimatedSection, { StaggerChildren, StaggerItem } from "@/components/shared/AnimatedSection";
-import StarRating from "@/components/shared/StarRating";
 import VideoCardButton from "@/components/shared/VideoCardButton";
-import { productSocialProof } from "@/lib/social-proof";
 import { cn } from "@/lib/utils";
 
 /* ── Grade color helper ─────────────────────────────── */
@@ -45,31 +43,6 @@ function SpecRow({ label, value, i }: { label: string; value: string; i: number 
     </div>
   );
 }
-
-/* ── Review card ────────────────────────────────────── */
-const REVIEWS = [
-  {
-    name: "Stavros P.",
-    rating: 5,
-    comment:
-      "Incredible quality for the price. The appliance arrived perfectly packaged and works flawlessly from day one.",
-    date: "Nov 2024",
-  },
-  {
-    name: "Maria K.",
-    rating: 5,
-    comment:
-      "Third open box purchase from Lamidis. Always impressed by the condition — and the 12-month warranty gives true peace of mind.",
-    date: "Oct 2024",
-  },
-  {
-    name: "Nikos A.",
-    rating: 4,
-    comment:
-      "Great deal. Minor cosmetic mark that wasn't visible after installation. Very happy with the purchase overall.",
-    date: "Sep 2024",
-  },
-];
 
 /* ── Related product card ───────────────────────────── */
 function RelatedCard({ product }: { product: Product }) {
@@ -122,13 +95,13 @@ function RelatedCard({ product }: { product: Product }) {
 }
 
 /* ══════════════════════════════════════════════════════ */
-type Tab = "features" | "details" | "reviews";
+type Tab = "features" | "details";
 
 export default function ProductDetail({ product, related = [] }: { product: Product; related?: Product[] }) {
   const gc = gradeColor(product.grade);
   const hasRealSaving = product.originalPrice > product.salePrice && product.savings > 0;
-  const proof = productSocialProof(product.id);
-  const { addToCart } = useCart();
+  const { addToCart, items } = useCart();
+  const inCart = items.some((i) => i.product.id === product.id);
   const [quantity, setQuantity] = useState(1);
   const [activeThumb, setActiveThumb] = useState(0);
   const [activeTab, setActiveTab] = useState<Tab>("features");
@@ -194,7 +167,6 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
   const tabs: { key: Tab; label: string }[] = [
     { key: "features", label: "Features" },
     { key: "details", label: "Details & Specs" },
-    { key: "reviews", label: `Reviews (${REVIEWS.length})` },
   ];
 
   return (
@@ -358,16 +330,6 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
                 )}
               </div>
 
-              {/* Rating + social proof */}
-              <div className="flex items-center gap-2 flex-wrap">
-                <StarRating rating={proof.rating} size={16} />
-                <span className="text-navy-700 text-sm font-bold tnum">{proof.rating.toFixed(1)}</span>
-                <span className="text-navy-300 text-sm">·</span>
-                <span className="text-navy-500 text-sm tnum">{proof.reviews} reviews</span>
-                <span className="text-navy-200">·</span>
-                <span className="text-emerald-600 text-sm font-semibold tnum">{proof.sold}+ sold</span>
-              </div>
-
               {/* Pricing */}
               <div className="flex items-end gap-4 pb-5 border-b border-navy-100/60">
                 <div>
@@ -400,10 +362,12 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
                   <Package className="w-4 h-4" />
                   {product.sold ? "Sold" : "In Stock"}
                 </div>
+                {!product.sold && (
                 <div className="flex items-center gap-1.5 text-navy-500 font-medium">
                   <Truck className="w-4 h-4 text-gold-500" />
                   Ships within 24–48h
                 </div>
+                )}
                 <a href={SITE_MAPS_URL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-navy-500 font-medium hover:text-navy-700 transition-colors">
                   <MapPin className="w-4 h-4 text-gold-500" />
                   Delivery may vary
@@ -472,6 +436,18 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
                 </button>
               </div>
 
+              {/* In the cart: a way to continue */}
+              {inCart && (
+                <Link
+                  href="/cart"
+                  className="-mt-4 inline-flex items-center gap-1.5 self-start min-h-[44px] text-sm font-semibold text-emerald-700 hover:text-emerald-800 transition-colors"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  View cart
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              )}
+
               {/* Inquiry buttons */}
               <div className="flex flex-col sm:flex-row gap-3">
                 <Link href="/contact" className="btn-gold text-sm flex-1 justify-center">
@@ -514,7 +490,7 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
         </div>
       </section>
 
-      {/* ── Tabs: Features / Details / Reviews ─────────────── */}
+      {/* ── Tabs: Features / Details ───────────────────────── */}
       <section className="bg-white border-t border-navy-100/60">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
           {/* Tab bar */}
@@ -610,71 +586,6 @@ export default function ProductDetail({ product, related = [] }: { product: Prod
                       </div>
                     </>
                   )}
-                </div>
-              )}
-
-              {/* ── Reviews ── */}
-              {activeTab === "reviews" && (
-                <div className="max-w-3xl">
-                  {/* Summary */}
-                  <div className="flex items-center gap-6 mb-8 p-5 rounded-2xl bg-navy-50/60 border border-navy-100/50">
-                    <div className="text-center">
-                      <div
-                        className="font-black text-5xl text-navy-950 leading-none tnum"
-                        style={{ fontFamily: "var(--font-jakarta)" }}
-                      >
-                        {proof.rating.toFixed(1)}
-                      </div>
-                      <div className="flex items-center justify-center mt-1.5">
-                        <StarRating rating={proof.rating} size={16} />
-                      </div>
-                      <p className="text-navy-400 text-xs mt-1 font-medium tnum">{proof.reviews} reviews</p>
-                    </div>
-                    <div className="flex-1 flex flex-col gap-1.5">
-                      {[5, 4, 3, 2, 1].map((stars) => {
-                        const pct = stars === 5 ? 72 : stars === 4 ? 22 : stars === 3 ? 6 : 0;
-                        return (
-                          <div key={stars} className="flex items-center gap-2 text-xs">
-                            <span className="text-navy-400 w-3 text-right">{stars}</span>
-                            <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
-                            <div className="flex-1 h-1.5 rounded-full bg-navy-100 overflow-hidden">
-                              <div
-                                className="h-full rounded-full bg-amber-400"
-                                style={{ width: `${pct}%` }}
-                              />
-                            </div>
-                            <span className="text-navy-400 w-7">{pct}%</span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Individual reviews */}
-                  <div className="flex flex-col gap-5">
-                    {REVIEWS.map(({ name, rating, comment, date }) => (
-                      <div
-                        key={name}
-                        className="p-5 rounded-2xl border border-navy-100/60 bg-white hover:shadow-sm transition-shadow"
-                      >
-                        <div className="flex items-start justify-between mb-3">
-                          <div>
-                            <p className="text-navy-950 font-semibold text-sm">{name}</p>
-                            <div className="flex items-center gap-0.5 mt-1">
-                              {Array.from({ length: rating }).map((_, i) => (
-                                <Star key={i} className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-                              ))}
-                              {Array.from({ length: 5 - rating }).map((_, i) => (
-                                <Star key={i} className="w-3.5 h-3.5 text-navy-200 fill-navy-100" />
-                              ))}
-                            </div>
-                          </div>
-                          <span className="text-navy-300 text-xs font-medium">{date}</span>
-                        </div>
-                        <p className="text-navy-600 text-sm leading-relaxed">{comment}</p>
-                      </div>
-                    ))}
-                  </div>
                 </div>
               )}
             </motion.div>

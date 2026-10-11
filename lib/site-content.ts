@@ -5,6 +5,7 @@ import {
   SITE_PHONE, SITE_EMAIL, SITE_ADDRESS, SITE_HOURS,
   SOCIAL_LINKS, FEATURED_PRODUCTS, type Product,
 } from "./constants";
+import { inStockFirst } from "./product-order";
 
 // ─── Types ────────────────────────────────────────────────────────
 
@@ -514,8 +515,44 @@ export async function getFeaturedProducts(limit = 8): Promise<Product[]> {
   // Fetch a small padded set (not the whole 500-row catalogue) so the homepage
   // render — and every ISR regeneration — does a light Mongo read. The pad
   // covers rows dropped by the price/model filter inside getPublicProducts.
-  const all = await getPublicProducts(Math.max(limit + 8, 24));
+  const padded = inStockFirst(await getPublicProducts(Math.max(limit + 8, 24)));
+  // In-stock products come first, so a sold one is featured only when nothing
+  // else is left. If the padded set has too few in stock, read the whole
+  // catalogue once to find the rest.
+  const all = padded.slice(0, limit).some((p) => p.sold)
+    ? inStockFirst(await getPublicProducts())
+    : padded;
   return all.slice(0, limit).map((p) => ({ ...p, images: [] }));
+}
+
+/**
+ * Category ids that have at least one listed product. The homepage category
+ * strip uses it to hide a chip that would open an empty list. One light query
+ * (three small fields, no images). Returns null when nothing can be read, so
+ * the strip then keeps every chip.
+ */
+export async function getListedCategoryIds(): Promise<string[] | null> {
+  try {
+    const { getPayload } = await import("payload");
+    const { default: payloadConfig } = await import("@payload-config");
+    const payload = await getPayload({ config: payloadConfig });
+    const res = await payload.find({
+      collection: "products",
+      limit: 500,
+      depth: 0,
+      select: { category: true, model: true, salePrice: true },
+    });
+    const docs = (res?.docs ?? []) as Array<Record<string, unknown>>;
+    const ids = docs
+      // Same rule as getPublicProducts: listed means a model and a price.
+      .filter((d) => String(d.model ?? "").trim().length > 0 && Number(d.salePrice ?? 0) > 0)
+      .map((d) => String(d.category ?? ""))
+      .filter(Boolean);
+    return ids.length > 0 ? [...new Set(ids)] : null;
+  } catch (err) {
+    console.error("[getListedCategoryIds] payload read failed:", err);
+    return null;
+  }
 }
 
 /**

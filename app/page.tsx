@@ -4,7 +4,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Hero from "@/components/sections/Hero";
 import { ContentProvider } from "@/lib/content-context";
-import { getSiteContent, getFeaturedProducts, getPromoProducts } from "@/lib/site-content";
+import { getSiteContent, getFeaturedProducts, getPromoProducts, getListedCategoryIds } from "@/lib/site-content";
 import { SITE_URL } from "@/lib/constants";
 
 const ScrollProgress = dynamic(() => import("@/components/shared/ScrollProgress"));
@@ -32,9 +32,10 @@ export const metadata: Metadata = {
 
 export default async function HomePage() {
   const content = await getSiteContent();
-  const [products, promoItems] = await Promise.all([
+  const [products, promoItems, listedCategoryIds] = await Promise.all([
     getFeaturedProducts(8),
     getPromoProducts(content.promoPopup.items),
+    getListedCategoryIds(),
   ]);
   return (
     <ContentProvider content={content}>
@@ -43,7 +44,7 @@ export default async function HomePage() {
       <Navbar />
       <main id="main-content">
         <Hero />
-        <CategoryStrip />
+        <CategoryStrip listedCategoryIds={listedCategoryIds} />
         <Services />
         <ProductGallery products={products} />
         <Testimonials />

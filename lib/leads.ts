@@ -1,12 +1,20 @@
 import fs from "fs";
 import path from "path";
-import type { LeadDoc } from "@/lib/models";
+import type { AttributionDoc, LeadDoc } from "@/lib/models";
 
 export interface ChatMessage { role: "user" | "assistant"; content: string }
 export interface Lead {
   id: string; name: string; phone: string;
   timestamp: string; chatLog: ChatMessage[];
+  /** chatbot | contact | lead_capture. Older leads have none and are chatbot leads. */
+  origin?: string;
+  email?: string; subject?: string; interest?: string; message?: string;
 }
+
+export type NewLead =
+  Pick<Lead, "name" | "phone" | "chatLog"> &
+  Pick<Lead, "origin" | "email" | "subject" | "interest" | "message"> &
+  { attribution?: AttributionDoc | null };
 
 const LEADS_PATH = path.join(process.cwd(), "data", "leads.json");
 
@@ -38,6 +46,11 @@ export async function getLeads(): Promise<Lead[]> {
         phone:     d.phone,
         timestamp: d.createdAt.toISOString(),
         chatLog:   d.chatLog as ChatMessage[],
+        origin:    d.origin   || "chatbot",
+        email:     d.email    || "",
+        subject:   d.subject  || "",
+        interest:  d.interest || "",
+        message:   d.message  || "",
       }));
     } catch (err) {
       console.error("[MongoDB] getLeads failed:", err);
@@ -46,9 +59,14 @@ export async function getLeads(): Promise<Lead[]> {
   return readFromFile();
 }
 
-export async function addLead(
-  data: Pick<Lead, "name" | "phone" | "chatLog">
-): Promise<Lead> {
+export async function addLead(data: NewLead): Promise<Lead> {
+  const formFields = {
+    origin:   data.origin   || "chatbot",
+    email:    data.email    || "",
+    subject:  data.subject  || "",
+    interest: data.interest || "",
+    message:  data.message  || "",
+  };
   if (process.env.MONGODB_URI) {
     try {
       const { connectDB } = await import("@/lib/db");
@@ -58,6 +76,8 @@ export async function addLead(
         name:    data.name    || "Unknown",
         phone:   data.phone   || "Unknown",
         chatLog: data.chatLog ?? [],
+        ...formFields,
+        ...(data.attribution ? { attribution: data.attribution } : {}),
       });
       return {
         id:        String(doc._id),
@@ -65,6 +85,7 @@ export async function addLead(
         phone:     doc.phone,
         timestamp: (doc as unknown as { createdAt: Date }).createdAt.toISOString(),
         chatLog:   doc.chatLog as ChatMessage[],
+        ...formFields,
       };
     } catch (err) {
       console.error("[MongoDB] addLead failed:", err);
@@ -77,6 +98,7 @@ export async function addLead(
     phone:     data.phone   || "Unknown",
     timestamp: new Date().toISOString(),
     chatLog:   data.chatLog ?? [],
+    ...formFields,
   };
   leads.unshift(newLead);
   writeToFile(leads);

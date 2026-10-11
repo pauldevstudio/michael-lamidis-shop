@@ -10,6 +10,7 @@ import SectionHeader from "@/components/shared/SectionHeader";
 import AnimatedSection from "@/components/shared/AnimatedSection";
 import { SITE_ADDRESS, SITE_EMAIL, SITE_HOURS, SITE_MAPS_URL, SITE_PHONE, SITE_WHATSAPP } from "@/lib/constants";
 import { analytics } from "@/lib/analytics";
+import { HONEYPOT_FIELD } from "@/lib/validate";
 
 export default function ContactSection() {
   const { t, pick } = useLanguage();
@@ -31,16 +32,32 @@ export default function ContactSection() {
   const __biHours   = __bi?.hours   || SITE_HOURS;
 
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
-  const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  // Hidden field real visitors never see. Bots fill it, and the server drops those.
+  const [website, setWebsite] = useState("");
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm((prev) => ({ ...prev, [k]: e.target.value }));
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (status === "sending") return;
     setStatus("sending");
-    analytics.contactSubmit();
-    setTimeout(() => setStatus("sent"), 1500);
+    try {
+      const res = await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ origin: "contact", ...form, [HONEYPOT_FIELD]: website }),
+      });
+      if (!res.ok) {
+        setStatus("error");
+        return;
+      }
+      analytics.contactSubmit();
+      setStatus("sent");
+    } catch {
+      setStatus("error");
+    }
   };
 
   const contactItems = [
@@ -158,6 +175,21 @@ export default function ContactSection() {
                       <label htmlFor="contact-message" className="text-navy-400 text-xs font-bold uppercase tracking-widest">{f.message}</label>
                       <textarea id="contact-message" value={form.message} onChange={set("message")} placeholder={f.message} rows={5} required className="form-input-light resize-none" />
                     </div>
+
+                    <input
+                      type="text"
+                      name={HONEYPOT_FIELD}
+                      value={website}
+                      onChange={(e) => setWebsite(e.target.value)}
+                      tabIndex={-1}
+                      autoComplete="off"
+                      aria-hidden="true"
+                      className="absolute -left-[9999px] h-px w-px opacity-0"
+                    />
+
+                    {status === "error" && (
+                      <p role="alert" className="text-red-600 text-sm">{f.error}</p>
+                    )}
 
                     <button
                       type="submit"

@@ -10,6 +10,7 @@ import Analytics from "@/components/shared/Analytics";
 import MetaPixel from "@/components/shared/MetaPixel";
 import AutoTrack from "@/components/shared/AutoTrack";
 import { CookieConsentProvider } from "@/lib/cookie-consent";
+import { CONSENT_VERSION } from "@/lib/consent-core";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import LazyWidgets from "@/components/shared/LazyWidgets";
 
@@ -101,7 +102,7 @@ export default async function RootLayout({
   return (
     <html lang="en" data-scroll-behavior="smooth" className={`${inter.variable} ${plusJakarta.variable}`}>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: `try{var m=document.cookie.match(/cookie_consent=([^;]+)/);if(m){var j=JSON.parse(decodeURIComponent(m[1]));if(j&&j.v===1)document.documentElement.dataset.cc="1"}}catch(e){}` }} />
+        <script dangerouslySetInnerHTML={{ __html: `try{var m=document.cookie.match(/cookie_consent=([^;]+)/);if(m){var j=JSON.parse(decodeURIComponent(m[1]));if(j&&j.v===${CONSENT_VERSION})document.documentElement.dataset.cc="1"}}catch(e){}` }} />
         <link rel="preconnect" href="https://res.cloudinary.com" />
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
         <link rel="preconnect" href="https://iax3scoubxgocab7.public.blob.vercel-storage.com" crossOrigin="anonymous" />

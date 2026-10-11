@@ -49,6 +49,9 @@ NEXT_PUBLIC_CLARITY_ID=xxxxxxxxxx   # Microsoft Clarity project id
 | `product_click` | clicked a product → details | — |
 | `generate_lead` | submitted a lead form | ✅ |
 | `contact_form_submit` | submitted the contact form | ✅ |
+| `add_to_cart` | added a product to the cart (Meta: AddToCart) | ✅ |
+| `begin_checkout` | opened the checkout with items (Meta: InitiateCheckout) | ✅ |
+| `purchase` | placed an order request (Meta: Purchase, event id `purchase-<order id>`) | ✅ |
 | `outbound_click` | clicked an external link | — |
 | `search` | used site search (when added) | — |
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import LegalPage from "@/components/shared/LegalPage";
 import { SITE_URL, SITE_NAME, SITE_EMAIL, SITE_PHONE, SITE_ADDRESS } from "@/lib/constants";
 
-const LAST_UPDATED = "13 June 2026";
+const LAST_UPDATED = "11 October 2026";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -30,37 +30,50 @@ export default function PrivacyPolicyPage() {
 
       <h2>2. The information we collect</h2>
       <ul>
-        <li><strong>Order details</strong> — your name, email, phone, delivery address, the items ordered and your chosen payment method, when you place an order.</li>
-        <li><strong>Enquiries &amp; quote requests</strong> — your name, email, phone and any message you send through our contact, quote or chat features.</li>
-        <li><strong>Newsletter</strong> — your email address, if you subscribe to deals and updates.</li>
-        <li><strong>Usage &amp; technical data</strong> — with your consent, information about how you use the site (pages viewed, approximate location derived from your IP address, device and browser type, and referring site), through analytics.</li>
+        <li><strong>Order details</strong>: your name, email, phone, delivery address, the items ordered and your chosen payment method, when you place an order.</li>
+        <li><strong>Enquiries &amp; quote requests</strong>: your name, email, phone and any message you send through our contact, offers, quote or chat features.</li>
+        <li><strong>Newsletter</strong>: your email address, if you subscribe to deals and updates.</li>
+        <li><strong>Usage &amp; technical data</strong>: with your consent, information about how you use the site (pages viewed, approximate location derived from your IP address, device and browser type, referring site, and the advertisement or channel that brought you), through analytics.</li>
       </ul>
-      <p>We do not knowingly collect special-category data, and we do not store full payment-card details — orders are paid by bank transfer, cash on delivery, or in our showroom.</p>
+      <p>We do not knowingly collect special-category data, and we do not store full payment-card details. Orders are paid by bank transfer, cash on delivery, or in our showroom.</p>
 
       <h2>3. How we use your data &amp; our legal bases</h2>
       <ul>
-        <li><strong>To process and deliver your order</strong> and provide customer support — legal basis: <strong>performance of a contract</strong>.</li>
-        <li><strong>To respond to enquiries and quote requests</strong> — legal basis: <strong>your consent</strong> and/or steps taken at your request before entering a contract.</li>
-        <li><strong>To send marketing emails</strong> (newsletter) — legal basis: <strong>your consent</strong>, which you can withdraw at any time via the unsubscribe link.</li>
-        <li><strong>To measure and improve the site</strong> through analytics — legal basis: <strong>your consent</strong> (managed through our cookie banner).</li>
-        <li><strong>To keep the site secure and meet legal/accounting obligations</strong> — legal basis: <strong>legitimate interests</strong> and <strong>legal obligation</strong>.</li>
+        <li><strong>To process and deliver your order</strong> and provide customer support. Legal basis: <strong>performance of a contract</strong>.</li>
+        <li><strong>To respond to enquiries and quote requests</strong>. Legal basis: <strong>your consent</strong> and/or steps taken at your request before entering a contract.</li>
+        <li><strong>To send marketing emails</strong> (newsletter). Legal basis: <strong>your consent</strong>, which you can withdraw at any time via the unsubscribe link.</li>
+        <li><strong>To measure and improve the site</strong> through analytics, including which of our advertising brings orders and messages. Legal basis: <strong>your consent</strong> (managed through our cookie banner).</li>
+        <li><strong>To measure the results of our advertising</strong> on Facebook and Instagram (Meta Pixel). Legal basis: <strong>your consent</strong> (managed through our cookie banner).</li>
+        <li><strong>To keep the site secure and meet legal/accounting obligations</strong>. Legal basis: <strong>legitimate interests</strong> and <strong>legal obligation</strong>.</li>
       </ul>
 
       <h2>4. Cookies &amp; analytics</h2>
       <p>
         We use cookies and similar technologies as described in our{" "}
-        <a href="/cookie-policy">Cookie Policy</a>. Analytics and any future marketing cookies only load
-        after you give consent, and you can change or withdraw consent at any time via the
-        &ldquo;Cookie Settings&rdquo; link in the footer.
+        <a href="/cookie-policy">Cookie Policy</a>. Analytics and marketing cookies only load after you
+        give consent, and you can change or withdraw consent at any time via the &ldquo;Cookie
+        Settings&rdquo; link in the footer.
+      </p>
+      <p>
+        If you have accepted Analytics cookies and you send us an order request or a message, we note
+        which of our advertisements or which channel brought you to the site, the page you arrived on,
+        and the dates of that visit and of your first visit, so we can see which advertising works. We
+        do not attach the list of pages you viewed or any visitor identifier to your order or message.
+      </p>
+      <p>
+        Our website host (Vercel) may also measure how fast our pages load. This uses no cookies and is
+        not used to identify you.
       </p>
 
       <h2>5. Who we share your data with</h2>
       <p>We never sell your personal data. We share it only with service providers (&ldquo;processors&rdquo;) who help us run the business, under contracts that require them to protect it:</p>
       <ul>
-        <li><strong>Hosting &amp; infrastructure</strong> — our website host (Vercel) and database provider (MongoDB Atlas).</li>
-        <li><strong>Analytics</strong> — Google Analytics (Google Ireland Ltd / Google LLC), only with your consent.</li>
-        <li><strong>Delivery partners</strong> — couriers we use to deliver your order, where applicable.</li>
-        <li><strong>Authorities</strong> — where we are legally required to disclose information.</li>
+        <li><strong>Hosting &amp; infrastructure</strong>: our website host (Vercel), database provider (MongoDB Atlas) and image delivery network (Cloudinary).</li>
+        <li><strong>Email delivery</strong>: our email provider (Resend), which delivers your order request or message to our shop mailbox so we can answer you.</li>
+        <li><strong>Analytics</strong>: Google Analytics (Google Ireland Ltd / Google LLC), only with your consent.</li>
+        <li><strong>Advertising measurement</strong>: Meta Platforms Ireland Ltd (Meta Pixel), only with your consent.</li>
+        <li><strong>Delivery partners</strong>: couriers we use to deliver your order, where applicable.</li>
+        <li><strong>Authorities</strong>: where we are legally required to disclose information.</li>
       </ul>
 
       <h2>6. International transfers</h2>
@@ -72,10 +85,10 @@ export default function PrivacyPolicyPage() {
 
       <h2>7. How long we keep your data</h2>
       <ul>
-        <li><strong>Order &amp; transaction records</strong> — for as long as required by Cypriot tax and accounting law (typically up to 6 years).</li>
-        <li><strong>Enquiries &amp; quotes</strong> — for as long as needed to deal with your request and a reasonable period afterwards.</li>
-        <li><strong>Newsletter</strong> — until you unsubscribe.</li>
-        <li><strong>Analytics</strong> — in aggregated or pseudonymised form, per the retention periods in our Cookie Policy.</li>
+        <li><strong>Order &amp; transaction records</strong>: for as long as required by Cypriot tax and accounting law (typically up to 6 years).</li>
+        <li><strong>Enquiries, messages &amp; quotes</strong>: for as long as needed to deal with your request and a reasonable period afterwards.</li>
+        <li><strong>Newsletter</strong>: until you unsubscribe.</li>
+        <li><strong>Analytics</strong>: in aggregated or pseudonymised form, per the retention periods in our Cookie Policy.</li>
       </ul>
 
       <h2>8. Your rights</h2>

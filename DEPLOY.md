@@ -56,6 +56,9 @@ In Vercel project → **Settings → Environment Variables**:
 | `ADMIN_PASSWORD` | a strong password (do NOT reuse `Lamidis@2026`)   | ✅       |
 | `ADMIN_SECRET`   | 64-char hex string (see below)                     | ✅       |
 | `MONGODB_URI`    | from MongoDB Atlas — only if you want admin edits  | optional |
+| `RESEND_API_KEY` | Resend API key — instant email for new orders and messages | optional |
+| `NOTIFY_EMAIL_TO` | who receives those emails (comma-separated for several) | with the key |
+| `NOTIFY_EMAIL_FROM` | sender on a domain verified in Resend, e.g. `Michael Lamidis Shop <orders@…>` | with the key |
 
 **Generate `ADMIN_SECRET`:**
 

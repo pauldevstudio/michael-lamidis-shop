@@ -1,15 +1,35 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import { X, Sparkles, ArrowRight } from "lucide-react";
 import type { Product } from "@/lib/constants";
 import { useContent } from "@/lib/content-context";
+import { useCookieConsent } from "@/lib/cookie-consent";
 import { useLanguage } from "@/lib/i18n-context";
 
 const SHOW_DELAY_MS = 6000;
+// Set when the visitor closes the popup, so it stays closed for the rest of
+// this browser tab session (sessionStorage is cleared when the tab closes).
+const CLOSED_KEY = "ml-promo-closed";
+
+function wasClosed(): boolean {
+  try {
+    return sessionStorage.getItem(CLOSED_KEY) === "1";
+  } catch {
+    return false; // storage blocked — treat as not closed yet
+  }
+}
+
+function rememberClosed() {
+  try {
+    sessionStorage.setItem(CLOSED_KEY, "1");
+  } catch {
+    /* storage blocked — the popup still closes for this page view */
+  }
+}
 
 export default function PromoPopup({ items }: { items: Product[] }) {
   const content = useContent();
@@ -18,9 +38,15 @@ export default function PromoPopup({ items }: { items: Product[] }) {
   // When off (or no image), the popup falls back to the curated product list.
   const posterMode = !!promo?.imageUrl && promo?.imageMode !== false;
   const { t, pick } = useLanguage();
+  const { hasChoice } = useCookieConsent();
   const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
+
+  const close = useCallback(() => {
+    rememberClosed();
+    setOpen(false);
+  }, []);
 
   useEffect(() => setMounted(true), []);
 
@@ -30,9 +56,12 @@ export default function PromoPopup({ items }: { items: Product[] }) {
     const force =
       typeof window !== "undefined" &&
       new URLSearchParams(window.location.search).has("promo");
+    // Wait until the cookie banner is answered, and stay closed once the
+    // visitor has closed it in this tab. The admin preview (?promo=1) skips both.
+    if (!force && (!hasChoice || wasClosed())) return;
     const t = setTimeout(() => setOpen(true), force ? 0 : SHOW_DELAY_MS);
     return () => clearTimeout(t);
-  }, [promo?.enabled, posterMode, items.length]);
+  }, [promo?.enabled, posterMode, items.length, hasChoice]);
 
   useEffect(() => {
     if (!open) return;
@@ -40,7 +69,7 @@ export default function PromoPopup({ items }: { items: Product[] }) {
     document.body.style.overflow = "hidden";
     closeRef.current?.focus();
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") { setOpen(false); return; }
+      if (e.key === "Escape") { close(); return; }
       if (e.key !== "Tab") return;
       const dialog = closeRef.current?.closest('[role="dialog"]');
       if (!dialog) return;
@@ -63,7 +92,7 @@ export default function PromoPopup({ items }: { items: Product[] }) {
       document.body.style.overflow = prevOverflow;
       window.removeEventListener("keydown", onKey);
     };
-  }, [open]);
+  }, [open, close]);
 
   if (!mounted || !open || !promo) return null;
 
@@ -72,7 +101,7 @@ export default function PromoPopup({ items }: { items: Product[] }) {
     return createPortal(
       <div
         className="fixed inset-0 z-[10050] flex items-center justify-center p-3 bg-black/70 backdrop-blur-sm animate-in fade-in duration-300"
-        onClick={() => setOpen(false)}
+        onClick={close}
         role="dialog"
         aria-modal="true"
         aria-label={promo.title || "Promotion"}
@@ -83,13 +112,13 @@ export default function PromoPopup({ items }: { items: Product[] }) {
         >
           <button
             ref={closeRef}
-            onClick={() => setOpen(false)}
+            onClick={close}
             aria-label="Close"
-            className="absolute top-2.5 right-2.5 z-10 w-9 h-9 rounded-full bg-black/50 hover:bg-black/70 border border-white/20 flex items-center justify-center text-white transition-transform hover:scale-105"
+            className="absolute top-2.5 right-2.5 z-10 w-11 h-11 rounded-full bg-black/50 hover:bg-black/70 border border-white/20 flex items-center justify-center text-white transition-transform hover:scale-105"
           >
             <X className="w-4 h-4" />
           </button>
-          <Link href={promo.ctaHref || "/products"} onClick={() => setOpen(false)} className="block">
+          <Link href={promo.ctaHref || "/products"} onClick={close} className="block">
             {/* Plain img so any admin-uploaded poster aspect ratio renders undistorted. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -114,7 +143,7 @@ export default function PromoPopup({ items }: { items: Product[] }) {
   return createPortal(
     <div
       className="fixed inset-0 z-[10050] flex items-center justify-center p-3 bg-black/70 backdrop-blur-sm animate-in fade-in duration-300"
-      onClick={() => setOpen(false)}
+      onClick={close}
       role="dialog"
       aria-modal="true"
       aria-labelledby="promo-popup-title"
@@ -127,9 +156,9 @@ export default function PromoPopup({ items }: { items: Product[] }) {
         {/* Close */}
         <button
           ref={closeRef}
-          onClick={() => setOpen(false)}
+          onClick={close}
           aria-label="Close"
-          className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 border border-white/10 flex items-center justify-center text-white/70 hover:text-white transition-colors"
+          className="absolute top-3 right-3 z-10 w-11 h-11 rounded-full bg-black/40 hover:bg-black/60 border border-white/10 flex items-center justify-center text-white/70 hover:text-white transition-colors"
         >
           <X className="w-4 h-4" />
         </button>
@@ -184,7 +213,7 @@ export default function PromoPopup({ items }: { items: Product[] }) {
 
           <Link
             href={`/products/${featured.id}`}
-            onClick={() => setOpen(false)}
+            onClick={close}
             className="inline-flex items-center justify-center gap-2 w-full px-6 py-3.5 rounded-xl text-navy-950 text-sm font-bold transition-transform hover:scale-[1.02]"
             style={{ background: "linear-gradient(135deg, #E6B450 0%, #C8881A 100%)" }}
           >
@@ -193,7 +222,7 @@ export default function PromoPopup({ items }: { items: Product[] }) {
 
           <Link
             href={promo.ctaHref || "/products?category=best-deals"}
-            onClick={() => setOpen(false)}
+            onClick={close}
             className="inline-flex items-center justify-center gap-1.5 text-white/50 hover:text-gold-400 text-xs font-medium transition-colors"
           >
             {pick(promo.ctaLabel, t.promoPopup.cta)} <ArrowRight className="w-3 h-3" />

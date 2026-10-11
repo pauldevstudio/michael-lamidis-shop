@@ -2,23 +2,8 @@
 
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { track, analytics, ANALYTICS_EVENTS } from "@/lib/analytics";
+import { track, analytics, beacon, pageviewBeacon, ANALYTICS_EVENTS } from "@/lib/analytics";
 import { useCookieConsent } from "@/lib/cookie-consent";
-
-/** Non-blocking first-party beacon to our own analytics endpoint. */
-function beacon(payload: Record<string, unknown>) {
-  if (typeof window === "undefined") return;
-  try {
-    const body = JSON.stringify({ ...payload, referrer: document.referrer });
-    if (navigator.sendBeacon) {
-      navigator.sendBeacon("/api/track", new Blob([body], { type: "application/json" }));
-    } else {
-      fetch("/api/track", { method: "POST", body, keepalive: true, headers: { "content-type": "application/json" } });
-    }
-  } catch {
-    /* never let tracking break the page */
-  }
-}
 
 /**
  * Zero-touch event tracking. One delegated click listener on the document
@@ -43,7 +28,7 @@ export default function AutoTrack() {
       page_location: typeof window !== "undefined" ? window.location.href : pathname,
       page_title: typeof document !== "undefined" ? document.title : undefined,
     });
-    beacon({ kind: "pageview", path: pathname });
+    pageviewBeacon(pathname);
   }, [pathname, allowed]);
 
   // Delegated click tracking.

@@ -9,7 +9,7 @@ import { useLanguage } from "@/lib/i18n-context";
 const COPY = {
   en: {
     title: "We value your privacy",
-    body: "We use strictly necessary cookies to make this site work. With your consent, we also use analytics cookies to understand how the site is used. You can accept all, reject non-essential cookies, or choose what to allow. Read our",
+    body: "We use strictly necessary cookies to make this site work. With your consent, we also use analytics cookies to understand how the site is used, and marketing cookies to measure our advertising. You can accept all, reject non-essential cookies, or choose what to allow. Read our",
     and: "and",
     cookiePolicy: "Cookie Policy",
     privacyPolicy: "Privacy Policy",
@@ -21,14 +21,14 @@ const COPY = {
     necessary: "Strictly necessary",
     necessaryDesc: "Required for the site to work — security, your session and remembering this cookie choice. Always on.",
     analytics: "Analytics",
-    analyticsDesc: "Help us measure visits and improve the site (Google Analytics and our own first-party statistics).",
+    analyticsDesc: "Help us measure visits, improve the site and see which of our adverts bring orders and messages (Google Analytics and our own first-party statistics).",
     marketing: "Marketing",
-    marketingDesc: "Used to measure or personalise advertising. We do not run any marketing cookies at the moment.",
+    marketingDesc: "Help us show you relevant offers and measure ad performance (Meta Pixel).",
     alwaysOn: "Always on",
   },
   gr: {
     title: "Σεβόμαστε το απόρρητό σας",
-    body: "Χρησιμοποιούμε απολύτως απαραίτητα cookies για τη λειτουργία του ιστότοπου. Με τη συγκατάθεσή σας, χρησιμοποιούμε επίσης cookies ανάλυσης για να κατανοούμε τη χρήση του ιστότοπου. Μπορείτε να τα αποδεχθείτε όλα, να απορρίψετε τα μη απαραίτητα ή να επιλέξετε τι επιτρέπετε. Διαβάστε την",
+    body: "Χρησιμοποιούμε απολύτως απαραίτητα cookies για τη λειτουργία του ιστότοπου. Με τη συγκατάθεσή σας, χρησιμοποιούμε επίσης cookies ανάλυσης για να κατανοούμε τη χρήση του ιστότοπου και cookies μάρκετινγκ για να μετράμε τις διαφημίσεις μας. Μπορείτε να τα αποδεχθείτε όλα, να απορρίψετε τα μη απαραίτητα ή να επιλέξετε τι επιτρέπετε. Διαβάστε την",
     and: "και την",
     cookiePolicy: "Πολιτική Cookies",
     privacyPolicy: "Πολιτική Απορρήτου",
@@ -40,9 +40,9 @@ const COPY = {
     necessary: "Απολύτως απαραίτητα",
     necessaryDesc: "Απαραίτητα για τη λειτουργία του ιστότοπου — ασφάλεια, συνεδρία και αποθήκευση της επιλογής cookies. Πάντα ενεργά.",
     analytics: "Ανάλυσης",
-    analyticsDesc: "Μας βοηθούν να μετράμε τις επισκέψεις και να βελτιώνουμε τον ιστότοπο (Google Analytics και δικά μας στατιστικά).",
+    analyticsDesc: "Μας βοηθούν να μετράμε τις επισκέψεις, να βελτιώνουμε τον ιστότοπο και να βλέπουμε ποιες διαφημίσεις μας φέρνουν παραγγελίες και μηνύματα (Google Analytics και δικά μας στατιστικά).",
     marketing: "Μάρκετινγκ",
-    marketingDesc: "Για μέτρηση ή εξατομίκευση διαφημίσεων. Προς το παρόν δεν χρησιμοποιούμε cookies μάρκετινγκ.",
+    marketingDesc: "Μας βοηθούν να σας δείχνουμε σχετικές προσφορές και να μετράμε την απόδοση διαφημίσεων (Meta Pixel).",
     alwaysOn: "Πάντα ενεργά",
   },
 } as const;

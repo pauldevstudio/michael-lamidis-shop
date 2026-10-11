@@ -279,6 +279,7 @@ const COUNTRY_NAMES: Record<string, string> = {
   IN: "India", AE: "UAE", IL: "Israel", TR: "Turkey", AU: "Australia", CA: "Canada",
 };
 const SOURCE_ORDER = ["Organic Search", "Direct", "Social Media", "Referral", "Paid Advertising"];
+const NON_CLICK_EVENTS = new Set(["add_to_cart", "begin_checkout", "purchase", "contact_form_submit", "generate_lead"]);
 
 function clickType(name: string): string {
   if (name === "cta_click") return "CTA";
@@ -318,7 +319,9 @@ async function getRealtimeAnalytics(range: RangeKey): Promise<AnalyticsData | nu
   const allVids = new Set<string>();
   const newVids = new Set<string>();
   const convSids = new Set<string>();
-  const events = docs.filter((d) => d.kind === "event");
+  // Cart, checkout, order and form events are conversions, not clicks. Keep
+  // them out of the Clicks panel so they cannot push real clicks off the list.
+  const events = docs.filter((d) => d.kind === "event" && !NON_CLICK_EVENTS.has(d.name));
   let pageViews = 0;
 
   for (const d of docs) {

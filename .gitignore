@@ -45,6 +45,7 @@ Thumbs.db
 
 # Local data (use MongoDB / KV in production)
 /data/site-content.json
+/data/leads.json
 /public/uploads/*
 !/public/uploads/.gitkeep
 

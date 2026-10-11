@@ -11,21 +11,20 @@ import {
 } from "lucide-react";
 import { MEGA_MENU_CATEGORIES, MEGA_MENU_SPECIAL } from "@/lib/mega-menu-categories";
 import AnimatedSection from "@/components/shared/AnimatedSection";
-import StarRating from "@/components/shared/StarRating";
 import VideoCardButton from "@/components/shared/VideoCardButton";
 import { FEATURED_PRODUCTS, PRODUCT_CATEGORIES, type Product } from "@/lib/constants";
 import { useCart } from "@/lib/cart-context";
 import { useLanguage } from "@/lib/i18n-context";
-import { productSocialProof } from "@/lib/social-proof";
+import { inStockFirst } from "@/lib/product-order";
 import { cn } from "@/lib/utils";
 
 /* ── Product Card ──────────────────────────────────────── */
 function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
   const cat = PRODUCT_CATEGORIES.find((c) => c.id === product.category);
-  const { addToCart } = useCart();
+  const { addToCart, items } = useCart();
   const { t } = useLanguage();
   const [added, setAdded] = useState(false);
-  const proof = productSocialProof(product.id);
+  const inCart = items.some((i) => i.product.id === product.id);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -142,15 +141,6 @@ function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
           </p>
         </div>
 
-        {/* Rating + social proof */}
-        <div className="flex items-center gap-1.5 flex-wrap">
-          <StarRating rating={proof.rating} size={13} />
-          <span className="text-navy-800 text-xs font-bold tnum">{proof.rating.toFixed(1)}</span>
-          <span className="text-navy-400 text-xs tnum">({proof.reviews})</span>
-          <span className="text-navy-200">·</span>
-          <span className="text-emerald-600 text-[11px] font-semibold tnum">{proof.sold}+ sold</span>
-        </div>
-
         {/* Mini specs */}
         {product.specs.length > 0 && (
           <div className="flex flex-wrap gap-x-4 gap-y-1">
@@ -183,10 +173,12 @@ function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
             <Shield className="w-3 h-3 text-emerald-500" />
             <span>{product.warranty}{t.pages.products.warrantyMo}</span>
           </div>
+          {!product.sold && (
           <div className="flex items-center gap-1">
             <Zap className="w-3 h-3 text-gold-400" />
             <span>{t.pages.products.inStock}</span>
           </div>
+          )}
         </div>
 
         {/* CTA row: View Details + Add to Cart (above the card-overlay link) */}
@@ -223,6 +215,18 @@ function ProductCard({ product }: { product: (typeof FEATURED_PRODUCTS)[0] }) {
           </button>
           )}
         </div>
+
+        {/* In the cart: a way to continue (above the card-overlay link) */}
+        {inCart && (
+          <Link
+            href="/cart"
+            className="relative z-10 inline-flex items-center justify-center gap-1 py-2 text-xs font-semibold text-emerald-700 hover:text-emerald-800 transition-colors"
+          >
+            <Check className="w-3.5 h-3.5" />
+            {t.pages.products.viewCart}
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        )}
       </div>
     </motion.div>
   );
@@ -278,7 +282,8 @@ export default function ProductsContent({ products, bestDealIds }: { products?: 
         `${p.name ?? ""} ${p.brand} ${p.model} ${p.description ?? ""}`.toLowerCase().includes(q)
       );
     }
-    return list;
+    // In-stock products first, sold ones last (order inside each group kept).
+    return inStockFirst(list);
   }, [effectiveCategory, __products, __bestDealIds, searchQuery]);
 
   const PRODUCTS_PER_PAGE = 24;

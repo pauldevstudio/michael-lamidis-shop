@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import type { Product } from "./constants";
+import { analytics } from "./analytics";
 
 /* ── Types ─────────────────────────────────────────────── */
 export interface CartItem {
@@ -68,6 +69,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
         );
       }
       return [...prev, { product, quantity: qty }];
+    });
+    // After the cart update, so tracking can never get in the way of it.
+    analytics.addToCart({
+      id: product.id,
+      name: product.name || `${product.brand} ${product.model}`,
+      price: product.salePrice,
+      quantity: qty,
     });
   }, []);
 

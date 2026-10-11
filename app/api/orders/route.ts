@@ -1,47 +1,41 @@
 export const runtime = "nodejs";
 
-import { NextRequest, NextResponse } from "next/server";
+import { after, NextRequest, NextResponse } from "next/server";
+import { SITE_URL } from "@/lib/constants";
+import { buildOrderEmail, readMailConfig, sendShopEmail, type SendResult } from "@/lib/notify";
+import { clientKey, createRateLimiter } from "@/lib/rate-limit";
+import { readJsonBody } from "@/lib/request-guard";
+import { parseOrderBody } from "@/lib/validate";
 
-interface OrderBody {
-  customer: {
-    fullName: string;
-    email: string;
-    phone: string;
-    address?: string;
-    city?: string;
-    postalCode?: string;
-    notes?: string;
-  };
-  items: Array<{
-    productId: string;
-    brand: string;
-    model: string;
-    salePrice: number;
-    quantity: number;
-  }>;
-  totalPrice: number;
-  payment: "bank_transfer" | "cash_on_delivery" | "showroom_pickup";
-}
+const HOUR_MS = 60 * 60 * 1000;
+const DAY_MS = 24 * HOUR_MS;
+const ORDERS_PER_HOUR_PER_ADDRESS = 6;
+const MAX_BODY_BYTES = 32 * 1024;
+// A free email plan sends about 100 emails a day. Orders may use at most half
+// and messages less (see the leads route), so a flood of one kind can never
+// silence the other. Orders over the cap are still saved, only not emailed.
+const MAX_ORDER_NOTICES_PER_DAY = 50;
 
-const VALID_PAYMENTS = ["bank_transfer", "cash_on_delivery", "showroom_pickup"] as const;
+const limiter = createRateLimiter(ORDERS_PER_HOUR_PER_ADDRESS, HOUR_MS);
 
 export async function POST(request: NextRequest) {
   try {
-    const body = (await request.json()) as OrderBody;
+    if (!limiter.check(clientKey(request.headers))) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later or call us." },
+        { status: 429 },
+      );
+    }
 
-    // Validate
-    if (!body.customer?.fullName?.trim() || !body.customer?.email?.trim() || !body.customer?.phone?.trim()) {
-      return NextResponse.json({ error: "Name, email, and phone are required" }, { status: 400 });
+    const read = await readJsonBody(request, MAX_BODY_BYTES);
+    if (!read.ok) {
+      return NextResponse.json({ error: read.error }, { status: read.status });
     }
-    if (!Array.isArray(body.items) || body.items.length === 0) {
-      return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
+    const parsed = parseOrderBody(read.body);
+    if (!parsed.ok) {
+      return NextResponse.json({ error: parsed.error }, { status: 400 });
     }
-    if (!VALID_PAYMENTS.includes(body.payment)) {
-      return NextResponse.json({ error: "Invalid payment method" }, { status: 400 });
-    }
-    if (body.payment !== "showroom_pickup" && (!body.customer.address?.trim() || !body.customer.city?.trim())) {
-      return NextResponse.json({ error: "Delivery address is required" }, { status: 400 });
-    }
+    const input = parsed.data;
 
     if (!process.env.MONGODB_URI) {
       // Local dev without DB — fall back to a generated id so the UI still works.
@@ -52,19 +46,48 @@ export async function POST(request: NextRequest) {
 
     const { connectDB } = await import("@/lib/db");
     const { OrderModel } = await import("@/lib/models");
+    const { lookupAttribution, dropAnalyticsCookiesWithoutConsent } = await import("@/lib/visitor-attribution");
     await connectDB();
+    const attribution = await lookupAttribution(request);
 
     const order = await OrderModel.create({
-      customer: body.customer,
-      items: body.items,
-      totalPrice: body.totalPrice,
-      payment: body.payment,
+      customer: input.customer,
+      items: input.items,
+      totalPrice: input.totalPrice,
+      payment: input.payment,
       status: "new",
+      ...(attribution ? { attribution } : {}),
+    });
+    const orderId = order._id.toString();
+    const ordersToday = await OrderModel.countDocuments({ createdAt: { $gte: new Date(Date.now() - DAY_MS) } });
+
+    // The order is saved. The notice to the shop runs after the response, so a
+    // slow or failing email provider can never delay or fail the customer's
+    // order. Its outcome is stored on the order for the admin and the reports.
+    after(async () => {
+      const notice: SendResult = ordersToday > MAX_ORDER_NOTICES_PER_DAY
+        ? { sent: false, reason: "daily_cap" }
+        : await sendShopEmail(
+            buildOrderEmail({ id: orderId, ...input, attribution }, SITE_URL),
+            readMailConfig(process.env),
+          );
+      const noticeStatus = notice.sent ? "sent" : notice.reason;
+      if (!notice.sent) {
+        console.warn("[orders] shop notice not sent:", noticeStatus, orderId);
+      }
+      try {
+        await OrderModel.updateOne({ _id: order._id }, { $set: { noticeStatus } });
+      } catch {
+        /* the status is informational; the order itself is already saved */
+      }
     });
 
-    return NextResponse.json({ orderId: order._id.toString() }, { status: 201 });
+    const response = NextResponse.json({ orderId }, { status: 201 });
+    dropAnalyticsCookiesWithoutConsent(request, response);
+    return response;
   } catch (err) {
-    console.error("[orders] failed:", err);
+    // Log the error type only: database errors can echo what the customer typed.
+    console.error("[orders] failed:", err instanceof Error ? err.name : "unknown error");
     return NextResponse.json({ error: "Failed to place order" }, { status: 500 });
   }
 }

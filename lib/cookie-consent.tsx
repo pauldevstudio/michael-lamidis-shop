@@ -3,6 +3,7 @@
 import {
   createContext, useCallback, useContext, useMemo, useState,
 } from "react";
+import { CONSENT_COOKIE, CONSENT_VERSION } from "@/lib/consent-core";
 
 /**
  * GDPR / ePrivacy cookie-consent state.
@@ -25,8 +26,8 @@ export type ConsentRecord = ConsentCategories & {
   ts: string;            // ISO timestamp the choice was made
 };
 
-export const CONSENT_COOKIE = "cookie_consent";
-export const CONSENT_VERSION = 1;
+// Defined in lib/consent-core.ts so the server can apply the same rules.
+export { CONSENT_COOKIE, CONSENT_VERSION };
 const ONE_YEAR_SECONDS = 60 * 60 * 24 * 365;
 
 // Module-level constants so the "no choice yet" / fallback values keep a stable
@@ -56,6 +57,24 @@ function writeConsentCookie(rec: ConsentRecord) {
   document.cookie =
     `${CONSENT_COOKIE}=${encodeURIComponent(JSON.stringify(rec))}` +
     `; Max-Age=${ONE_YEAR_SECONDS}; Path=/; SameSite=Lax${secure}`;
+}
+
+/**
+ * Our own analytics cookies (_av, _as) are HttpOnly, so only the server can
+ * delete them. /api/track expires them for any caller whose consent cookie
+ * does not allow Analytics, so one call makes a withdrawal take effect at once.
+ */
+function dropAnalyticsCookies() {
+  if (typeof fetch === "undefined") return;
+  fetch("/api/track", {
+    method: "POST",
+    keepalive: true,
+    headers: { "content-type": "application/json" },
+    body: "{}",
+  }).catch(() => {
+    // Offline or blocked: the server also expires them on the visitor's next
+    // order request or message, and nothing reads them without consent.
+  });
 }
 
 type ConsentContextValue = {
@@ -94,6 +113,7 @@ export function CookieConsentProvider({ children }: { children: React.ReactNode 
       ts: new Date().toISOString(),
     };
     writeConsentCookie(rec);
+    if (!choice.analytics) dropAnalyticsCookies();
     setRecord(rec);
     setSettingsOpen(false);
   }, []);
