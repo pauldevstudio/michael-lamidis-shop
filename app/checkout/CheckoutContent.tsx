@@ -138,6 +138,19 @@ export default function CheckoutContent() {
     );
   }
 
+  // A placed order empties the cart while the confirmation page is still
+  // loading. Say the order went through instead of showing an empty cart.
+  if (submitting && items.length === 0) {
+    return (
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl text-center py-12" role="status">
+        <h1 className="font-display font-black text-3xl text-navy-950 mb-3">
+          Order received
+        </h1>
+        <p className="text-navy-600">Opening your confirmation&hellip;</p>
+      </div>
+    );
+  }
+
   if (items.length === 0) {
     return (
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl text-center py-12">
