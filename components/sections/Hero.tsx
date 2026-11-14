@@ -132,7 +132,10 @@ export default function Hero() {
               </button>
             </div>
 
-            {showroomOpen && <ShowroomVideoModal open={showroomOpen} onClose={() => setShowroomOpen(false)} src="/showroom.mp4" />}
+            {/* Official vertical "One Stop, One Shop" film. New file name on purpose:
+                .mp4 files are cached for a year, so reusing /showroom.mp4 would keep
+                serving the old video to returning visitors. */}
+            {showroomOpen && <ShowroomVideoModal open={showroomOpen} onClose={() => setShowroomOpen(false)} src="/one-stop-one-shop.mp4" />}
 
             {/* Trust micro-row */}
             <div className="hero-animate hero-animate-5 flex flex-wrap items-center gap-x-5 gap-y-2 mt-9">
